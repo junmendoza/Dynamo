@@ -460,7 +460,7 @@ namespace ProtoCore.DSASM
                 classNodes.Add(new ClassNode(rhs.classNodes[n]));
             }
 
-            symbolTable = new Namespace.SymbolTable();
+            symbolTable = new Namespace.SymbolTable(rhs.symbolTable);
         }
 
         public void Reserve(int size)
