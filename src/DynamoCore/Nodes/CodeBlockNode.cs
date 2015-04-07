@@ -49,6 +49,20 @@ namespace Dynamo.Nodes
             public const string TOOL_TIP_FOR_TEMP_VARIABLE = "Statement Output";
         }
 
+        private ProtoCore.Core compileCore = null;
+
+        /// <summary>
+        /// Create a core that is only used for compiling CBN code
+        /// It inherits properties from the live core
+        /// </summary>
+        private void CreateCompileCore()
+        {
+            Validity.Assert(libraryServices != null && libraryServices.LibraryManagementCore != null);
+            compileCore = new ProtoCore.Core(libraryServices.LibraryManagementCore.Options);
+            compileCore.Compilers.Add(ProtoCore.Language.kAssociative, new ProtoAssociative.Compiler(compileCore));
+            compileCore.Compilers.Add(ProtoCore.Language.kImperative, new ProtoImperative.Compiler(compileCore));
+        }
+
         #region Public Methods
 
         public CodeBlockNodeModel(LibraryServices libraryServices)
@@ -57,6 +71,7 @@ namespace Dynamo.Nodes
             this.libraryServices = libraryServices;
             this.libraryServices.LibraryLoaded += LibraryServicesOnLibraryLoaded;
             this.ElementResolver = new ElementResolver();
+            CreateCompileCore();
         }
 
         public CodeBlockNodeModel(string userCode, double xPos, double yPos, LibraryServices libraryServices)
@@ -387,6 +402,7 @@ namespace Dynamo.Nodes
         private void ProcessCode(ref string errorMessage, ref string warningMessage, 
             ElementResolver workspaceElementResolver = null)
         {
+            Validity.Assert(compileCore != null);
             code = CodeBlockUtils.FormatUserText(code);
             codeStatements.Clear();
 
@@ -400,7 +416,7 @@ namespace Dynamo.Nodes
                 var resolver = workspaceElementResolver ?? this.ElementResolver;
                 var parseParam = new ParseParam(GUID, code, resolver);
 
-                if (CompilerUtils.PreCompileCodeBlock(libraryServices.LibraryManagementCore, ref parseParam))
+                if (CompilerUtils.PreCompileCodeBlock(compileCore, ref parseParam))
                 {
                     if (parseParam.ParsedNodes != null)
                     {
