@@ -42,9 +42,30 @@ namespace Dynamo.DSEngine
         private readonly IPathManager pathManager;
         public ProtoCore.Core LibraryManagementCore{get; private set;}
 
-        public void SetLibraryCore(ProtoCore.Core core)
+
+        /// <summary>
+        /// Create a library core based from the live core properties
+        /// </summary>
+        /// <param name="liveCore"></param>
+        private void CreateLibraryCore(ProtoCore.Core liveCore)
         {
-            LibraryManagementCore = core;
+            Validity.Assert(liveCore != null);
+            LibraryManagementCore = new ProtoCore.Core(liveCore.Options);
+            LibraryManagementCore.Compilers.Add(ProtoCore.Language.kAssociative, new ProtoAssociative.Compiler(LibraryManagementCore));
+            LibraryManagementCore.Compilers.Add(ProtoCore.Language.kImperative, new ProtoImperative.Compiler(LibraryManagementCore));
+
+            LibraryManagementCore.ProcTable = new ProcedureTable(liveCore.ProcTable);
+            LibraryManagementCore.ClassTable = new ClassTable(liveCore.ClassTable);
+        }
+
+        public void SetLibraryCore(ProtoCore.Core liveCore)
+        {
+            LibraryManagementCore = liveCore;
+        }
+
+        public void PrepareLibraryCore(ProtoCore.Core liveCore)
+        {
+            CreateLibraryCore(liveCore);
         }
 
         public void LoadLibraries()

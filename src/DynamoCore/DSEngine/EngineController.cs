@@ -527,7 +527,7 @@ namespace Dynamo.DSEngine
             // The LiveRunner core is newly instantiated whenever a new library is imported
             // due to which a new instance of CodeCompletionServices needs to be created with the new Core
             codeCompletionServices = new CodeCompletionServices(LiveRunnerCore);
-            libraryServices.SetLibraryCore(LiveRunnerCore);
+            libraryServices.PrepareLibraryCore(LiveRunnerCore);
         }
 
         #region Implement IAstNodeContainer interface

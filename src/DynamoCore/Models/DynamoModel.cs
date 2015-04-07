@@ -514,6 +514,7 @@ namespace Dynamo.Models
 
             ResetEngineInternal();
             LibraryServices.LoadLibraries();
+            LibraryServices.PrepareLibraryCore(EngineController.LiveRunnerCore);
 
 
             AddHomeWorkspace();
