@@ -96,6 +96,15 @@ namespace ProtoCore.DSASM
 
         public ProcedureNode(ProcedureNode rhs)
         {
+            name = rhs.name;
+            pc = rhs.pc;
+            localCount = rhs.localCount;
+            returntype = rhs.returntype;
+            runtimeIndex = rhs.runtimeIndex;
+            isExternal = rhs.isExternal;
+            isAssocOperator = rhs.isAssocOperator;
+            isVarArg = rhs.isVarArg;
+
             procId = rhs.procId;
             classScope = rhs.classScope;
             argTypeList = new List<Type>(rhs.argTypeList);
