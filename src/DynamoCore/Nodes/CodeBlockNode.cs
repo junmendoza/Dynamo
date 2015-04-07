@@ -85,6 +85,7 @@ namespace Dynamo.Nodes
             this.libraryServices = libraryServices;
             this.libraryServices.LibraryLoaded += LibraryServicesOnLibraryLoaded;
             this.ElementResolver = new ElementResolver();
+            CreateCompileCore();
             code = userCode;
             GUID = guid;
             ShouldFocus = false;
