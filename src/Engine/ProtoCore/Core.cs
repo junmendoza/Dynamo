@@ -535,6 +535,19 @@ namespace ProtoCore
             // Remove inactive graphnodes in the list
             GraphNodeCallList.RemoveAll(g => !g.isActive);
             ExprInterpreterExe = null;
+
+            if (Options.SuppressBuildOutput)
+            {
+                //  don't log any of the build related messages
+                //  just accumulate them in relevant containers with
+                //  BuildStatus object
+                //
+                BuildStatus = new BuildStatus(this, false, false, false);
+            }
+            else
+            {
+                BuildStatus = new BuildStatus(this, Options.BuildOptWarningAsError);
+            }
         }
 
         public void ResetForPrecompilation()
