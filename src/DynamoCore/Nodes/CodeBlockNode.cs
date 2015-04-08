@@ -49,6 +49,26 @@ namespace Dynamo.Nodes
             public const string TOOL_TIP_FOR_TEMP_VARIABLE = "Statement Output";
         }
 
+        private ProtoCore.Core compileCore = null;
+
+        /// <summary>
+        /// Create a library core based from the live core properties
+        /// The properties to copy are only those used by the library core
+        /// </summary>
+        /// <param name="liveCore"></param>
+        private void CreateLibraryCore(ProtoCore.Core liveCore)
+        {
+            Validity.Assert(liveCore != null);
+            compileCore = new ProtoCore.Core(liveCore.Options);
+            compileCore.Compilers.Add(ProtoCore.Language.kAssociative, new ProtoAssociative.Compiler(compileCore));
+            compileCore.Compilers.Add(ProtoCore.Language.kImperative, new ProtoImperative.Compiler(compileCore));
+
+            compileCore.ProcTable = new ProtoCore.DSASM.ProcedureTable(liveCore.ProcTable);
+            compileCore.ClassTable = new ProtoCore.DSASM.ClassTable(liveCore.ClassTable);
+
+            //compileCore.CodeBlockList = new List<ProtoCore.DSASM.CodeBlock>(liveCore.CodeBlockList);
+        }
+
         #region Public Methods
 
         public CodeBlockNodeModel(LibraryServices libraryServices)
@@ -57,6 +77,7 @@ namespace Dynamo.Nodes
             this.libraryServices = libraryServices;
             this.libraryServices.LibraryLoaded += LibraryServicesOnLibraryLoaded;
             this.ElementResolver = new ElementResolver();
+            CreateLibraryCore(libraryServices.LibraryManagementCore);
         }
 
         public CodeBlockNodeModel(string userCode, double xPos, double yPos, LibraryServices libraryServices)
@@ -73,7 +94,7 @@ namespace Dynamo.Nodes
             code = userCode;
             GUID = guid;
             ShouldFocus = false;
-
+            CreateLibraryCore(libraryServices.LibraryManagementCore);
             ProcessCodeDirect();
         }
 
@@ -399,7 +420,7 @@ namespace Dynamo.Nodes
                 // in which case, a local copy of the ER obtained from the CBN is used
                 var resolver = workspaceElementResolver ?? this.ElementResolver;
                 var parseParam = new ParseParam(GUID, code, resolver);
-                if (CompilerUtils.PreCompileCodeBlock(libraryServices.LibraryManagementCore, ref parseParam))
+                if (CompilerUtils.PreCompileCodeBlock(compileCore, ref parseParam))
                 {
                     if (parseParam.ParsedNodes != null)
                     {
