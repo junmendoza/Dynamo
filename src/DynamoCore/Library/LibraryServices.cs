@@ -45,6 +45,7 @@ namespace Dynamo.DSEngine
 
         /// <summary>
         /// Create a library core based from the live core properties
+        /// The properties to copy are only those used by the library core
         /// </summary>
         /// <param name="liveCore"></param>
         private void CreateLibraryCore(ProtoCore.Core liveCore)
@@ -56,6 +57,8 @@ namespace Dynamo.DSEngine
 
             LibraryManagementCore.ProcTable = new ProcedureTable(liveCore.ProcTable);
             LibraryManagementCore.ClassTable = new ClassTable(liveCore.ClassTable);
+
+            LibraryManagementCore.CodeBlockList = new List<CodeBlock>(liveCore.CodeBlockList);
         }
 
         public void SetLibraryCore(ProtoCore.Core liveCore)
