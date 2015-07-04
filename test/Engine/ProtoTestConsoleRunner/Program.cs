@@ -55,8 +55,12 @@ namespace ProtoTestConsoleRunner
             ProtoScriptTestRunner runner = new ProtoScriptTestRunner();
 
             // Assuming current directory in test/debug mode is "...\Dynamo\bin\AnyCPU\Debug"
-            RuntimeCore runtimeCore = null;
-            ExecutionMirror mirror = runner.LoadAndExecute(@"..\..\..\test\core\dsevaluation\DSFiles\test.ds", core, out runtimeCore);
+          //  RuntimeCore runtimeCore = null;
+            //ExecutionMirror mirror = runner.LoadAndExecute(@"..\..\..\test\core\dsevaluation\DSFiles\test.ds", core, out runtimeCore);
+
+            ProtoTest.LiveRunner.MicroFeatureTests test = new ProtoTest.LiveRunner.MicroFeatureTests();
+            test.Setup();
+            test.TestSimpleExecution01();
 
             long ms = sw.ElapsedMilliseconds;
             sw.Stop();

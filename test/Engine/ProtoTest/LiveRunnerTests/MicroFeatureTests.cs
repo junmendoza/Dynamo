@@ -15,7 +15,7 @@ using System.Collections;
 
 namespace ProtoTest.LiveRunner
 {
-    class MicroFeatureTests : ProtoTestBase
+    public class MicroFeatureTests : ProtoTestBase
     {
         private ProtoScript.Runners.LiveRunner liveRunner = null;
         private Random randomGen = new Random();
@@ -867,7 +867,7 @@ namespace ProtoTest.LiveRunner
         {
             List<string> codes = new List<string>() 
             {
-                "a = 10;",
+                "a = 10; b = 2;",
             };
             Guid guid = System.Guid.NewGuid();
 
@@ -4802,7 +4802,9 @@ r = func_1(x);
         public void TestNestedLanguageBlockReExecution05()
         {
             string code = @"
-def foo()
+
+
+def foo()
 {
     x2 = 5;
     v1 = [Associative]
