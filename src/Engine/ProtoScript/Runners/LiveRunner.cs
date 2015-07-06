@@ -1,3 +1,4 @@
+
 using System;
 using System.IO;
 using System.Text;
@@ -250,7 +251,8 @@ namespace ProtoScript.Runners
                 BinaryExpressionNode bNode = node as BinaryExpressionNode;
                 if (bNode != null)
                 {
-                    foreach (var gnode in core.DSExecutable.instrStreamList[0].dependencyGraph.GraphList)
+                    InstructionStream iStream = core.DSExecutable.GetInstructionStream(0);
+                    foreach (var gnode in iStream.dependencyGraph.GraphList)
                     {
                         if (gnode.OriginalAstID == bNode.OriginalAstID)
                         {
@@ -317,6 +319,11 @@ namespace ProtoScript.Runners
             this.core = core;
             this.runtimeCore = runtimeCore;
             currentSubTreeList = new Dictionary<Guid, Subtree>();
+        }
+
+        public Dictionary<System.Guid, Subtree> GetProgramSnapshot()
+        {
+            return currentSubTreeList;
         }
 
         /// <summary>
@@ -1793,6 +1800,16 @@ namespace ProtoScript.Runners
             return cbnGuidList;
         }
 
+        /// <summary>
+        /// Generates a snapshot of the entire program 
+        /// A snapshot is the current list of nodes
+        /// </summary>
+        /// <returns></returns>
+        private List<Subtree> GenerateProgramSnapshot()
+        {
+            return null;
+        }
+
         private void SynchronizeInternal(GraphSyncData syncData)
         {
             runnerCore.Options.IsDeltaCompile = true;
@@ -1824,7 +1841,8 @@ namespace ProtoScript.Runners
             }
             else
             {
-                CompileAndExecuteForDeltaExecution(code);
+                var astNodes = CoreUtils.BuildASTList(runnerCore, code);
+                CompileAndExecuteForDeltaExecution(astNodes);
             }
         }
 

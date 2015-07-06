@@ -302,7 +302,7 @@ namespace ProtoCore.AssociativeEngine
             int classIndex = Constants.kInvalidIndex;
             int procIndex = Constants.kGlobalScope;
             int blockScope = (int)Executable.OffsetConstants.kInstrStreamGlobalScope;
-            AssociativeGraph.DependencyGraph dependencyGraph = exe.instrStreamList[blockScope].dependencyGraph;
+            AssociativeGraph.DependencyGraph dependencyGraph = exe.GetInstructionStream(blockScope).dependencyGraph;
             List<AssociativeGraph.GraphNode> graphNodesInScope = dependencyGraph.GetGraphNodesAtScope(classIndex, procIndex);
 
 
@@ -339,7 +339,7 @@ namespace ProtoCore.AssociativeEngine
         public static bool IsGlobalScopeDirty(Executable exe)
         {
             Validity.Assert(exe != null);
-            var graph = exe.instrStreamList[0].dependencyGraph;
+            var graph = exe.GetInstructionStream(0).dependencyGraph;
             var graphNodes = graph.GetGraphNodesAtScope(Constants.kInvalidIndex, Constants.kGlobalScope);
             if (graphNodes != null)
             {
@@ -377,7 +377,7 @@ namespace ProtoCore.AssociativeEngine
             bool recursiveSearch,
             bool propertyChanged = false)
         {
-            AssociativeGraph.DependencyGraph dependencyGraph = executive.exe.instrStreamList[languageBlockID].dependencyGraph;
+            AssociativeGraph.DependencyGraph dependencyGraph = executive.exe.GetInstructionStream(languageBlockID).dependencyGraph;
             List<AssociativeGraph.GraphNode> reachableGraphNodes = new List<AssociativeGraph.GraphNode>();
 
             if (executingGraphNode == null)
@@ -782,7 +782,7 @@ namespace ProtoCore.AssociativeEngine
                     continue;
                 }
 
-                foreach (var gnode in core.DSExecutable.instrStreamList[0].dependencyGraph.GetGraphNodesAtScope(Constants.kInvalidIndex, Constants.kGlobalScope))
+                foreach (var gnode in core.DSExecutable.GetInstructionStream(0).dependencyGraph.GetGraphNodesAtScope(Constants.kInvalidIndex, Constants.kGlobalScope))
                 {
                     if (gnode.isActive && gnode.OriginalAstID == bNode.OriginalAstID)
                     {
@@ -815,7 +815,7 @@ namespace ProtoCore.AssociativeEngine
                 }
 
                 int exprId = Constants.kInvalidIndex;
-                foreach (var gnode in runtimeCore.DSExecutable.instrStreamList[0].dependencyGraph.GraphList)
+                foreach (var gnode in runtimeCore.DSExecutable.GetInstructionStream(0).dependencyGraph.GraphList)
                 {
                     if (gnode.isActive)
                     {
@@ -942,6 +942,16 @@ namespace ProtoCore.AssociativeGraph
         public int SSASubscript { get; set; }
         public bool IsLastNodeInSSA { get; set; }
 
+
+        public int MacroblockID { get; set; }
+        public bool Visited { get; set; }
+
+        /// <summary>
+        /// A graphnode is flagged as an allocation represents a variable that was initially allocated on the DS stack or heap
+        /// i.e. the graphnode associated with a variable declaration
+        /// </summary>
+        public bool IsAllocation { get; set; }
+
         public GraphNode()
         {
             IsModifier = false;
@@ -981,6 +991,10 @@ namespace ProtoCore.AssociativeGraph
             reExecuteExpression = false;
             SSASubscript = Constants.kInvalidIndex;
             IsLastNodeInSSA = false;
+
+            MacroblockID = Constants.kInvalidIndex;
+            Visited = false;
+            IsAllocation = false;
         }
 
 
@@ -1616,6 +1630,29 @@ namespace ProtoCore.AssociativeGraph
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Gets the first dirty graphnode at the global and macroblock scope
+        /// </summary>
+        /// <param name="pc"></param>
+        /// <param name="macroBlockID"></param>
+        /// <returns></returns>
+        public GraphNode GetFirstDirtyGraphNodeAtGlobalScope(int pc, int macroBlockID)
+        {
+            List<GraphNode> gnodeList = GetGraphNodesAtScope(Constants.kInvalidIndex, Constants.kGlobalScope);
+
+            IEnumerable<GraphNode> macroBlockScope = gnodeList.Where(
+                g => g.MacroblockID == macroBlockID).Where(
+                g => g.isActive).Where(
+                g => g.isDirty).Where(
+                g => g.updateBlock.startpc >= pc);
+            if (macroBlockScope == null || macroBlockScope.Count() < 1)
+            {
+                return null;
+            }
+
+            return macroBlockScope.First();
         }
 
 
