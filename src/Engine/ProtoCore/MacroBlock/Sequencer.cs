@@ -1,9 +1,15 @@
+#define BENCHMARK
+//#define SERIAL
+#define PARAL
 using System;
 using System.Text;
 using System.Collections.Generic;
 using ProtoCore.DSASM.Mirror;
 using ProtoCore.Utils;
 using ProtoCore.DSASM;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ProtoCore.Runtime 
 {
@@ -20,7 +26,7 @@ namespace ProtoCore.Runtime
             ProtoCore.DSASM.Executive executive,
             int exeblock, 
             int entry, 
-            StackFrame stackFrame, int locals = 0)
+            ProtoCore.DSASM.StackFrame stackFrame, int locals = 0)
         {
             //executive.SetupBounce(exeblock, entry, stackFrame, locals);
             throw new NotImplementedException();
@@ -33,7 +39,7 @@ namespace ProtoCore.Runtime
             ProtoCore.DSASM.Executive executive,
             int exeblock,
             int entry,
-            StackFrame stackFrame, 
+            ProtoCore.DSASM.StackFrame stackFrame, 
             int locals = 0
             )
         {
@@ -46,12 +52,49 @@ namespace ProtoCore.Runtime
             {
                 return;
             }
-
-            foreach (ProtoCore.Runtime.MacroBlock macroBlock in validBlocks)
+#if BENCHMARK
+            Stopwatch watch = new Stopwatch();
+            string filePath = "c:\\benchMark.txt";
+            using (StreamWriter sw = new StreamWriter(filePath, true))
             {
-                executive.SetupBounce(exeblock, entry, stackFrame, locals);
-                executive.Execute(macroBlock);
+                string description = "\n===== Benchmarking =====\n";
+                sw.WriteLine(description);
+                // clean up
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+
+                DateTime now = DateTime.Now;
+                sw.WriteLine(now);
+                sw.WriteLine("Number of cores : {0}", Environment.ProcessorCount);
+                watch.Start();
+            
+#endif
+#if SERIAL
+                foreach (ProtoCore.Runtime.MacroBlock macroBlock in validBlocks)
+                {
+                    executive.SetupBounce(exeblock, entry, stackFrame, locals);
+                    executive.Execute(macroBlock);
+                }
+#endif
+
+#if PARAL
+                Parallel.ForEach(validBlocks, currentBlk =>
+                    {
+                        executive.SetupBounce(exeblock, entry, stackFrame, locals);
+                        executive.Execute(currentBlk);
+                    });
+#endif
+
+#if BENCHMARK
+                watch.Stop();
+                sw.WriteLine("Time Elapsed {0} ms\n", watch.Elapsed.TotalMilliseconds);
             }
+            
+#endif
+        
+
+
         }
 
         /// <summary>

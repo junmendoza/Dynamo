@@ -12,6 +12,7 @@ using ProtoCore.AST.AssociativeAST;
 using ProtoCore.DSASM;
 using ProtoCore.Mirror;
 using System.Collections;
+using System.Text;
 
 namespace ProtoTest.LiveRunner
 {
@@ -865,9 +866,10 @@ namespace ProtoTest.LiveRunner
         [Test]
         public void TestSimpleExecution01()
         {
+            string code = GenerateCode01(500);
             List<string> codes = new List<string>() 
             {
-                "a = 10; b = 2;",
+                code
             };
             Guid guid = System.Guid.NewGuid();
 
@@ -878,6 +880,23 @@ namespace ProtoTest.LiveRunner
             liveRunner.UpdateGraph(syncData);
             AssertValue("a", 10);
         }
+
+private string GenerateCode01(int p)
+{
+    StringBuilder script = new StringBuilder();
+    string varName = "a";
+    for(int i = 1; i<p; i++)
+    {
+        script.Append(GetAssignmentString((string)varName+i, i));   
+        script.Append(System.Environment.NewLine);
+    }
+    return script.ToString();
+}
+
+private string GetAssignmentString(string p, int i)
+{
+ 	return p + "=" + i.ToString() +";";
+}
 
         [Test]
         public void TestSimpleExecution02()

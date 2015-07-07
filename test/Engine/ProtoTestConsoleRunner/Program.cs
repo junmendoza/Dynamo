@@ -6,6 +6,7 @@ using ProtoScript.Runners;
 using ProtoCore.DSASM.Mirror;
 using ProtoTest.TD;
 using System.IO;
+using System.Text;
 
 namespace ProtoTestConsoleRunner
 {
