@@ -1,6 +1,6 @@
-#define BENCHMARK
-//#define SERIAL
-#define PARAL
+//#define BENCHMARK
+#define SERIAL
+//#define PARAL
 using System;
 using System.Text;
 using System.Collections.Generic;
