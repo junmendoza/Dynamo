@@ -1,4 +1,6 @@
 
+//#define __MACROBLOCK_CORE_EXECUTION
+
 using System;
 using System.Text;
 using System.Collections.Generic;
@@ -169,7 +171,20 @@ namespace ProtoScript.Runners
                     int locals = 0; // This is the global scope, there are no locals
                     ProtoCore.DSASM.Interpreter interpreter = new ProtoCore.DSASM.Interpreter(runtimeCore);
                     runtimeCore.CurrentExecutive.CurrentDSASMExec = interpreter.runtime;
+                    
+#if __MACROBLOCK_CORE_EXECUTION
+
+                    Executable exe = runtimeCore.DSExecutable;
+                    ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList);
+                    sequencer.Execute(
+                        runtimeCore.CurrentExecutive.CurrentDSASMExec,
+                        codeBlock.codeBlockId,
+                        runtimeCore.StartPC,
+                        stackFrame,
+                        locals);
+#else
                     runtimeCore.CurrentExecutive.CurrentDSASMExec.Bounce(codeBlock.codeBlockId, codeBlock.instrStream.entrypoint, stackFrame, locals);
+#endif
                 }
                 runtimeCore.NotifyExecutionEvent(ProtoCore.ExecutionStateEventArgs.State.kExecutionEnd);
             }
@@ -220,13 +235,24 @@ namespace ProtoScript.Runners
                     runtimeCore.CurrentExecutive.CurrentDSASMExec = interpreter.runtime;
                 }
 
+                
+#if __MACROBLOCK_CORE_EXECUTION
+
+                ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList);
+                sequencer.Execute(
+                    runtimeCore.CurrentExecutive.CurrentDSASMExec,
+                    codeBlock.codeBlockId,
+                    runtimeCore.StartPC,
+                    stackFrame,
+                    locals);
+#else
                 runtimeCore.CurrentExecutive.CurrentDSASMExec.BounceUsingExecutive(
                     runtimeCore.CurrentExecutive.CurrentDSASMExec,
                     codeBlock.codeBlockId,
                     runtimeCore.StartPC,
                     stackFrame,
                     locals);
-
+#endif
                 runtimeCore.NotifyExecutionEvent(ProtoCore.ExecutionStateEventArgs.State.kExecutionEnd);
             }
             catch
