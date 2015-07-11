@@ -133,9 +133,9 @@ namespace ProtoCore
                 // The children of 'a = 1' are:
                 //      b = a
                 //      c = a
-                if (graphNode.graphNodesToExecute.Count > 1)
+                if (graphNode.ChildrenNodes.Count > 1)
                 {
-                    foreach (AssociativeGraph.GraphNode child in graphNode.graphNodesToExecute)
+                    foreach (AssociativeGraph.GraphNode child in graphNode.ChildrenNodes)
                     {
                         child.MacroblockID = macroblockID++;
                         child.Visited = true;

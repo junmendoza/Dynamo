@@ -1,6 +1,6 @@
 ﻿
 
-//#define __MACROBLOCK_CORE_EXECUTION
+#define __MACROBLOCK_CORE_EXECUTION
 
 using System;
 using System.Collections.Generic;
