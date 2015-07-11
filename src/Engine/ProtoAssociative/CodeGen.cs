@@ -2982,7 +2982,6 @@ namespace ProtoAssociative
                 BinaryExpressionNode bnode = new BinaryExpressionNode(leftNode, rightNode, ProtoCore.DSASM.Operator.assign);
                 bnode.isSSAAssignment = isSSAAssignment;
                 bnode.IsInputExpression = astBNode.IsInputExpression;
-                bnode.MacroBlockID = astBNode.MacroBlockID;
 
                 astlist.Add(bnode);
                 ssaStack.Push(bnode);
@@ -3792,7 +3791,6 @@ namespace ProtoAssociative
                 {
                     AssociativeNode lastNode = DFSEmitSplitAssign_AST(bnode.RightNode, ref astList);
                     var newBNode = nodeBuilder.BuildBinaryExpression(bnode.LeftNode, lastNode);
-                    (newBNode as BinaryExpressionNode).MacroBlockID = bnode.MacroBlockID;
                     astList.Add(newBNode);
                     return bnode.LeftNode;
                 }
@@ -4237,7 +4235,12 @@ namespace ProtoAssociative
 
             List<GraphNode> nodesInScope = codeBlock.instrStream.dependencyGraph.GetGraphNodesAtScope(Constants.kInvalidIndex, Constants.kGlobalScope);
             ProtoCore.AssociativeEngine.Utils.BuildGraphNodeDependencies(nodesInScope);
-            core.MacroblockGen.GenerateMacroBlocks(nodesInScope);
+
+            // Generate the macroblock fragments at the global scope
+            if (codeBlock.codeBlockId == 0)
+            {
+                GenerateAndCacheMacroblocks(nodesInScope);
+            }
             
             if (codeBlock.parent == null)  // top-most langauge block
             {
@@ -4257,6 +4260,15 @@ namespace ProtoAssociative
             core.CallsiteGuidMap = new Dictionary<Guid, int>();
 
             return codeBlock.codeBlockId;
+        }
+
+        private void GenerateAndCacheMacroblocks(List<GraphNode> nodesInScope)
+        {
+            Validity.Assert(macroblockGen != null);
+            List<ProtoCore.Runtime.MacroBlock> macroblocks = macroblockGen.GenerateMacroblocks(nodesInScope);
+
+            // Cache the generated blocks in core
+            core.RuntimeMacroBlockList = macroblocks;
         }
 
         private void EmitFunctionCallToInitStaticProperty(List<AssociativeNode> codeblock)
@@ -8701,12 +8713,6 @@ namespace ProtoAssociative
                             symbolnode = Allocate(globalClassIndex, globalClassIndex, globalProcIndex, t.Name, inferedType, ProtoCore.DSASM.Constants.kPrimitiveSize,
                                     false, ProtoCore.CompilerDefinitions.AccessModifier.kPublic, ProtoCore.DSASM.MemoryRegion.kMemStack, bnode.line, bnode.col);
 
-                            // It is an input graphnode if the variable is allocated on the stack and is not compiler generated
-                            if (!CoreUtils.IsCompilerGenerated(symbolnode.name))
-                            {
-                                graphNode.IsAllocation = true;
-                            }
-
                             if (core.Options.RunMode == ProtoCore.DSASM.InterpreterMode.kExpressionInterpreter)
                             {
                                 core.watchSymbolList.Add(symbolnode);
@@ -8831,7 +8837,6 @@ namespace ProtoAssociative
                     }
 
                     PushGraphNode(graphNode);
-                    StoreGraphnodeAtMacroBlock(graphNode, bnode.MacroBlockID);
 
                     if (core.InlineConditionalBodyGraphNodes.Count > 0)
                     {

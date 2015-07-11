@@ -342,7 +342,6 @@ namespace ProtoCore
         //The dynamic string table and function table
         public DynamicVariableTable DynamicVariableTable { get; set; }
         public DynamicFunctionTable DynamicFunctionTable { get; set; }
-        public List<ProtoCore.CompileTime.MacroBlock> MacroBlockList { get; set; }
         public List<ProtoCore.Runtime.MacroBlock> RuntimeMacroBlockList { get; set; }
 
 
@@ -393,10 +392,6 @@ namespace ProtoCore
         public Stack<List<GraphNode>> InlineConditionalBodyGraphNodes { get; set; }
 
         public int newEntryPoint { get; private set; }
-
-        public int CurrentMacroBlockID { get; set; }
-
-        public ProtoCore.MacroBlockGenerator MacroblockGen { get; set; }
 
         public void SetNewEntryPoint(int pc)
         {
@@ -682,9 +677,7 @@ namespace ProtoCore
             InlineConditionalBodyGraphNodes = new Stack<List<GraphNode>>();
 
             newEntryPoint = Constants.kInvalidIndex;
-            CurrentMacroBlockID = Constants.kInvalidIndex;
             RuntimeMacroBlockList = new List<Runtime.MacroBlock>();
-            MacroblockGen = new MacroBlockGenerator(this);
         }
 
         // The unique subscript for SSA temporaries

@@ -321,11 +321,6 @@ namespace ProtoScript.Runners
             currentSubTreeList = new Dictionary<Guid, Subtree>();
         }
 
-        public Dictionary<System.Guid, Subtree> GetProgramSnapshot()
-        {
-            return currentSubTreeList;
-        }
-
         /// <summary>
         /// Given deltaGraphNodes, estimate the reachable graphnodes from the live core
         /// </summary>
@@ -1732,6 +1727,12 @@ namespace ProtoScript.Runners
             runnerCore.DSExecutable.UpdatedSymbols.Clear();
         }
 
+        private void ForceGC()
+        {
+            var gcRoots = runtimeCore.CurrentExecutive.CurrentDSASMExec.CollectGCRoots();
+            runtimeCore.RuntimeMemory.Heap.FullGC(gcRoots, runtimeCore.CurrentExecutive.CurrentDSASMExec);
+        }
+
         private void ApplyUpdate()
         {
             if (ProtoCore.AssociativeEngine.Utils.IsGlobalScopeDirty(runnerCore.DSExecutable))
@@ -1740,6 +1741,7 @@ namespace ProtoScript.Runners
                 runnerCore.Options.ApplyUpdate = true;
                 Execute(true);
             }
+            ForceGC();
         }
 
         /// <summary>
@@ -1800,16 +1802,6 @@ namespace ProtoScript.Runners
             return cbnGuidList;
         }
 
-        /// <summary>
-        /// Generates a snapshot of the entire program 
-        /// A snapshot is the current list of nodes
-        /// </summary>
-        /// <returns></returns>
-        private List<Subtree> GenerateProgramSnapshot()
-        {
-            return null;
-        }
-
         private void SynchronizeInternal(GraphSyncData syncData)
         {
             runnerCore.Options.IsDeltaCompile = true;
@@ -1841,8 +1833,7 @@ namespace ProtoScript.Runners
             }
             else
             {
-                var astNodes = CoreUtils.BuildASTList(runnerCore, code);
-                CompileAndExecuteForDeltaExecution(astNodes);
+                CompileAndExecuteForDeltaExecution(code);
             }
         }
 

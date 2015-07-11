@@ -1,3 +1,6 @@
+
+#define __MACROBLOCK_CORE_EXECUTION
+
 using System;
 using System.Text;
 using System.Collections.Generic;
@@ -47,7 +50,7 @@ namespace ProtoScript.Runners
             return buildSucceeded;
         }
 
-        public bool Compile(string code, ProtoCore.Core core, out int blockId)
+        public bool CompileInternal(string code, ProtoCore.Core core, out int blockId)
         {
             bool buildSucceeded = false;
             blockId = ProtoCore.DSASM.Constants.kInvalidIndex;
@@ -151,7 +154,7 @@ namespace ProtoScript.Runners
 
             try
             {
-                foreach (ProtoCore.DSASM.CodeBlock codeblock in core.CodeBlockList)
+                foreach (ProtoCore.DSASM.CodeBlock codeBlock in core.CodeBlockList)
                 {
                     // Comment Jun:
                     // On first bounce, the stackframe depth is initialized to -1 in the Stackfame constructor.
@@ -168,7 +171,20 @@ namespace ProtoScript.Runners
                     int locals = 0; // This is the global scope, there are no locals
                     ProtoCore.DSASM.Interpreter interpreter = new ProtoCore.DSASM.Interpreter(runtimeCore);
                     runtimeCore.CurrentExecutive.CurrentDSASMExec = interpreter.runtime;
-                    runtimeCore.CurrentExecutive.CurrentDSASMExec.Bounce(codeblock.codeBlockId, codeblock.instrStream.entrypoint, stackFrame, locals);
+                    
+#if __MACROBLOCK_CORE_EXECUTION
+
+                    Executable exe = runtimeCore.DSExecutable;
+                    ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList);
+                    sequencer.Execute(
+                        runtimeCore.CurrentExecutive.CurrentDSASMExec,
+                        codeBlock.codeBlockId,
+                        runtimeCore.StartPC,
+                        stackFrame,
+                        locals);
+#else
+                    runtimeCore.CurrentExecutive.CurrentDSASMExec.Bounce(codeBlock.codeBlockId, codeBlock.instrStream.entrypoint, stackFrame, locals);
+#endif
                 }
                 runtimeCore.NotifyExecutionEvent(ProtoCore.ExecutionStateEventArgs.State.kExecutionEnd);
             }
@@ -180,77 +196,7 @@ namespace ProtoScript.Runners
             return runtimeCore;
         }
 
-        /// <summary>
-        /// Use the sequencer to execute a list of macroblocks
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="runtimeCore"></param>
-        private void ExecuteSequence(ProtoCore.Core core, ProtoCore.RuntimeCore runtimeCore)
-        {
-           
-        }
-
-        private void ExecuteMacroblock(ProtoCore.Runtime.MacroBlock macroblock)
-        {
-
-        }
-
-        /// <summary>
-        /// ExecuteLive is called by the liverunner where a persistent RuntimeCore is provided
-        /// ExecuteLive assumes only a single global scope
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="runtimeCore"></param>
-        /// <param name="runningBlock"></param>
-        /// <param name="staticContext"></param>
-        /// <param name="runtimeContext"></param>
-        /// <returns></returns>
-        public ProtoCore.RuntimeCore __ExecuteLive_CurrentVersion(ProtoCore.Core core, ProtoCore.RuntimeCore runtimeCore)
-        {
-            try
-            {
-                Executable exe = runtimeCore.DSExecutable;
-                Validity.Assert(exe.CodeBlocks.Count == 1);
-                CodeBlock codeBlock = runtimeCore.DSExecutable.CodeBlocks[0];
-                int codeBlockID = codeBlock.codeBlockId;
-
-                // Comment Jun:
-                // On first bounce, the stackframe depth is initialized to -1 in the Stackfame constructor.
-                // Passing it to bounce() increments it so the first depth is always 0
-                ProtoCore.DSASM.StackFrame stackFrame = new ProtoCore.DSASM.StackFrame(core.GlobOffset);
-                stackFrame.FramePointer = runtimeCore.RuntimeMemory.FramePointer;
-
-                // Comment Jun: Tell the new bounce stackframe that this is an implicit bounce
-                // Register TX is used for this.
-                StackValue svCallConvention = StackValue.BuildCallingConversion((int)ProtoCore.DSASM.CallingConvention.BounceType.kImplicit);
-                stackFrame.TX = svCallConvention;
-
-                // Initialize the entry point interpreter
-                int locals = 0; // This is the global scope, there are no locals
-                if (runtimeCore.CurrentExecutive.CurrentDSASMExec == null)
-                {
-                    ProtoCore.DSASM.Interpreter interpreter = new ProtoCore.DSASM.Interpreter(runtimeCore);
-                    runtimeCore.CurrentExecutive.CurrentDSASMExec = interpreter.runtime;
-                }
-
-                runtimeCore.CurrentExecutive.CurrentDSASMExec.BounceUsingExecutive(
-                    runtimeCore.CurrentExecutive.CurrentDSASMExec,
-                    codeBlock.codeBlockId,
-                    runtimeCore.StartPC,
-                    stackFrame,
-                    locals);
-
-                runtimeCore.NotifyExecutionEvent(ProtoCore.ExecutionStateEventArgs.State.kExecutionEnd);
-            }
-            catch
-            {
-                runtimeCore.NotifyExecutionEvent(ProtoCore.ExecutionStateEventArgs.State.kExecutionEnd);
-                throw;
-            }
-            return runtimeCore;
-        }
-
-
+       
         /// <summary>
         /// ExecuteLive is called by the liverunner where a persistent RuntimeCore is provided
         /// ExecuteLive assumes only a single global scope
@@ -289,6 +235,9 @@ namespace ProtoScript.Runners
                     runtimeCore.CurrentExecutive.CurrentDSASMExec = interpreter.runtime;
                 }
 
+                
+#if __MACROBLOCK_CORE_EXECUTION
+
                 ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList);
                 sequencer.Execute(
                     runtimeCore.CurrentExecutive.CurrentDSASMExec,
@@ -296,7 +245,14 @@ namespace ProtoScript.Runners
                     runtimeCore.StartPC,
                     stackFrame,
                     locals);
-
+#else
+                runtimeCore.CurrentExecutive.CurrentDSASMExec.BounceUsingExecutive(
+                    runtimeCore.CurrentExecutive.CurrentDSASMExec,
+                    codeBlock.codeBlockId,
+                    runtimeCore.StartPC,
+                    stackFrame,
+                    locals);
+#endif
                 runtimeCore.NotifyExecutionEvent(ProtoCore.ExecutionStateEventArgs.State.kExecutionEnd);
             }
             catch
@@ -399,7 +355,7 @@ namespace ProtoScript.Runners
         {
             ProtoCore.RuntimeCore runtimeCore = null;
             int blockId = ProtoCore.DSASM.Constants.kInvalidIndex;
-            bool succeeded = Compile(sourcecode, core, out blockId);
+            bool succeeded = CompileInternal(sourcecode, core, out blockId);
             if (succeeded)
             {
                 core.GenerateExecutable();
@@ -475,10 +431,10 @@ namespace ProtoScript.Runners
         /// <param name="compileCore"></param>
         /// <param name="dsExecutable"></param>
         /// <returns></returns>
-        public bool CompileMe(string sourcecode, ProtoCore.Core compileCore, out Executable dsExecutable)
+        public bool Compile(string sourcecode, ProtoCore.Core compileCore, out Executable dsExecutable)
         {
             int blockID = 0;
-            bool succeeded = Compile(sourcecode, compileCore, out blockID);
+            bool succeeded = CompileInternal(sourcecode, compileCore, out blockID);
 
             compileCore.GenerateExecutable();
             dsExecutable = compileCore.DSExecutable;
