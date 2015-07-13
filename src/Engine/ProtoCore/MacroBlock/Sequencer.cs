@@ -33,11 +33,52 @@ namespace ProtoCore.Runtime
             // Setup the executive prior to execution
             executive.SetupBounce(exeblock, entry, stackFrame, locals);
 
-            // Execute all macroblocks
-            foreach (ProtoCore.Runtime.MacroBlock macroBlock in macroBlockList)
+            int i = 0;
+            int executedNodes = 0;
+            int blockCount = macroBlockList.Count;
+            while (executedNodes < blockCount)
             {
-                executive.Execute(macroBlock);
+                ProtoCore.Runtime.MacroBlock macroBlock = macroBlockList[i];
+                UpdateMacroblockState(ref macroBlock);
+                if (IsBlockReady(macroBlock))
+                {
+                    executive.Execute(macroBlock);
+                    executedNodes++;
+                }
+
+                // Go to the next macroblock index
+                // Reset to 0 if 'i' is the last one
+                i = (i < blockCount - 1) ? i + 1 : 0;
             }
+        }
+
+        /// <summary>
+        /// Update the macroblock state by inspecting the input graphnode
+        /// </summary>
+        /// <param name="macroBlock"></param>
+        private void UpdateMacroblockState(ref Runtime.MacroBlock macroBlock)
+        {
+            // Check if the node is a direct input.
+            AssociativeGraph.GraphNode inputNode = macroBlock.InputGraphNode;
+
+            // A direct input is a node that is not dependent on any other node value, such as a constant assignment
+            //      a = 1 <- this is a directinput node
+            bool isDirectInput = inputNode.ParentNodes.Count == 0;
+            if (!isDirectInput)
+            {
+                // The nodes operands (parentnodes) must be checked if the are dirty.
+                // If at least one operand is dirty, then it means it hasnt executed yet and the node is not ready 
+                //      c = a + b <- This is an input node and we must check if 'a' and 'b' have been executed
+                foreach (AssociativeGraph.GraphNode parent in inputNode.ParentNodes)
+                {
+                    if (parent.isDirty)
+                    {
+                        macroBlock.State = MacroBlock.ExecuteState.NotReady;
+                        return;
+                    }
+                }
+            }
+            macroBlock.State = MacroBlock.ExecuteState.Ready;
         }
 
         /// <summary>
