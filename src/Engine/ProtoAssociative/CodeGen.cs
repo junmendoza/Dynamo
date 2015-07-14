@@ -8473,21 +8473,39 @@ namespace ProtoAssociative
             // bnode.RightNode.endLine = bnode.endLine;
             // bnode.RightNode.endCol = bnode.endCol;
 
+            
+            IdentifierNode identifierNode = bnode.LeftNode as IdentifierNode;
+            bool isRhsAnIdentifier = identifierNode != null;
+
+            // Do not allow variable redefinition
+            // Before traversing the RHS, check if the lhs is redefined. If it is, throw a warning and ignore the entire statement
+            if (isRhsAnIdentifier)
+            {
+                if (IsVariableAllocated(identifierNode.Name, identifierNode.IsLocal))
+                {
+                    string message = string.Format("Redefinition of: '{0}' is not allowed. Ignoring the entire statement.\n", identifierNode.Name);
+                    buildStatus.LogWarning(WarningID.kVariableRedefinition, message, core.CurrentDSFileName, identifierNode.line, identifierNode.col);
+
+                    // The rest of the expression is ignored
+                    // No graphnode and byecode is generated for this statement and is therefore NOT included in the executable
+                    return;
+                }
+            }
+
             // Traverse the entire RHS expression
             DfsTraverse(bnode.RightNode, ref inferedType, isBooleanOperation, graphNode, ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kNone, bnode);
             subPass = ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kUnboundIdentifier;
 
-            if (bnode.LeftNode is IdentifierNode)
+            if (isRhsAnIdentifier)
             {
                 // TODO Jun: Cleansify this block where the lhs is being handled.
                 // For one, make the return as a return node
-                IdentifierNode t = bnode.LeftNode as IdentifierNode;
                 ProtoCore.DSASM.SymbolNode symbolnode = null;
 
 
                 ProtoCore.AssociativeGraph.UpdateNodeRef leftNodeGlobalRef = null; 
 
-                string s = t.Value;
+                string s = identifierNode.Value;
                 if (s == ProtoCore.DSDefinitions.Keyword.Return)
                 {
                     Validity.Assert(null == symbolnode);
@@ -8517,46 +8535,46 @@ namespace ProtoAssociative
                     ProtoCore.DSASM.ProcedureNode procNode = null;
                     if (globalClassIndex != ProtoCore.DSASM.Constants.kGlobalScope)
                     {
-                        procNode = core.ClassTable.ClassNodes[globalClassIndex].GetMemberFunction(t.Name, null, globalClassIndex, out isAccessibleFp, out realType);
+                        procNode = core.ClassTable.ClassNodes[globalClassIndex].GetMemberFunction(identifierNode.Name, null, globalClassIndex, out isAccessibleFp, out realType);
                     }
                     if (procNode == null)
                     {
-                        procNode = CoreUtils.GetFirstVisibleProcedure(t.Name, null, codeBlock);
+                        procNode = CoreUtils.GetFirstVisibleProcedure(identifierNode.Name, null, codeBlock);
                     }
                     if (procNode != null)
                     {
                         if (ProtoCore.DSASM.Constants.kInvalidIndex != procNode.procId && emitDebugInfo)
                         {
-                            buildStatus.LogSemanticError(String.Format(Resources.FunctionAsVariableError, t.Name), core.CurrentDSFileName, t.line, t.col);
+                            buildStatus.LogSemanticError(String.Format(Resources.FunctionAsVariableError, identifierNode.Name), core.CurrentDSFileName, identifierNode.line, identifierNode.col);
                         }
                     }
 
                     //int type = (int)ProtoCore.PrimitiveType.kTypeVoid;
-                    bool isLocalDeclaration = t.IsLocal;
+                    bool isLocalDeclaration = identifierNode.IsLocal;
                     bool isAccessible = false;
                     bool isAllocated = false;
 
                     if (isLocalDeclaration)
                     {
-                        isAllocated = VerifyAllocationInScope(t.Name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+                        isAllocated = VerifyAllocationInScope(identifierNode.Name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
                     }
                     else
                     {
-                        isAllocated = VerifyAllocation(t.Name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+                        isAllocated = VerifyAllocation(identifierNode.Name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
                     }
 
                     int runtimeIndex = (!isAllocated || !isAccessible) ? codeBlock.symbolTable.RuntimeIndex : symbolnode.runtimeTableIndex;
                     if (isAllocated && !isAccessible)
                     {
-                        string message = String.Format(ProtoCore.Properties.Resources.kPropertyIsInaccessible, t.Name);
-                        buildStatus.LogWarning(WarningID.kAccessViolation, message, core.CurrentDSFileName, t.line, t.col, graphNode);
+                        string message = String.Format(ProtoCore.Properties.Resources.kPropertyIsInaccessible, identifierNode.Name);
+                        buildStatus.LogWarning(WarningID.kAccessViolation, message, core.CurrentDSFileName, identifierNode.line, identifierNode.col, graphNode);
                     }
 
                     int dimensions = 0;
-                    if (null != t.ArrayDimensions)   
+                    if (null != identifierNode.ArrayDimensions)   
                     {
                         graphNode.isIndexingLHS = true;
-                        dimensions = DfsEmitArrayIndexHeap(t.ArrayDimensions, graphNode, bnode);
+                        dimensions = DfsEmitArrayIndexHeap(identifierNode.ArrayDimensions, graphNode, bnode);
                     }
 
 
@@ -8611,7 +8629,7 @@ namespace ProtoAssociative
                             // TODO Jun: If this local var exists globally, should it allocate a local copy?
                             if (!isAllocated || !isAccessible)
                             {
-                                symbolnode = Allocate(globalClassIndex, globalClassIndex, globalProcIndex, t.Name, inferedType, ProtoCore.DSASM.Constants.kPrimitiveSize,
+                                symbolnode = Allocate(globalClassIndex, globalClassIndex, globalProcIndex, identifierNode.Name, inferedType, ProtoCore.DSASM.Constants.kPrimitiveSize,
                                     false, ProtoCore.CompilerDefinitions.AccessModifier.kPublic, ProtoCore.DSASM.MemoryRegion.kMemStack, bnode.line, bnode.col);
 
                                 // Add the symbols during watching process to the watch symbol list.
@@ -8635,21 +8653,21 @@ namespace ProtoAssociative
                             EmitPushVarData(dimensions, castType.UID, castType.rank);
 
                             symbol = symbolnode.symbolTableIndex;
-                            if (t.Name == ProtoCore.DSASM.Constants.kTempArg)
+                            if (identifierNode.Name == ProtoCore.DSASM.Constants.kTempArg)
                             {
-                                EmitInstrConsole(ProtoCore.DSASM.kw.pop, t.Name);
+                                EmitInstrConsole(ProtoCore.DSASM.kw.pop, identifierNode.Name);
                                 EmitPopForSymbol(symbolnode, runtimeIndex);
                             }
                             else
                             {
                                 if (core.Options.RunMode != ProtoCore.DSASM.InterpreterMode.kExpressionInterpreter)
                                 {
-                                    EmitInstrConsole(ProtoCore.DSASM.kw.pop, t.Name);
+                                    EmitInstrConsole(ProtoCore.DSASM.kw.pop, identifierNode.Name);
                                     EmitPopForSymbol(symbolnode, runtimeIndex, node.line, node.col, node.endLine, node.endCol);
                                 }
                                 else
                                 {
-                                    EmitInstrConsole(ProtoCore.DSASM.kw.popw, t.Name);
+                                    EmitInstrConsole(ProtoCore.DSASM.kw.popw, identifierNode.Name);
                                     EmitPopForSymbolW(symbolnode, runtimeIndex, node.line, node.col, node.endLine, node.endCol);
                                 }
                             }
@@ -8663,7 +8681,7 @@ namespace ProtoAssociative
                             castType = symbolnode.staticType;
                             EmitPushVarData(dimensions, castType.UID, castType.rank);
 
-                            EmitInstrConsole(ProtoCore.DSASM.kw.popm, t.Name);
+                            EmitInstrConsole(ProtoCore.DSASM.kw.popm, identifierNode.Name);
 
                             if (symbolnode.isStatic)
                             {
@@ -8695,7 +8713,7 @@ namespace ProtoAssociative
                     {
                         if (!isAllocated)
                         {
-                            symbolnode = Allocate(globalClassIndex, globalClassIndex, globalProcIndex, t.Name, inferedType, ProtoCore.DSASM.Constants.kPrimitiveSize,
+                            symbolnode = Allocate(globalClassIndex, globalClassIndex, globalProcIndex, identifierNode.Name, inferedType, ProtoCore.DSASM.Constants.kPrimitiveSize,
                                     false, ProtoCore.CompilerDefinitions.AccessModifier.kPublic, ProtoCore.DSASM.MemoryRegion.kMemStack, bnode.line, bnode.col);
 
                             if (core.Options.RunMode == ProtoCore.DSASM.InterpreterMode.kExpressionInterpreter)
@@ -8765,9 +8783,6 @@ namespace ProtoAssociative
                     }
                 }
 
-                // Dependency graph top level symbol 
-                //graphNode.symbol = symbolnode;
-
                 // Assign the end pc to this graph node's update block
                 // Dependency graph construction is complete for this expression
                 if (!isTempExpression)
@@ -8810,7 +8825,7 @@ namespace ProtoAssociative
                     graphNode.ResolveLHSArrayIndex();
                     graphNode.updateBlock.endpc = pc - 1;
 
-                    string identName = t.Name;
+                    string identName = identifierNode.Name;
                     if (ProtoCore.Utils.CoreUtils.IsSSATemp(identName))
                     {
                         // Extract the SSA subscript from the ID
@@ -8904,6 +8919,23 @@ namespace ProtoAssociative
                 if (bnode.RightNode is PostFixNode)
                     EmitPostFixNode(bnode.RightNode, ref inferedType);
 #endif
+        }
+
+        /// <summary>
+        /// Checks if a variable is allocated on the symbol tables
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="isLocalVariable"></param>
+        /// <returns></returns>
+        private bool IsVariableAllocated(string name, bool isLocalVariable)
+        {
+            bool isAccessible = false;
+            ProtoCore.DSASM.SymbolNode symbolnode = null;
+            if (isLocalVariable)
+            {
+                return VerifyAllocationInScope(name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+            }
+            return VerifyAllocation(name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
         }
 
         private void EmitImportNode(AssociativeNode node, ref ProtoCore.Type inferedType, ProtoCore.CompilerDefinitions.Associative.SubCompilePass subPass = ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kNone)
