@@ -86,8 +86,8 @@ namespace ProtoCore
             //      HasMoreThanOneDependent = graphnode.dependentList.Count > 1
             //      IsEntryPoint = NoDependent or HasMoreThanOneDependent
             //
-            bool hasNoDependency = graphnode.dependentList.Count == 0;
-            bool hasMoreThanOneDependent = graphnode.dependentList.Count > 1;
+            bool hasNoDependency = graphnode.ParentNodes.Count == 0;
+            bool hasMoreThanOneDependent = graphnode.ParentNodes.Count > 1;
             bool isEntryPoint = hasNoDependency || hasMoreThanOneDependent;
             return !graphnode.isReturn && isEntryPoint;
         }
