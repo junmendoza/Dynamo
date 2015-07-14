@@ -507,18 +507,12 @@ namespace ProtoCore.DSASM
 
             SetupGraphNodesInScope();
 
+
+            pc = entry;
             if (!fepRun)
             {
-                // TODO Jun: Perhaps the entrypoint now can be set from the argument 'entry' only...instead of the stream
-                //pc = istream.entrypoint;
-                pc = entry;
-
                 // JILFep handles function call stack frames
                 rmem.FramePointer = rmem.Stack.Count;
-            }
-            else
-            {
-                pc = entry;
             }
 
             executingLanguage = exe.GetInstructionStream(exeblock).language;
@@ -2467,22 +2461,13 @@ namespace ProtoCore.DSASM
                 Properties.Reset();
             }
 
-            if (false == fepRun)
+
+            pc = entry;
+            if (!fepRun && !runtimeCore.DebugProps.isResume) // resume from a breakpoint, 
             {
-                if (runtimeCore.DebugProps.isResume) // resume from a breakpoint, 
-                {
-                    pc = entry;
-                }
-                else
-                {
-                    pc = istream.entrypoint;
-                    rmem.FramePointer = rmem.Stack.Count;
-                }
+                rmem.FramePointer = rmem.Stack.Count;
             }
-            else
-            {
-                pc = entry;
-            }
+            
             executingLanguage = exe.GetInstructionStream(exeblock).language;
 
             if (Language.kAssociative == executingLanguage && !runtimeCore.DebugProps.isResume)
