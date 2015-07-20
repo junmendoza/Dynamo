@@ -16,6 +16,7 @@ namespace ProtoCore.Runtime
             NotReady,
             Ready,
             Executing,
+            Done,
             Paused
         }
 

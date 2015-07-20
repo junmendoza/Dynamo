@@ -15,7 +15,6 @@ namespace ProtoCore.Runtime
             macroBlockList = macroBlocks;
         }
 
-
         /// <summary>
         /// Begin excution of macroblocks
         /// </summary>
@@ -43,6 +42,7 @@ namespace ProtoCore.Runtime
                 if (IsBlockReady(macroBlock))
                 {
                     executive.Execute(macroBlock);
+                    macroBlock.State = MacroBlock.ExecuteState.Done;
                     executedNodes++;
                 }
 
@@ -58,6 +58,11 @@ namespace ProtoCore.Runtime
         /// <param name="macroBlock"></param>
         private void UpdateMacroblockState(ref Runtime.MacroBlock macroBlock)
         {
+            if (macroBlock.State == MacroBlock.ExecuteState.Done)
+            {
+                return;
+            }
+
             // Check if the node is a direct input.
             AssociativeGraph.GraphNode inputNode = macroBlock.InputGraphNode;
 
