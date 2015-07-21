@@ -42,7 +42,11 @@ namespace ProtoCore.Runtime
             int entryPoint = Constants.kInvalidPC;
             if (GraphNodeList.Count > 0)
             {
-                entryPoint = GraphNodeList[0].updateBlock.startpc;
+                AssociativeGraph.GraphNode entryGraphNode = GraphNodeList[0];
+                if (entryGraphNode.isDirty)
+                {
+                    entryPoint = entryGraphNode.updateBlock.startpc;
+                }
             }
             return entryPoint;
         }

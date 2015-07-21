@@ -50,6 +50,9 @@ namespace ProtoCore.Runtime
                 // Reset to 0 if 'i' is the last one
                 i = (i < blockCount - 1) ? i + 1 : 0;
             }
+
+            // Reset after execution
+            ResetMacroblocksToReady(macroBlockList);
         }
 
         /// <summary>
@@ -84,6 +87,19 @@ namespace ProtoCore.Runtime
                 }
             }
             macroBlock.State = MacroBlock.ExecuteState.Ready;
+        }
+
+        /// <summary>
+        /// Reset the macroblocks into its ready state
+        /// </summary>
+        /// <param name="macroBlockList"></param>
+        private void ResetMacroblocksToReady(List<ProtoCore.Runtime.MacroBlock> macroBlockList)
+        {
+            Validity.Assert(macroBlockList != null);
+            foreach(ProtoCore.Runtime.MacroBlock block in macroBlockList)
+            {
+                block.State = MacroBlock.ExecuteState.Ready;
+            }
         }
 
         /// <summary>
