@@ -28,7 +28,7 @@ namespace ProtoImperative
 
     public class CodeGen : ProtoCore.CodeGen
     {
-        private List<ImperativeNode> astNodes; 
+        private List<ImperativeNode> astNodes;
 
         private ProtoCore.CompilerDefinitions.Imperative.CompilePass compilePass;
 
@@ -36,7 +36,8 @@ namespace ProtoImperative
 
         private NodeBuilder nodeBuilder;
 
-        public CodeGen(Core coreObj, ProtoCore.CompileTime.Context callContext, ProtoCore.DSASM.CodeBlock parentBlock = null) : base(coreObj, parentBlock)
+        public CodeGen(Core coreObj, ProtoCore.CompileTime.Context callContext, ProtoCore.DSASM.CodeBlock parentBlock = null)
+            : base(coreObj, parentBlock)
         {
             context = callContext;
             //  dumpbytecode is optionally enabled
@@ -92,6 +93,47 @@ namespace ProtoImperative
         }
 
         /// <summary>
+        /// Check if the variable is allocated within an associative block
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="isLocalVariable"></param>
+        /// <returns></returns>
+        private bool IsVariableAllocatedInAssociativeBlock(string name, bool isLocalVariable)
+        {
+            bool isAccessible = false;
+            ProtoCore.DSASM.SymbolNode symbolnode = null;
+            bool isAllocated = false;
+            if (isLocalVariable)
+            {
+                isAllocated = VerifyAllocationInScope(name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+            }
+            else
+            {
+                isAllocated = VerifyAllocation(name, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+            }
+
+            if (isAllocated)
+            {
+                Validity.Assert(symbolnode != null);
+                Validity.Assert(symbolnode.codeBlockId >= 0);
+
+                // Check if the variable is allocated in the current imperative block
+                bool isAllocatedInCurrentBlock = symbolnode.codeBlockId == core.CodeBlockList.Count;
+                if (isAllocatedInCurrentBlock)
+                {
+                    // The variable is allocated in the current imperative block
+                    isAllocated = false;
+                }
+                else
+                {
+                    // If it is not allocated in the current block, check if it was allocated within an associative block
+                    isAllocated = core.CodeBlockList[symbolnode.codeBlockId].language == Language.kAssociative;
+                }
+            }
+            return isAllocated;
+        }
+
+        /// <summary>
         /// Emits a block of code for the following cases:
         ///     if elseif else body
         ///     while body
@@ -101,9 +143,9 @@ namespace ProtoImperative
         /// <param name="inferedType"></param>
         /// <param name="subPass"></param>
         private void EmitCodeBlock(
-            List<ImperativeNode> codeBlock, 
-            ref ProtoCore.Type inferedType, 
-            bool isBooleanOp = false, 
+            List<ImperativeNode> codeBlock,
+            ref ProtoCore.Type inferedType,
+            bool isBooleanOp = false,
             ProtoCore.AssociativeGraph.GraphNode graphNode = null)
         {
             foreach (ImperativeNode bodyNode in codeBlock)
@@ -155,8 +197,8 @@ namespace ProtoImperative
                 ProtoCore.Language.kImperative,
                 core.CodeBlockIndex,
                 new ProtoCore.DSASM.SymbolTable("imperative lang block", core.RuntimeTableIndex),
-                new ProtoCore.DSASM.ProcedureTable(core.RuntimeTableIndex), 
-                false, 
+                new ProtoCore.DSASM.ProcedureTable(core.RuntimeTableIndex),
+                false,
                 core);
 
             ++core.CodeBlockIndex;
@@ -196,7 +238,7 @@ namespace ProtoImperative
 
         private bool IsNoValueStatement(ImperativeNode node)
         {
-            return (node is IfStmtNode) || (node is ForLoopNode) || (node is WhileStmtNode); 
+            return (node is IfStmtNode) || (node is ForLoopNode) || (node is WhileStmtNode);
         }
 
         private int DfsExprValue(ImperativeNode node)
@@ -217,7 +259,7 @@ namespace ProtoImperative
                 catch (FormatException)
                 {
                     buildStatus.LogSemanticError(Resources.ConstantExpectedInArrayDeclaration, core.CurrentDSFileName, t.line, t.col);
-                } 
+                }
             }
             else if (node is BinaryExpressionNode)
             {
@@ -299,13 +341,14 @@ namespace ProtoImperative
         }
 
         // this method is used in conjuction with array var declarations
-        private void DfsBuildIndex(ImperativeNode node, List<int> indexlist) 
+        private void DfsBuildIndex(ImperativeNode node, List<int> indexlist)
         {
             if (node is ArrayNode)
             {
                 ArrayNode array = node as ArrayNode;
                 int exprval = 0;
-                if (null != array.Expr) {
+                if (null != array.Expr)
+                {
                     exprval = DfsExprValue(array.Expr);
                 }
                 indexlist.Add(exprval);
@@ -336,9 +379,9 @@ namespace ProtoImperative
 
                 // TODO Jun: Optimize this
                 DfsBuildIndex(nodeArray, indexlist);
-                foreach (int indexVal in indexlist) 
+                foreach (int indexVal in indexlist)
                 {
-                    if (0 != indexVal) 
+                    if (0 != indexVal)
                     {
                         symbol.size *= indexVal;
                     }
@@ -373,26 +416,26 @@ namespace ProtoImperative
             SetStackIndex(symbol);
         }
 
-        private ProtoCore.DSASM.SymbolNode Allocate( 
-            string ident, 
-            int funcIndex, 
-            ProtoCore.Type datatype, 
-            int size = 1, 
-            int datasize = ProtoCore.DSASM.Constants.kPrimitiveSize, 
+        private ProtoCore.DSASM.SymbolNode Allocate(
+            string ident,
+            int funcIndex,
+            ProtoCore.Type datatype,
+            int size = 1,
+            int datasize = ProtoCore.DSASM.Constants.kPrimitiveSize,
             ImperativeNode nodeArray = null,
             ProtoCore.DSASM.MemoryRegion region = ProtoCore.DSASM.MemoryRegion.kMemStack)
         {
             if (core.ClassTable.IndexOf(ident) != ProtoCore.DSASM.Constants.kInvalidIndex)
-                buildStatus.LogSemanticError(String.Format(Resources.ClassNameAsVariableError,ident));
+                buildStatus.LogSemanticError(String.Format(Resources.ClassNameAsVariableError, ident));
 
             ProtoCore.DSASM.SymbolNode symbolnode = new ProtoCore.DSASM.SymbolNode(
-                ident, 
-                ProtoCore.DSASM.Constants.kInvalidIndex, 
-                ProtoCore.DSASM.Constants.kInvalidIndex, 
-                funcIndex, 
+                ident,
+                ProtoCore.DSASM.Constants.kInvalidIndex,
+                ProtoCore.DSASM.Constants.kInvalidIndex,
+                funcIndex,
                 datatype,
                 TypeSystem.BuildPrimitiveTypeObject(PrimitiveType.kTypeVar, Constants.kArbitraryRank),
-                size, 
+                size,
                 datasize,
                 false,
                 codeBlock.symbolTable.RuntimeIndex,
@@ -435,7 +478,7 @@ namespace ProtoImperative
             }
             else
             {
-                symbolindex = codeBlock.symbolTable.Append(symbolnode);                
+                symbolindex = codeBlock.symbolTable.Append(symbolnode);
             }
 
             symbolnode.symbolTableIndex = symbolindex;
@@ -443,9 +486,9 @@ namespace ProtoImperative
         }
 
         private int AllocateArg(
-            string ident, 
-            int funcIndex, 
-            ProtoCore.Type datatype, 
+            string ident,
+            int funcIndex,
+            ProtoCore.Type datatype,
             int size = 1,
             int datasize = ProtoCore.DSASM.Constants.kPrimitiveSize,
             ImperativeNode nodeArray = null,
@@ -470,7 +513,7 @@ namespace ProtoImperative
             int symbolindex = ProtoCore.DSASM.Constants.kInvalidIndex;
             if (ProtoCore.DSASM.Constants.kInvalidIndex != codeBlock.symbolTable.IndexOf(symbolnode))
             {
-                buildStatus.LogSemanticError(String.Format(Resources.IdentifierRedefinition,ident));
+                buildStatus.LogSemanticError(String.Format(Resources.IdentifierRedefinition, ident));
             }
             else
             {
@@ -517,8 +560,8 @@ namespace ProtoImperative
             //AppendInstruction(instr, line, col);
             updatePcDictionary(line, col);
         }
-		
-		protected override void EmitRetcn(int blockId = Constants.kInvalidIndex, int line = ProtoCore.DSASM.Constants.kInvalidIndex, int col = ProtoCore.DSASM.Constants.kInvalidIndex,
+
+        protected override void EmitRetcn(int blockId = Constants.kInvalidIndex, int line = ProtoCore.DSASM.Constants.kInvalidIndex, int col = ProtoCore.DSASM.Constants.kInvalidIndex,
             int endline = ProtoCore.DSASM.Constants.kInvalidIndex, int endcol = ProtoCore.DSASM.Constants.kInvalidIndex)
         {
             Instruction instr = new Instruction();
@@ -550,8 +593,8 @@ namespace ProtoImperative
             //AppendInstruction(instr);
         }
 
-        public override ProtoCore.DSASM.ProcedureNode TraverseFunctionCall(ProtoCore.AST.Node node, ProtoCore.AST.Node parentNode, int lefttype, int depth, ref ProtoCore.Type inferedType, 
-            ProtoCore.AssociativeGraph.GraphNode graphNode = null, ProtoCore.CompilerDefinitions.Associative.SubCompilePass subPass = ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kNone, 
+        public override ProtoCore.DSASM.ProcedureNode TraverseFunctionCall(ProtoCore.AST.Node node, ProtoCore.AST.Node parentNode, int lefttype, int depth, ref ProtoCore.Type inferedType,
+            ProtoCore.AssociativeGraph.GraphNode graphNode = null, ProtoCore.CompilerDefinitions.Associative.SubCompilePass subPass = ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kNone,
             ProtoCore.AST.Node bnode = null)
         {
             if (!IsParsingGlobal() && !IsParsingGlobalFunctionBody())
@@ -749,7 +792,7 @@ namespace ProtoImperative
                     EmitInstrConsole(ProtoCore.DSASM.kw.callr, procNode.name);
 
                     DebugProperties.BreakpointOptions oldOptions = core.DebuggerProperties.breakOptions;
-                    if(procNode.name.StartsWith(Constants.kSetterPrefix))
+                    if (procNode.name.StartsWith(Constants.kSetterPrefix))
                     {
                         EmitCall(procNode.procId, blockId, type, parentNode.line, parentNode.col, parentNode.endLine, parentNode.endCol);
                     }
@@ -800,9 +843,9 @@ namespace ProtoImperative
                     DynamicFunction dynFunc = null;
                     if (procName == Constants.kFunctionPointerCall && depth == 0)
                     {
-                        if (!core.DynamicFunctionTable.TryGetFunction(procName, 
-                                                                      arglist.Count, 
-                                                                      lefttype, 
+                        if (!core.DynamicFunctionTable.TryGetFunction(procName,
+                                                                      arglist.Count,
+                                                                      lefttype,
                                                                       out dynFunc))
                         {
                             dynFunc = core.DynamicFunctionTable.AddNewFunction(procName, arglist.Count, lefttype);
@@ -812,9 +855,9 @@ namespace ProtoImperative
                     }
                     else
                     {
-                        if (!core.DynamicFunctionTable.TryGetFunction(procName, 
-                                                                      arglist.Count, 
-                                                                      lefttype, 
+                        if (!core.DynamicFunctionTable.TryGetFunction(procName,
+                                                                      arglist.Count,
+                                                                      lefttype,
                                                                       out dynFunc))
                         {
                             dynFunc = core.DynamicFunctionTable.AddNewFunction(procName, arglist.Count, lefttype);
@@ -870,7 +913,7 @@ namespace ProtoImperative
                 endCol = funcDefNode.FunctionBody.endCol;
                 line = endLine = funcDefNode.FunctionBody.endLine;
                 return true;
-            }            
+            }
 
             return false;
         }
@@ -967,7 +1010,7 @@ namespace ProtoImperative
                     else
                     {
                         DfsTraverse(node, ref type, false, graphNode);
-                    }                    
+                    }
 
                     if (ProtoCore.Utils.NodeUtils.IsReturnExpressionNode(node))
                         hasReturnStatement = true;
@@ -1218,8 +1261,8 @@ namespace ProtoImperative
                     {
                         foreach (var depentNode in subGraphNode.dependentList)
                         {
-                            if (depentNode.updateNodeRefList != null 
-                                && depentNode.updateNodeRefList.Count > 0 
+                            if (depentNode.updateNodeRefList != null
+                                && depentNode.updateNodeRefList.Count > 0
                                 && depentNode.updateNodeRefList[0].nodeList != null
                                 && depentNode.updateNodeRefList[0].nodeList.Count > 0)
                             {
@@ -1329,7 +1372,7 @@ namespace ProtoImperative
                         ProtoCore.DSASM.ArgumentInfo argInfo = new ProtoCore.DSASM.ArgumentInfo { DefaultExpression = aDefaultExpression };
                         localProcedure.argInfoList.Add(argInfo);
                     }
-                }         
+                }
             }
             else if (parseGlobalFunctionBody)
             {
@@ -1365,7 +1408,7 @@ namespace ProtoImperative
 
 
                 ProtoCore.FunctionEndPoint fep = null;
-                                
+
                 //Traverse default argument
                 emitDebugInfo = false;
                 foreach (ProtoCore.DSASM.ArgumentInfo argNode in localProcedure.argInfoList)
@@ -1500,7 +1543,7 @@ namespace ProtoImperative
                 fnode.ArrayDimensions = null;
             }
 
-            if(bnode == null)
+            if (bnode == null)
                 EmitSetExpressionUID(core.ExpressionUID++);
         }
 
@@ -1569,7 +1612,7 @@ namespace ProtoImperative
                 // Set the new codeblock as the current codeblock
                 ProtoCore.DSASM.CodeBlock localCodeBlock = null;
 
-            
+
                 localCodeBlock = new ProtoCore.DSASM.CodeBlock(
                     context.guid,
                     ProtoCore.DSASM.CodeBlockType.kConstruct,
@@ -1843,7 +1886,7 @@ namespace ProtoImperative
                     codeBlock = localCodeBlock;
                     backpatchMap.EntryTable[localCodeBlock.codeBlockId] = entry;
                     backpatchMap.BreakTable[localCodeBlock.codeBlockId] = new BackpatchTable();
-                    
+
                     EmitPushBlockID(localCodeBlock.codeBlockId);
                     EmitCodeBlock(whileNode.Body, ref inferedType, isBooleanOp, graphNode);
 
@@ -2061,6 +2104,27 @@ namespace ProtoImperative
                 }
             }
 
+
+            IdentifierNode identifierNode = b.LeftNode as IdentifierNode;
+            bool isRhsAnIdentifier = identifierNode != null;
+
+            bool isAssignmentOp = b.Optr == ProtoCore.DSASM.Operator.assign;
+
+            // Do not allow variable redefinition
+            // Before traversing the RHS, check if the lhs is redefined. If it is, throw a warning and ignore the entire statement
+            if (isRhsAnIdentifier && isAssignmentOp)
+            {
+                if (IsVariableAllocatedInAssociativeBlock(identifierNode.Name, identifierNode.IsLocal))
+                {
+                    string message = string.Format("Redefinition of: '{0}' is not allowed. Ignoring the entire statement.\n", identifierNode.Name);
+                    buildStatus.LogWarning(WarningID.kVariableRedefinition, message, core.CurrentDSFileName, identifierNode.line, identifierNode.col);
+
+                    // The rest of the expression is ignored
+                    // No graphnode and byecode is generated for this statement and is therefore NOT included in the executable
+                    return;
+                }
+            }
+
             if (parentNode != null)
             {
                 DfsTraverse(b.RightNode, ref inferedType, isBooleanOperation, graphNode, ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kNone, parentNode);
@@ -2098,12 +2162,12 @@ namespace ProtoImperative
                 return;
             }
 
-            if (b.LeftNode is IdentifierNode)
+
+            if (isRhsAnIdentifier)
             {
-                IdentifierNode t = b.LeftNode as IdentifierNode;
                 ProtoCore.DSASM.SymbolNode symbolnode = null;
 
-                string s = t.Value;
+                string s = identifierNode.Value;
                 bool isReturn = (s == ProtoCore.DSDefinitions.Keyword.Return);
                 if (isReturn)
                 {
@@ -2118,41 +2182,41 @@ namespace ProtoImperative
                         ProtoCore.DSASM.ProcedureNode procNode = null;
                         if (globalClassIndex != ProtoCore.DSASM.Constants.kGlobalScope)
                         {
-                            procNode = core.ClassTable.ClassNodes[globalClassIndex].GetMemberFunction(t.Name, null, globalClassIndex, out isAccessibleFp, out realType);
+                            procNode = core.ClassTable.ClassNodes[globalClassIndex].GetMemberFunction(identifierNode.Name, null, globalClassIndex, out isAccessibleFp, out realType);
                         }
                         if (procNode == null)
                         {
-                            procNode = CoreUtils.GetFirstVisibleProcedure(t.Name, null, codeBlock);
+                            procNode = CoreUtils.GetFirstVisibleProcedure(identifierNode.Name, null, codeBlock);
                         }
                         if (procNode != null)
                         {
                             if (ProtoCore.DSASM.Constants.kInvalidIndex != procNode.procId && emitDebugInfo)
                             {
-                                buildStatus.LogSemanticError(String.Format(Resources.FunctionAsVaribleError,t.Name), core.CurrentDSFileName, t.line, t.col);
+                                buildStatus.LogSemanticError(String.Format(Resources.FunctionAsVaribleError, identifierNode.Name), core.CurrentDSFileName, identifierNode.line, identifierNode.col);
                             }
                         }
                     }
 
                     bool isAccessible = false;
                     bool isAllocated = false;
-                    bool isLocalDeclaration = t.IsLocal;
+                    bool isLocalDeclaration = identifierNode.IsLocal;
                     // if it's forloop, verify allocation with its original arrayname
-                    if (t.ArrayName != null && !t.ArrayName.Equals(""))
+                    if (identifierNode.ArrayName != null && !identifierNode.ArrayName.Equals(""))
                     {
-                        isAllocated = VerifyAllocation(t.Value, t.ArrayName, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+                        isAllocated = VerifyAllocation(identifierNode.Value, identifierNode.ArrayName, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
                     }
                     else
                     {
                         if (isLocalDeclaration)
                         {
-                            isAllocated = VerifyAllocationInScope(t.Value, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+                            isAllocated = VerifyAllocationInScope(identifierNode.Value, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
                         }
                         else
                         {
-                            isAllocated = VerifyAllocation(t.Value, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
+                            isAllocated = VerifyAllocation(identifierNode.Value, globalClassIndex, globalProcIndex, out symbolnode, out isAccessible);
                         }
                     }
-                   
+
                     int runtimeIndex = (!isAllocated) ? codeBlock.symbolTable.RuntimeIndex : symbolnode.runtimeTableIndex;
 
                     // Comment Jun: Add modifeid properties into the updatedProperties list of the current function
@@ -2203,9 +2267,9 @@ namespace ProtoImperative
                     }
 
                     int dimensions = 0;
-                    if (null != t.ArrayDimensions)
+                    if (null != identifierNode.ArrayDimensions)
                     {
-                        dimensions = DfsEmitArrayIndexHeap(t.ArrayDimensions);
+                        dimensions = DfsEmitArrayIndexHeap(identifierNode.ArrayDimensions);
                     }
 
                     ProtoCore.Type castType = TypeSystem.BuildPrimitiveTypeObject(PrimitiveType.kTypeVar, 0);
@@ -2255,11 +2319,11 @@ namespace ProtoImperative
                                 }
                             }
                             bool isMemberVar = ProtoCore.DSASM.Constants.kGlobalScope == core.ClassTable.ClassNodes[globalClassIndex].symbols.symbolList[n].functionIndex
-                                && core.ClassTable.ClassNodes[globalClassIndex].symbols.symbolList[n].name == t.Name
+                                && core.ClassTable.ClassNodes[globalClassIndex].symbols.symbolList[n].name == identifierNode.Name
                                 && !localVarInMemFunc;
                             if (isMemberVar)
                             {
-                                if (t.ArrayDimensions == null)
+                                if (identifierNode.ArrayDimensions == null)
                                     core.ClassTable.ClassNodes[globalClassIndex].symbols.symbolList[n].datatype = inferedType;
                                 else if (dimensions == inferedType.rank)
                                     core.ClassTable.ClassNodes[globalClassIndex].symbols.symbolList[n].datatype.UID = inferedType.UID;
@@ -2272,7 +2336,7 @@ namespace ProtoImperative
                         {
                             if (!isAllocated)
                             {
-                                symbolnode = Allocate(t.Name, globalProcIndex, inferedType);
+                                symbolnode = Allocate(identifierNode.Name, globalProcIndex, inferedType);
                             }
 
                             symbol = symbolnode.symbolTableIndex;
@@ -2297,7 +2361,7 @@ namespace ProtoImperative
                             castType = symbolnode.staticType;
                             EmitPushVarData(dimensions, castType.UID, castType.rank);
 
-                            EmitInstrConsole(ProtoCore.DSASM.kw.popm, t.Name);
+                            EmitInstrConsole(ProtoCore.DSASM.kw.popm, identifierNode.Name);
 
                             StackValue operand = symbolnode.isStatic
                                                  ? StackValue.BuildStaticMemVarIndex(symbol)
@@ -2310,7 +2374,7 @@ namespace ProtoImperative
                     {
                         if (!isAllocated)
                         {
-                            symbolnode = Allocate(t.Value, globalProcIndex, inferedType);
+                            symbolnode = Allocate(identifierNode.Value, globalProcIndex, inferedType);
                             if (dimensions > 0)
                             {
                                 symbolnode.datatype.rank = dimensions;
@@ -2330,7 +2394,7 @@ namespace ProtoImperative
                         }
                         castType = symbolnode.staticType;
                         EmitPushVarData(dimensions, castType.UID, castType.rank);
-                        EmitInstrConsole(ProtoCore.DSASM.kw.pop, t.Value);
+                        EmitInstrConsole(ProtoCore.DSASM.kw.pop, identifierNode.Value);
                         if (parentNode != null)
                         {
                             EmitPopForSymbol(symbolnode, runtimeIndex, parentNode.line, parentNode.col, parentNode.endLine, parentNode.endCol);
@@ -2339,7 +2403,7 @@ namespace ProtoImperative
                         {
                             EmitPopForSymbol(symbolnode, runtimeIndex, node.line, node.col, node.endLine, node.endCol);
                         }
-                        
+
 
                         // Check if the symbol was not here, only then it becomes a valid propagation symbol 
                         // TODO Jun: check if the symbol was allocated from an associative block
@@ -2805,7 +2869,7 @@ namespace ProtoImperative
             {
                 if (localProcedure != null)
                 {
-                    core.BuildStatus.LogWarning(ProtoCore.BuildData.WarningID.kFunctionAbnormalExit, ProtoCore.Properties.Resources.kInvalidBreakForFunction , core.CurrentDSFileName, node.line, node.col);
+                    core.BuildStatus.LogWarning(ProtoCore.BuildData.WarningID.kFunctionAbnormalExit, ProtoCore.Properties.Resources.kInvalidBreakForFunction, core.CurrentDSFileName, node.line, node.col);
                     EmitPushNull();
                     EmitReturnToRegister();
                 }
@@ -3026,7 +3090,7 @@ namespace ProtoImperative
                 }
             }
 
-        }     
+        }
 
         //protected override void EmitDependency(int exprUID, bool isSSAAssign)
         protected void EmitDependency(int exprUID, bool isSSAAssign)
@@ -3055,7 +3119,7 @@ namespace ProtoImperative
             instr.op3 = StackValue.BuildClassIndex(classScope);
 
             ++pc;
-            
+
             codeBlock.instrStream.instrList.Add(instr);
 
             // TODO: Figure out why using AppendInstruction fails for adding these instructions to ExpressionInterpreter
@@ -3071,7 +3135,7 @@ namespace ProtoImperative
             instr.op1 = StackValue.BuildInt(exprId);
 
             ++pc;
-            
+
             codeBlock.instrStream.instrList.Add(instr);
 
             // TODO: Figure out why using AppendInstruction fails for adding these instructions to ExpressionInterpreter
@@ -3198,11 +3262,11 @@ namespace ProtoImperative
 
             EmitIdentifierListNode(node, ref inferedType, false, graphNode, ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kNone, parentNode);
 
-            if(parentNode == null)
+            if (parentNode == null)
                 EmitSetExpressionUID(core.ExpressionUID++);
         }
 
-        protected override void DfsTraverse(ProtoCore.AST.Node pNode, ref ProtoCore.Type inferedType, bool isBooleanOp = false, ProtoCore.AssociativeGraph.GraphNode graphNode = null, 
+        protected override void DfsTraverse(ProtoCore.AST.Node pNode, ref ProtoCore.Type inferedType, bool isBooleanOp = false, ProtoCore.AssociativeGraph.GraphNode graphNode = null,
             ProtoCore.CompilerDefinitions.Associative.SubCompilePass subPass = ProtoCore.CompilerDefinitions.Associative.SubCompilePass.kNone, ProtoCore.AST.Node parentNode = null)
         {
             ImperativeNode node = pNode as ImperativeNode;
@@ -3316,7 +3380,7 @@ namespace ProtoImperative
                 EmitGropuExpressionNode(node, ref inferedType);
             }
 
-            int blockId = codeBlock.codeBlockId; 
+            int blockId = codeBlock.codeBlockId;
             //updatePcDictionary(node, blockId);
             //updatePcDictionary(node.line, node.col);
         }
