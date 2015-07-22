@@ -3616,6 +3616,8 @@ a1.x = 5;// expected : test = { 5, { 5, { 5, 5} } }
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("Replication")]
         public void T69_Replication_Across_Language_Blocks()
         {

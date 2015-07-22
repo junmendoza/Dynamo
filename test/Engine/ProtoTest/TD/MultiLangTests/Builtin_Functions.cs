@@ -1287,6 +1287,9 @@ result = a? c:b;//t";
          }p*/
 
         [Test]
+        // Temporarily disable - infinite loop
+        // Variable redefinition is not allowed. As such, the following code loops infinitely. The runtime cyclic handler fails to detect this cycle.
+        [Ignore] 
         [Category("SmokeTest")]
         public void T042_AllFalse_DynamicArray()
         {

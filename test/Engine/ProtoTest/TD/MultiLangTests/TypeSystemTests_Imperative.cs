@@ -2387,6 +2387,8 @@ d;
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("Type System")]
         public void TS0190_TypeConversion_nested_block_1467568()
         {
@@ -2417,6 +2419,8 @@ c = 0;
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("Type System")]
         public void TS0191_TypeConversion_nested_block_1467568()
         {
@@ -2452,6 +2456,8 @@ Print(myRangeExpressionResult); // (3) and the results are more ints.. so far so
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("Type System")]
         public void TS0192_TypeConversion_nested_block_1467568()
         {
@@ -2507,6 +2513,8 @@ myRangeExpressionResult ;
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("Type System")]
         public void TS0194_TypeConversion_nested_block_1467568()
         {
@@ -2533,6 +2541,8 @@ myRangeExpressionResult ;
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("Type System")]
         public void TS0195_TypeConversion_nested_block_1467568()
         {
@@ -2569,6 +2579,8 @@ t2 = a.x;";
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("Type System")]
         public void TS0196_TypeConversion_nested_block_1467568()
         {

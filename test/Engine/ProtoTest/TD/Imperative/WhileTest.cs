@@ -301,6 +301,8 @@ p;
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("SmokeTest")]
         public void T12_WhileWithFunctionCall()
         {
@@ -436,10 +438,13 @@ factorial_a;
         }
 
         [Test]
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("SmokeTest")]
         public void T18_TestWhileWithNull()
         {
-            string src = @"a;b;c;
+            string src = @"
+a;b;c;
 [Imperative]
 {
     a = null;
