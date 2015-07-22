@@ -15428,7 +15428,8 @@ f;
         [Test]
         // Temporarily disable - infinite loop
         // Variable redefinition is not allowed. As such, the following code loops infinitely. The runtime cyclic handler fails to detect this cycle.
-        [Ignore] 
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("WatchFx Tests")]
         public void DebugWatch546_T01_WhileBreakContinue()
         {
@@ -22141,7 +22142,8 @@ c = AllFalse(a);
         [Test]
         // Temporarily disable - infinite loop
         // Variable redefinition is not allowed. As such, the following code loops infinitely. The runtime cyclic handler fails to detect this cycle.
-        [Ignore] 
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("WatchFx Tests")]
         public void DebugWatch808_T042_AllFalse_DynamicArray()
         {
@@ -45763,7 +45765,8 @@ i = 5;
         [Test]
         // Temporarily disable - infinite loop
         // Variable redefinition is not allowed. As such, the following code loops infinitely. The runtime cyclic handler fails to detect this cycle.
-        [Ignore] 
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("WatchFx Tests")]
         public void DebugWatch1684_T88_1461985_Update_In_Nested_Blocks_2()
         {

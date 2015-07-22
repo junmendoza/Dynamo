@@ -9,7 +9,8 @@ namespace ProtoTest.TD.Imperative
         [Test]
         // Temporarily disable - infinite loop
         // Variable redefinition is not allowed. As such, the following code loops infinitely. The runtime cyclic handler fails to detect this cycle.
-        [Ignore] 
+        [Ignore]
+        [Category("VariableRedefinition")] 
         [Category("SmokeTest")]
         public void T01_WhileBreakContinue()
         {
