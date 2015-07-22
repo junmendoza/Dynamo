@@ -91,6 +91,31 @@ namespace ProtoImperative
             return cb;
         }
 
+        /// <summary>
+        /// Gets the codeblock where the symbol is declared in
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <param name="currentBlockScope"></param>
+        /// <returns></returns>
+        private CodeBlock GetSymbolCodeBlock(SymbolNode symbol, CodeBlock currentBlockScope)
+        {
+            while (currentBlockScope != null)
+            {
+                if (currentBlockScope.codeBlockId == symbol.codeBlockId)
+                {
+                    return currentBlockScope;
+                }
+                currentBlockScope = currentBlockScope.parent;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Checks if the variable is allocated in any associative block scope
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="isLocalVariable"></param>
+        /// <returns></returns>
         private bool IsVariableAllocatedInAssociativeBlock(string name, bool isLocalVariable)
         {
             bool isAccessible = false;
@@ -111,8 +136,10 @@ namespace ProtoImperative
                 Validity.Assert(symbolnode.codeBlockId >= 0);
 
                 // Check if the variable is allocated in the current imperative block
+                CodeBlock declaredBlock = GetSymbolCodeBlock(symbolnode, codeBlock);
+                bool isAllocatedInConstructBlock = declaredBlock.blockType == CodeBlockType.kConstruct;
                 bool isAllocatedInCurrentBlock = symbolnode.codeBlockId == core.CodeBlockList.Count;
-                if (isAllocatedInCurrentBlock)
+                if (isAllocatedInCurrentBlock || isAllocatedInConstructBlock)
                 {
                     // The variable is allocated in the current imperative block
                     isAllocated = false;
