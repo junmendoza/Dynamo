@@ -34,6 +34,7 @@ namespace ProtoCore
             kReplicationWarning,
             kInvalidIndexing,
             kModuloByZero,
+            kSequencerError,
             kInvalidType
         }
 
