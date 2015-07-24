@@ -319,7 +319,7 @@ namespace ProtoCore.AssociativeEngine
         /// <param name="node"></param>
         /// <param name="otherNode"></param>
         /// <returns></returns>
-        private static bool AreLHSEqual(AssociativeGraph.GraphNode node, AssociativeGraph.GraphNode otherNode)
+        public static bool AreLHSEqual(AssociativeGraph.GraphNode node, AssociativeGraph.GraphNode otherNode)
         {
             Validity.Assert(node != null && otherNode != null);
             Validity.Assert(node.updateNodeRefList.Count > 0);

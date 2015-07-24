@@ -50,6 +50,145 @@ namespace ProtoCore.Runtime
             }
             return entryPoint;
         }
+
+        /// <summary>
+        /// Checks if inputNode already exists in the groupList
+        /// Compares the LHS of inputNode with the LHS of the first node in a group
+        ///     Given:
+        ///         inputNode: a = 1
+        ///         groupList: {{a = 1, a = 2}, {b = 3}}
+        ///     Here, inputNode exists in groupList
+        /// </summary>
+        /// <param name="inputNode"></param>
+        /// <param name="groupList"></param>
+        /// <returns></returns>
+        private bool DoesGraphNodeExistInGroupList(AssociativeGraph.GraphNode inputNode, List<List<AssociativeGraph.GraphNode>> groupList)
+        {
+            foreach (List<AssociativeGraph.GraphNode> group in groupList)
+            {
+                if (AssociativeEngine.Utils.AreLHSEqual(inputNode, group[0]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Group a list of graphnodes according to their LHS
+        ///     Given:
+        ///         a = 1
+        ///         a = 2
+        ///         b = 3
+        ///         
+        ///     Grouping:
+        ///           {a = 1, a = 2}
+        ///           {b = 3}
+        /// </summary>
+        /// <param name="graphNodeList"></param>
+        /// <returns></returns>
+        public List<List<AssociativeGraph.GraphNode>> GetGraphNodeGroups(List<AssociativeGraph.GraphNode> graphNodeList)
+        {
+            List<List<AssociativeGraph.GraphNode>> groupList = new List<List<AssociativeGraph.GraphNode>>();
+
+            // Generate a group for every node in graphNodeList
+            foreach (AssociativeGraph.GraphNode inputNode in graphNodeList)
+            {
+                if (!DoesGraphNodeExistInGroupList(inputNode, groupList))
+                {
+                    groupList.Add(GetGroupForGraphNode(inputNode, graphNodeList));
+                }
+            }
+            return groupList;
+        }
+
+        /// <summary>
+        /// Gets all the nodes in graphNodeList where the LHS is similar to inputNode
+        /// </summary>
+        /// <param name="inputNode"></param>
+        /// <param name="graphNodeList"></param>
+        /// <returns></returns>
+        private List<AssociativeGraph.GraphNode> GetGroupForGraphNode(AssociativeGraph.GraphNode inputNode, List<AssociativeGraph.GraphNode> graphNodeList)
+        {
+            List<AssociativeGraph.GraphNode> group = new List<AssociativeGraph.GraphNode>();
+            foreach (AssociativeGraph.GraphNode graphNode in graphNodeList)
+            {
+                if (AssociativeEngine.Utils.AreLHSEqual(inputNode, graphNode))
+                {
+                    group.Add(graphNode);
+                }
+            }
+            return group;
+        }
+
+        /// <summary>
+        /// If at least one graphnode has executed(is not dirty) then the group is ready
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        private bool IsGroupReady(List<AssociativeGraph.GraphNode> group)
+        {
+            foreach (AssociativeGraph.GraphNode graphNode in group)
+            {
+                if (!graphNode.isDirty)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// A macrobock is dirty if at least one of its graphnode is dirty
+        /// </summary>
+        /// <returns></returns>
+        public bool IsDirty()
+        {
+            foreach (AssociativeGraph.GraphNode graphNode in GraphNodeList)
+            {
+                if (graphNode.isDirty)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Inspect the operands of the macroblock to see if it is ready to execute
+        /// </summary>
+        /// <returns></returns>
+        public bool AreOperandsReady()
+        {
+            // A direct input is a node that is not dependent on any other node value, such as a constant assignment
+            //      a = 1 <- this is a directinput node
+            bool isDirectInput = InputGraphNode.ParentNodes.Count == 0;
+            if (isDirectInput)
+            {
+                return true;
+            }
+
+            List<List<AssociativeGraph.GraphNode>> graphNodeGroup = GetGraphNodeGroups(InputGraphNode.ParentNodes);
+
+            // The nodes operands (parentnodes) must be checked if they are dirty.
+            // If at least one operand is dirty, then it means it hasnt executed yet and the node is not ready 
+            //      c = a + b <- This is an input node and we must check if 'a' and 'b' have been executed
+
+            // Handle the case where there are multiple parents, but at least one of them already satisfies the condition
+            //      a = 1;
+            //      b = a; <- the parents of 'b' are 'a = 1' and 'a = 2'. If either one of these executes then macroblock 'b = a' is ready
+            //      a = 2;
+
+            foreach (List<AssociativeGraph.GraphNode> group in graphNodeGroup)
+            {
+                // A group is ready if at least one of it has executed
+                if (!IsGroupReady(group))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
 
@@ -124,7 +263,7 @@ namespace ProtoCore
                     continue;
                 }
 
-                // graphNode.graphNodesToExecute are the children of graphNode
+                // graphNode.ChildrenNodes are the graphnodes to execute downstream
                 // Where:
                 //      a = 1
                 //      b = a

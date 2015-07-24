@@ -42,7 +42,8 @@ namespace ProtoCore.Runtime
             int iterNum = 0;
             int threshold = blockCount * 10;
 
-            while (executedNodes < blockCount)
+            bool areAllBlocksClean = false;
+            while (!areAllBlocksClean)
             {
                 ProtoCore.Runtime.MacroBlock macroBlock = macroBlockList[i];
                 UpdateMacroblockState(ref macroBlock);
@@ -58,7 +59,7 @@ namespace ProtoCore.Runtime
                 i = (i < blockCount - 1) ? i + 1 : 0;
                 if (iterNum++ >= threshold)
                 {
-                    LogWarningNotAllMacroblocksExecuted(macroBlockList);
+                    //LogWarningNotAllMacroblocksExecuted(macroBlockList);
                     break;
                 }
             }
@@ -96,30 +97,16 @@ namespace ProtoCore.Runtime
         {
             if (macroBlock.State == MacroBlock.ExecuteState.Done)
             {
-                return;
-            }
-
-            // Check if the node is a direct input.
-            AssociativeGraph.GraphNode inputNode = macroBlock.InputGraphNode;
-
-            // A direct input is a node that is not dependent on any other node value, such as a constant assignment
-            //      a = 1 <- this is a directinput node
-            bool isDirectInput = inputNode.ParentNodes.Count == 0;
-            if (!isDirectInput)
-            {
-                // The nodes operands (parentnodes) must be checked if the are dirty.
-                // If at least one operand is dirty, then it means it hasnt executed yet and the node is not ready 
-                //      c = a + b <- This is an input node and we must check if 'a' and 'b' have been executed
-                foreach (AssociativeGraph.GraphNode parent in inputNode.ParentNodes)
+                if (!macroBlock.IsDirty())
                 {
-                    if (parent.isDirty)
-                    {
-                        macroBlock.State = MacroBlock.ExecuteState.NotReady;
-                        return;
-                    }
+                    return;
                 }
             }
-            macroBlock.State = MacroBlock.ExecuteState.Ready;
+
+            if (macroBlock.AreOperandsReady())
+            {
+                macroBlock.State = MacroBlock.ExecuteState.Ready;
+            }
         }
 
         /// <summary>
