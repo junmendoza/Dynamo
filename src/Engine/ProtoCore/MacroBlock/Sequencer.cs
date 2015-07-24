@@ -8,10 +8,12 @@ namespace ProtoCore.Runtime
 {
     public class MacroblockSequencer
     {
+        private RuntimeCore runtimeCore = null;
         private List<ProtoCore.Runtime.MacroBlock> macroBlockList = null;
 
-        public MacroblockSequencer(List<Runtime.MacroBlock> macroBlocks)
+        public MacroblockSequencer(List<Runtime.MacroBlock> macroBlocks, RuntimeCore runtimeCore)
         {
+            this.runtimeCore = runtimeCore;
             macroBlockList = macroBlocks;
         }
 
@@ -35,6 +37,11 @@ namespace ProtoCore.Runtime
             int i = 0;
             int executedNodes = 0;
             int blockCount = macroBlockList.Count;
+
+            // A simple heuristic to make sure the sequencer does not go into an infinit loop
+            int iterNum = 0;
+            int threshold = blockCount * 10;
+
             while (executedNodes < blockCount)
             {
                 ProtoCore.Runtime.MacroBlock macroBlock = macroBlockList[i];
@@ -49,10 +56,36 @@ namespace ProtoCore.Runtime
                 // Go to the next macroblock index
                 // Reset to 0 if 'i' is the last one
                 i = (i < blockCount - 1) ? i + 1 : 0;
+                if (iterNum++ >= threshold)
+                {
+                    LogWarningNotAllExecuted(macroBlockList);
+                    break;
+                }
             }
 
             // Reset after execution
             ResetMacroblocksToReady(macroBlockList);
+        }
+
+        /// <summary>
+        /// Logs a warning that lists which macroblocks did not execute
+        /// </summary>
+        /// <param name="macroBlockList"></param>
+        private void LogWarningNotAllExecuted(List<ProtoCore.Runtime.MacroBlock> macroBlockList)
+        {
+            // Get all macroblocks that did not execute
+            StringBuilder blocksNotExecuted = new StringBuilder();
+            foreach (MacroBlock block in macroBlockList)
+            {
+                if (block.State == MacroBlock.ExecuteState.Ready)
+                {
+                    blocksNotExecuted.Append(block.UID.ToString());
+                    blocksNotExecuted.Append(" ");
+                }
+            }
+            runtimeCore.RuntimeStatus.LogWarning(
+                WarningID.kSequencerError,
+                string.Format("Sequencer could not execute macroblocks: {0}", blocksNotExecuted.ToString()));
         }
 
         /// <summary>
