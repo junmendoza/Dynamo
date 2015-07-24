@@ -175,7 +175,7 @@ namespace ProtoScript.Runners
 #if __MACROBLOCK_CORE_EXECUTION
 
                     Executable exe = runtimeCore.DSExecutable;
-                    ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList);
+                    ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList, runtimeCore);
                     sequencer.Execute(
                         runtimeCore.CurrentExecutive.CurrentDSASMExec,
                         codeBlock.codeBlockId,
@@ -238,7 +238,7 @@ namespace ProtoScript.Runners
                 
 #if __MACROBLOCK_CORE_EXECUTION
 
-                ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList);
+                ProtoCore.Runtime.MacroblockSequencer sequencer = new ProtoCore.Runtime.MacroblockSequencer(exe.MacroBlockList, runtimeCore);
                 sequencer.Execute(
                     runtimeCore.CurrentExecutive.CurrentDSASMExec,
                     codeBlock.codeBlockId,

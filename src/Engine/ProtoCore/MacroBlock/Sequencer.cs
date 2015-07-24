@@ -58,7 +58,7 @@ namespace ProtoCore.Runtime
                 i = (i < blockCount - 1) ? i + 1 : 0;
                 if (iterNum++ >= threshold)
                 {
-                    LogWarningNotAllExecuted(macroBlockList);
+                    LogWarningNotAllMacroblocksExecuted(macroBlockList);
                     break;
                 }
             }
@@ -71,13 +71,13 @@ namespace ProtoCore.Runtime
         /// Logs a warning that lists which macroblocks did not execute
         /// </summary>
         /// <param name="macroBlockList"></param>
-        private void LogWarningNotAllExecuted(List<ProtoCore.Runtime.MacroBlock> macroBlockList)
+        private void LogWarningNotAllMacroblocksExecuted(List<ProtoCore.Runtime.MacroBlock> macroBlockList)
         {
             // Get all macroblocks that did not execute
             StringBuilder blocksNotExecuted = new StringBuilder();
             foreach (MacroBlock block in macroBlockList)
             {
-                if (block.State == MacroBlock.ExecuteState.Ready)
+                if (block.State != MacroBlock.ExecuteState.Done)
                 {
                     blocksNotExecuted.Append(block.UID.ToString());
                     blocksNotExecuted.Append(" ");
