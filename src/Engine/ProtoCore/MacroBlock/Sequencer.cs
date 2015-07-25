@@ -24,7 +24,7 @@ namespace ProtoCore.Runtime
             ProtoCore.DSASM.Executive executive,
             int exeblock,
             int entry,
-            StackFrame stackFrame, 
+            StackFrame stackFrame,
             int locals = 0
             )
         {
@@ -38,34 +38,54 @@ namespace ProtoCore.Runtime
             int executedNodes = 0;
             int blockCount = macroBlockList.Count;
 
-            // A simple heuristic to make sure the sequencer does not go into an infinit loop
-            int iterNum = 0;
-            int threshold = blockCount * 10;
-
-            bool areAllBlocksClean = false;
-            while (!areAllBlocksClean)
+            if (blockCount > 0)
             {
-                ProtoCore.Runtime.MacroBlock macroBlock = macroBlockList[i];
-                UpdateMacroblockState(ref macroBlock);
-                if (IsBlockReady(macroBlock))
+                // A simple heuristic to make sure the sequencer does not go into an infinit loop
+                int iterNum = 0;
+                int threshold = blockCount * 10;
+
+                bool areAllBlocksClean = false;
+                while (!areAllBlocksClean)
                 {
-                    executive.Execute(macroBlock);
-                    macroBlock.State = MacroBlock.ExecuteState.Done;
-                    executedNodes++;
+                    ProtoCore.Runtime.MacroBlock macroBlock = macroBlockList[i];
+                    UpdateMacroblockState(ref macroBlock);
+                    //if (HasCompletedExecution(macroBlockList))
+                    //{
+                    //    break;
+                    //}
+
+                    if (IsBlockReady(macroBlock))
+                    {
+                        executive.Execute(macroBlock);
+                        macroBlock.State = MacroBlock.ExecuteState.Done;
+                        executedNodes++;
+                    }
+
+                    // Go to the next macroblock index
+                    // Reset to 0 if 'i' is the last one
+                    i = (i < blockCount - 1) ? i + 1 : 0;
+                    if (iterNum++ >= threshold)
+                    {
+                        //LogWarningNotAllMacroblocksExecuted(macroBlockList);
+                        break;
+                    }
                 }
 
-                // Go to the next macroblock index
-                // Reset to 0 if 'i' is the last one
-                i = (i < blockCount - 1) ? i + 1 : 0;
-                if (iterNum++ >= threshold)
+                // Reset after execution
+                ResetMacroblocksToReady(macroBlockList);
+            }
+        }
+
+        private bool HasCompletedExecution(List<ProtoCore.Runtime.MacroBlock> macroBlockList)
+        {
+            foreach (MacroBlock block in macroBlockList)
+            {
+                if (block.State != MacroBlock.ExecuteState.Done)
                 {
-                    //LogWarningNotAllMacroblocksExecuted(macroBlockList);
-                    break;
+                    return false;
                 }
             }
-
-            // Reset after execution
-            ResetMacroblocksToReady(macroBlockList);
+            return true;
         }
 
         /// <summary>
