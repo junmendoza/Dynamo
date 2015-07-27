@@ -84,7 +84,7 @@ namespace ProtoCore.DSASM
         public bool IsExplicitCall { get; set; }
 
         public List<AssociativeGraph.GraphNode> deferedGraphNodes { get; private set; }
-        private int executingMacroBlock;
+        public int ExecutingMacroBlock { get; private set; }
 
         /// <summary>
         /// This is the list of graphnodes that are reachable from the current state
@@ -115,7 +115,23 @@ namespace ProtoCore.DSASM
             bounceType = CallingConvention.BounceType.kImplicit;
 
             deferedGraphNodes = new List<AssociativeGraph.GraphNode>();
-            executingMacroBlock = Constants.kInvalidIndex;
+            ExecutingMacroBlock = Constants.kInvalidIndex;
+        }
+
+        /// <summary>
+        /// Cache graphnodes in scope
+        /// For debug mode, there are no macroblocks so just retrieve all graphnodes in the currend scope
+        /// </summary>
+        private void SetupGraphNodesInScopeDebug()
+        {
+            int ci = Constants.kInvalidIndex;
+            int fi = Constants.kGlobalScope;
+            if (!IsGlobalScope())
+            {
+                ci = rmem.CurrentStackFrame.ClassScope;
+                fi = rmem.CurrentStackFrame.FunctionScope;
+            }
+            graphNodesInProgramScope = istream.dependencyGraph.GetGraphNodesAtScope(ci, fi);
         }
 
         /// <summary>
@@ -134,8 +150,11 @@ namespace ProtoCore.DSASM
                 List<AssociativeGraph.GraphNode> globalScopeNodes = istream.dependencyGraph.GetGraphNodesAtScope(ci, fi);
 
                 // Get only the nodes within the macroblock
-                graphNodesInProgramScope = new List<AssociativeGraph.GraphNode>();
-                graphNodesInProgramScope.AddRange(globalScopeNodes.Where(g => g.MacroblockID == executingMacroBlock));
+                if (globalScopeNodes != null)
+                {
+                    graphNodesInProgramScope = new List<AssociativeGraph.GraphNode>();
+                    graphNodesInProgramScope.AddRange(globalScopeNodes.Where(g => g.MacroblockID == ExecutingMacroBlock));
+                }
             }
             else
             {
@@ -229,7 +248,7 @@ namespace ProtoCore.DSASM
                 SetupAndPushBounceStackFrame(exeblock, entry, stackFrame, locals);
                 runtimeCore.DebugProps.SetUpBounce(exec, stackFrame.FunctionCallerBlock, stackFrame.ReturnPC);
             }
-            Execute(exeblock, entry, breakpoints);
+            Execute(exeblock, entry, breakpoints, 0);
             return RX;
         }
 
@@ -260,7 +279,7 @@ namespace ProtoCore.DSASM
                 SetupAndPushBounceStackFrame(exeblock, entry, stackFrame, locals);
                 runtimeCore.DebugProps.SetUpBounce(exec, stackFrame.FunctionCallerBlock, stackFrame.ReturnPC);
             }
-            executive.Execute(exeblock, entry, breakpoints);
+            executive.Execute(exeblock, entry, breakpoints, 0);
             return executive.RX;
         }
 
@@ -2430,7 +2449,8 @@ namespace ProtoCore.DSASM
             List<Instruction> instructions = istream.instrList;
             Validity.Assert(null != instructions);
 
-            SetupGraphNodesInScope();
+            //SetupGraphNodesInScope();
+            SetupGraphNodesInScopeDebug();
 
             // Restore the previous state
             //rmem = runtimeCore.RuntimeMemory;
@@ -2556,8 +2576,9 @@ namespace ProtoCore.DSASM
         /// <param name="entry"></param>
         /// <param name="breakpoints"></param>
         /// <param name="language"></param>
-        public void Execute(int exeblock, int entry, List<Instruction> breakpoints, Language language = Language.kInvalid)
+        public void Execute(int exeblock, int entry, List<Instruction> breakpoints, int macroblockID, Language language = Language.kInvalid)
         {
+            ExecutingMacroBlock = macroblockID;
             terminate = true;
             if (entry != Constants.kInvalidPC)
             {
@@ -2729,11 +2750,11 @@ namespace ProtoCore.DSASM
             if (entry != Constants.kInvalidPC)
             {
             //    exe.SetupMacroBlock(macroBlock.UID);
-                executingMacroBlock = macroBlock.UID;
+                //executingMacroBlock = macroBlock.UID;
                 int scope = 0;
                 try
                 {
-                    Execute(scope, entry, null);
+                    Execute(scope, entry, null, macroBlock.UID);
                 }
                 catch (ProtoCore.Exceptions.ExecutionCancelledException)
                 {

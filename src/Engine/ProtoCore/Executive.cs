@@ -20,7 +20,7 @@ namespace ProtoCore
         {
             ProtoCore.DSASM.Interpreter interpreter = new ProtoCore.DSASM.Interpreter(runtimeCore, fepRun);
             CurrentDSASMExec = interpreter.runtime;
-            return interpreter.Run(codeblock, entry, CurrentDSASMExec.executingLanguage, breakpoints);
+            return interpreter.Run(codeblock, entry, 0, CurrentDSASMExec.executingLanguage, breakpoints);
         }
 
 	}

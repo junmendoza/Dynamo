@@ -32,10 +32,15 @@ namespace ProtoCore.DSASM
             runtime.rmem.Push(val);
         }
 
-        public StackValue Run(int codeblock = Constants.kInvalidIndex, int entry = Constants.kInvalidIndex, Language lang = Language.kInvalid, List<Instruction> breakpoints = null)
+        public StackValue Run(
+            int codeblock = Constants.kInvalidIndex, 
+            int entry = Constants.kInvalidIndex, 
+            int macroblockID = Constants.kInvalidIndex,
+            Language lang = Language.kInvalid, 
+            List<Instruction> breakpoints = null)
         {
             runtime.RX = StackValue.Null;
-            runtime.Execute(codeblock, entry, breakpoints, lang);
+            runtime.Execute(codeblock, entry, breakpoints, macroblockID, lang);
             return runtime.RX;
         }
     }
