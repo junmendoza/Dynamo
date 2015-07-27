@@ -140,27 +140,35 @@ namespace ProtoCore.DSASM
         private void SetupGraphNodesInScope()
         {
 #if __MACROBLOCK_CORE_EXECUTION
-            int ci = Constants.kInvalidIndex;
-            int fi = Constants.kGlobalScope;
-            // Check if wh're in the global scope
-            // executingBlock is 0, if its the outer block (no language block)
-            // IsGlobalScope returns if true if execution is not within a function call
-            if (executingBlock == 0 && IsGlobalScope())
+            if (runtimeCore.Options.IDEDebugMode)
             {
-                List<AssociativeGraph.GraphNode> globalScopeNodes = istream.dependencyGraph.GetGraphNodesAtScope(ci, fi);
-
-                // Get only the nodes within the macroblock
-                if (globalScopeNodes != null)
-                {
-                    graphNodesInProgramScope = new List<AssociativeGraph.GraphNode>();
-                    graphNodesInProgramScope.AddRange(globalScopeNodes.Where(g => g.MacroblockID == ExecutingMacroBlock));
-                }
+                // Debug mode ignores macroblock groups and executes linearly
+                SetupGraphNodesInScopeDebug();
             }
             else
             {
-                ci = rmem.CurrentStackFrame.ClassScope;
-                fi = rmem.CurrentStackFrame.FunctionScope;
-                graphNodesInProgramScope = istream.dependencyGraph.GetGraphNodesAtScope(ci, fi);
+                int ci = Constants.kInvalidIndex;
+                int fi = Constants.kGlobalScope;
+                // Check if wh're in the global scope
+                // executingBlock is 0, if its the outer block (no language block)
+                // IsGlobalScope returns if true if execution is not within a function call
+                if (executingBlock == 0 && IsGlobalScope())
+                {
+                    List<AssociativeGraph.GraphNode> globalScopeNodes = istream.dependencyGraph.GetGraphNodesAtScope(ci, fi);
+
+                    // Get only the nodes within the macroblock
+                    if (globalScopeNodes != null)
+                    {
+                        graphNodesInProgramScope = new List<AssociativeGraph.GraphNode>();
+                        graphNodesInProgramScope.AddRange(globalScopeNodes.Where(g => g.MacroblockID == ExecutingMacroBlock));
+                    }
+                }
+                else
+                {
+                    ci = rmem.CurrentStackFrame.ClassScope;
+                    fi = rmem.CurrentStackFrame.FunctionScope;
+                    graphNodesInProgramScope = istream.dependencyGraph.GetGraphNodesAtScope(ci, fi);
+                }
             }
 #else             
             int ci = Constants.kInvalidIndex;
@@ -2449,8 +2457,7 @@ namespace ProtoCore.DSASM
             List<Instruction> instructions = istream.instrList;
             Validity.Assert(null != instructions);
 
-            //SetupGraphNodesInScope();
-            SetupGraphNodesInScopeDebug();
+            SetupGraphNodesInScope();
 
             // Restore the previous state
             //rmem = runtimeCore.RuntimeMemory;
@@ -2749,8 +2756,6 @@ namespace ProtoCore.DSASM
             int entry = macroBlock.GenerateEntryPoint();
             if (entry != Constants.kInvalidPC)
             {
-            //    exe.SetupMacroBlock(macroBlock.UID);
-                //executingMacroBlock = macroBlock.UID;
                 int scope = 0;
                 try
                 {
