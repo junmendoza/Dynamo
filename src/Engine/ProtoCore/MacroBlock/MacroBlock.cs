@@ -276,6 +276,11 @@ namespace ProtoCore
                 {
                     foreach (AssociativeGraph.GraphNode child in graphNode.ChildrenNodes)
                     {
+                        if (child.Visited)
+                        {
+                            continue;
+                        }
+
                         child.Visited = true;
                         CacheGraphnodeToMacroblock(child, macroblockID++, true);
                         BuildMacroblock(child, programSnapshot);
