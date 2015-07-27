@@ -84,6 +84,7 @@ namespace ProtoCore.DSASM
         public bool IsExplicitCall { get; set; }
 
         public List<AssociativeGraph.GraphNode> deferedGraphNodes { get; private set; }
+        private int executingMacroBlock;
 
         /// <summary>
         /// This is the list of graphnodes that are reachable from the current state
@@ -114,6 +115,7 @@ namespace ProtoCore.DSASM
             bounceType = CallingConvention.BounceType.kImplicit;
 
             deferedGraphNodes = new List<AssociativeGraph.GraphNode>();
+            executingMacroBlock = Constants.kInvalidIndex;
         }
 
         /// <summary>
@@ -133,7 +135,7 @@ namespace ProtoCore.DSASM
 
                 // Get only the nodes within the macroblock
                 graphNodesInProgramScope = new List<AssociativeGraph.GraphNode>();
-                graphNodesInProgramScope.AddRange(globalScopeNodes.Where(g => g.MacroblockID == exe.ExecutingMacroBlock));
+                graphNodesInProgramScope.AddRange(globalScopeNodes.Where(g => g.MacroblockID == executingMacroBlock));
             }
             else
             {
@@ -2726,7 +2728,8 @@ namespace ProtoCore.DSASM
             int entry = macroBlock.GenerateEntryPoint();
             if (entry != Constants.kInvalidPC)
             {
-                exe.SetupMacroBlock(macroBlock.UID);
+            //    exe.SetupMacroBlock(macroBlock.UID);
+                executingMacroBlock = macroBlock.UID;
                 int scope = 0;
                 try
                 {
@@ -6417,7 +6420,7 @@ namespace ProtoCore.DSASM
             // Find dependent nodes and mark them dirty
             int reachableNodes = UpdateGraph(exprID, modBlkID, isSSA);
 
-            if (runtimeCore.Options.ApplyUpdate)
+            if (runtimeCore.Options.IsDeltaExecution)// || runtimeCore.Options.ApplyUpdate)
             {
                 // Go to the first dirty pc
                 SetupNextExecutableGraph(fi, ci);
