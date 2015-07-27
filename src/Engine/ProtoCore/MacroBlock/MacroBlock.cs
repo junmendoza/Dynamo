@@ -213,6 +213,24 @@ namespace ProtoCore
         }
 
         /// <summary>
+        /// Checks if a graphnode can be allocated to a macroblock by inspecting its state
+        /// </summary>
+        /// <param name="graphnode"></param>
+        /// <returns></returns>
+        private bool CanAllocateGraphNodeToMacroblock(AssociativeGraph.GraphNode graphnode)
+        {
+            // Check for individual properties
+            if (graphnode.isActive && !graphnode.Visited)
+            {
+                return true;
+            }
+
+            // Check for other states here
+
+            return false;
+        }
+
+        /// <summary>
         /// Check if the graphnode is the start of a new macroblock
         /// </summary>
         /// <param name="graphnode"></param>
@@ -253,12 +271,7 @@ namespace ProtoCore
         {
             foreach (AssociativeGraph.GraphNode graphNode in programSnapshot)
             {
-                if (!graphNode.isActive)
-                {
-                    continue;
-                }
-
-                if (graphNode.Visited)
+                if (!CanAllocateGraphNodeToMacroblock(graphNode))
                 {
                     continue;
                 }
@@ -276,7 +289,7 @@ namespace ProtoCore
                 {
                     foreach (AssociativeGraph.GraphNode child in graphNode.ChildrenNodes)
                     {
-                        if (child.Visited)
+                        if (!CanAllocateGraphNodeToMacroblock(child))
                         {
                             continue;
                         }
@@ -306,12 +319,7 @@ namespace ProtoCore
             // Second pass - Generate macroblocks for the rest of the unvisited nodes
             foreach (AssociativeGraph.GraphNode graphNode in programSnapshot)
             {
-                if (!graphNode.isActive)
-                {
-                    continue;
-                }
-
-                if (graphNode.Visited)
+                if (!CanAllocateGraphNodeToMacroblock(graphNode))
                 {
                     continue;
                 }
@@ -337,7 +345,7 @@ namespace ProtoCore
             foreach (AssociativeGraph.GraphNode graphNode in programSnapshot)
             {
                 AssociativeGraph.GraphNode depNode = null;
-                if (graphNode.Visited)
+                if (!CanAllocateGraphNodeToMacroblock(graphNode))
                 {
                     continue;
                 }
