@@ -38,15 +38,13 @@ namespace ProtoCore.Runtime
         /// </summary>
         /// <returns></returns>
         public int GenerateEntryPoint()
-        {
+        { 
+            // The entry point in the first dirty node
             int entryPoint = Constants.kInvalidPC;
-            if (GraphNodeList.Count > 0)
+            AssociativeGraph.GraphNode nextGraphNode = ProtoCore.AssociativeEngine.Utils.GetFirstDirtyGraphNodeFromPC(0, GraphNodeList);
+            if (nextGraphNode != null)
             {
-                AssociativeGraph.GraphNode entryGraphNode = GraphNodeList[0];
-                if (entryGraphNode.isDirty)
-                {
-                    entryPoint = entryGraphNode.updateBlock.startpc;
-                }
+                entryPoint = nextGraphNode.updateBlock.startpc;
             }
             return entryPoint;
         }
