@@ -3869,6 +3869,8 @@ namespace ProtoAssociative
                                 identList1, 
                                 Operator.assign
                                 );
+
+                            bnodeGet.OriginalAstID = bNode.OriginalAstID;
                             newAstList.Add(bnodeGet);
 
                             //      tval[0] = 10     
@@ -3879,6 +3881,7 @@ namespace ProtoAssociative
                                 argument,
                                 Operator.assign
                                 );
+                            bnodeAssign.OriginalAstID = bNode.OriginalAstID;
                             newAstList.Add(bnodeAssign);
 
                             //      tmp = a.%set_x(tval)
@@ -3901,6 +3904,8 @@ namespace ProtoAssociative
                                 identList2,
                                 Operator.assign
                                 );
+
+                            bnodeSet.OriginalAstID = bNode.OriginalAstID;
                             newAstList.Add(bnodeSet);
                         }
                         else
@@ -3917,6 +3922,8 @@ namespace ProtoAssociative
                             BinaryExpressionNode convertedAssignNode = new BinaryExpressionNode(lhsTemp, identList, Operator.assign);
 
                             NodeUtils.CopyNodeLocation(convertedAssignNode, bNode);
+
+                            convertedAssignNode.OriginalAstID = bNode.OriginalAstID;
                             newAstList.Add(convertedAssignNode);
                         }
                     }

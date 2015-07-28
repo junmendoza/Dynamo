@@ -350,7 +350,10 @@ namespace ProtoCore
 
                 // Does graphNode node depend on currentNode and it is not an input node
                 bool isInputNode = IsMacroblockEntryPoint(graphNode);
-                if (!isInputNode && graphNode.DependsOn(currentNode.updateNodeRefList[0], ref depNode))
+                if (!isInputNode 
+                    && graphNode.DependsOn(currentNode.updateNodeRefList[0], ref depNode) 
+                    && !AssociativeEngine.Utils.AreLHSEqualIdentList(currentNode, graphNode)
+                    )
                 {
                     graphNode.Visited = true;
                     CacheGraphnodeToMacroblock(graphNode, currentNode.MacroblockID, false);
