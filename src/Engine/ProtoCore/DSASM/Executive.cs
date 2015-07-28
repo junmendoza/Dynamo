@@ -491,7 +491,12 @@ namespace ProtoCore.DSASM
             {
                 if (!runtimeCore.Options.IsDeltaExecution)
                 {
-                    pc = SetupGraphNodesForEntry(pc);
+                    // All graphnodes in inner scopes must be reset for re-execution
+                    bool isGlobalScope = executingBlock == 0 && IsGlobalScope();
+                    if (!isGlobalScope)
+                    {
+                        pc = SetupGraphNodesForEntry(pc);
+                    }
                     SetupGraphEntryPoint(pc, IsGlobalScope());
                 }
                 else
