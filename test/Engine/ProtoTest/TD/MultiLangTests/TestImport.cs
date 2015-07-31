@@ -77,7 +77,7 @@ c = Scale(a,b);";
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T007_BasicImport_TestClassConstructorAndProperties()
         {
@@ -101,7 +101,7 @@ myPointZ = myPoint.Z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T008_BasicImport_TestClassConstructorAndProperties_UserDefinedClass()
         {
@@ -140,7 +140,7 @@ endPtZ = endPt.Z;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T009_BasicImport_TestClassInstanceMethod()
         {
@@ -157,7 +157,7 @@ midValue = myPoint.MidValue();";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T010_BaseImportWithVariableClassInstance_top()
         {
@@ -214,7 +214,7 @@ import (""BaseImportImperative.ds"");";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T014_BasicImport_BeforeImperative()
         {
@@ -284,7 +284,7 @@ a = 10;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T018_MultipleImport()
         {
@@ -303,7 +303,7 @@ arr = Scale(midValue, 4.0);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T019_MultipleImport_ClashFunctionClassRedifinition()
         {

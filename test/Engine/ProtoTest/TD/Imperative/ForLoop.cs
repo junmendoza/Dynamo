@@ -1028,7 +1028,7 @@ x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T39_Defect_1452951_2()
         {
@@ -1077,7 +1077,7 @@ a4;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T39_Defect_1452951_3()
         {
@@ -1236,7 +1236,7 @@ p8 = y[1][1][1];
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         [Category("Failure")]
         public void T42_Create_3_Dim_Collection_Using_For_Loop_In_Class_Constructor()
@@ -1304,7 +1304,7 @@ p8 = y[1][1][1];
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T43_Create_3_Dim_Collection_Using_For_Loop_In_Class_Method()
         {
@@ -1374,7 +1374,7 @@ p8 = y[1][1][1];
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Array")]
         [Category("Failure")]
         public void T43_Create_CollectioninForLoop_1457172()
@@ -1438,7 +1438,7 @@ p8 = y[2][2];
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Array")]
         [Category("Failure")]
         public void T43_Create_CollectioninForLoop_1457172_2()
@@ -1524,7 +1524,7 @@ for (i in (0..10)) {
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T45_Defect_1458284()
         {

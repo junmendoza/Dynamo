@@ -117,7 +117,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestFunctionsOverload03()
         {
             String code =
@@ -142,7 +142,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestDynamicDispatch01()
         {
             String code =
@@ -154,7 +154,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Class")]
         public void TestClasses01()
         {
@@ -166,7 +166,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClasses02()
         {
             String code =
@@ -177,7 +177,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClasses03()
         {
             String code =
@@ -187,7 +187,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClasses04()
         {
             String code =
@@ -198,7 +198,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClasses05()
         {
             String code =
@@ -208,7 +208,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClasses06()
         {
             String code =
@@ -222,7 +222,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClasses07()
         {
             String code =
@@ -232,7 +232,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClasses08()
         {
             String code =
@@ -244,7 +244,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction01()
         {
             String code =
@@ -255,7 +255,7 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassHeirarchy01()
         {
             String code =
@@ -303,7 +303,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassHeirarchy02()
         {
             String code =
@@ -352,7 +352,7 @@ x = d.foo(c);
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction02()
         {
             String code =
@@ -362,7 +362,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction03()
         {
             String code =
@@ -373,7 +373,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction04()
         {
             String code =
@@ -384,7 +384,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction05()
         {
             String code =
@@ -401,7 +401,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction06()
         {
             String code =
@@ -413,7 +413,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction07()
         {
             String code =
@@ -423,7 +423,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction08()
         {
             String code =
@@ -438,7 +438,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction09()
         {
             String code =
@@ -450,7 +450,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction10()
         {
             String code =
@@ -459,7 +459,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction11()
         {
             String code =
@@ -469,7 +469,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction12()
         {
             String code =
@@ -478,7 +478,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction13()
         {
             String code =
@@ -491,7 +491,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("JunToFix")]
         public void TestClassFunction14()
         {
@@ -503,7 +503,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction15()
         {
             String code =
@@ -515,7 +515,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction16()
         {
             String code =
@@ -524,7 +524,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassFunction17()
         {
             String code =
@@ -535,7 +535,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestStaticUpdate01()
         {
             string code = @"class Base{    static x : int = 1;}t = Base.x;Base.x = 10;                 ";
@@ -544,7 +544,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestStaticUpdate02()
         {
             string code = @"class Base{    static x : int[];}t = Base.x;Base.x = { 1, 2 };                   ";
@@ -553,7 +553,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestStaticProperty01()
         {
             string code = @"class A{    static x:int;    static def foo(i)    {        return = 2 * i;    }}a = A.A();a.x = 3;t1 = a.x;b = A.A();t2 = b.x;                ";
@@ -563,7 +563,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestStaticProperty02()
         {
             string code = @"class S{	public static a : int;}class C{    public x : int;    constructor C()    {        S.a = 2;    }}p = C.C();b = S.a;";
@@ -573,7 +573,7 @@ x = d.foo(c);
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestStaticMethodResolution()
         {
             string code = @"            class A            {	            b : int;	            static z : int;	            def foo(a : int)	            {		            b = 1;		            return = a;	            }	            static def foo(a : int[])	            {		            z = 2;		            return = 9;	            }            }            x = A.A();            c = {1,2,3,4};            d = A.foo(c);            y = x.b;            v = x.z;            w = A.z;";
@@ -592,7 +592,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestClassNegative01()
         {
             Assert.Throws(typeof(ProtoCore.Exceptions.CompileErrorsOccured), () =>
@@ -696,7 +696,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestIndexingIntoArray01()
         {
             String code =
@@ -707,7 +707,7 @@ x = d.foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestIndexingIntoArray02()
         {
             String code =
@@ -922,7 +922,7 @@ r2 = a[""x""];
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestDictionary05()
         {
             // Using class instance as a key 
@@ -1428,7 +1428,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestReplicationGuidesOnDotOps01()
         {
             string code = @"class A{    x : var[];    constructor A()    {        x = {1,2};    }}a = A.A();b = A.A();c = a.x<1> + b.x<2>;x = c[0];y = c[1];";
@@ -1438,7 +1438,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestReplicationGuidesOnDotOps02()
         {
             string code = @"class C{    def f(a:int,b:int)    {        return = 1;    }}p = C.C();x = {1,2};y = {3,4};a = p.f(x<1>, y<2>);b = a[0];";
@@ -1447,7 +1447,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestReplicationGuidesOnDotOps03()
         {
             string code = @"class C{    def f(a:int,b:int)    {        return = 1;    }}p = C.C();a = p.f({1,2}<1>, {3,4}<2>);b = a[0];";
@@ -1456,7 +1456,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestReplicationGuidesOnDotOps04()
         {
             string code = @"class C{    def f(a : int)    {        return = 10;    }}p = {C.C(), C.C()};x = p<1>.f({1,2}<2>);y = x[0];z = x[1];";
@@ -1466,7 +1466,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestReplicationGuidesOnDotOps05()
         {
             string code = @"class A{        x;        constructor A ( x1 )        {            x = x1;        }        def foo ( y )        {            return = x + y;        }}a = A.A (0..1);b = 2..3;x = a<1>.foo(b<2>);y = x[0];z = x[1];";
@@ -1586,7 +1586,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestEq()
         {
             string code= @"
@@ -1680,7 +1680,7 @@ x4 = 0..#5..10;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void FunctionWithinConstr001()
         {
             String code =
@@ -1819,7 +1819,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void NegativeIndexOnCollection003()
         {
             String code =
@@ -1829,7 +1829,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void PopListWithDimension()
         {
             String code =
@@ -1896,7 +1896,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestFunctionUpdate01()
         {
             String code =
@@ -1906,7 +1906,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("JunToFix")]
         public void TestFunctionUpdate02()
         {
@@ -1917,7 +1917,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestNoUpdate01()
         {
             String code =
@@ -1927,7 +1927,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyUpdate01()
         {
             String code =
@@ -1938,7 +1938,7 @@ b = 2.1 % 0;
         // Comment Jun: Investigate how replicating setters have affected this update
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyUpdate02()
         {
             String code =
@@ -1949,7 +1949,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyUpdate03()
         {
             String code =
@@ -1959,7 +1959,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyUpdate04()
         {
             String code =
@@ -1969,7 +1969,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyUpdate05()
         {
             String code =
@@ -1979,7 +1979,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyUpdate06()
         {
             String code =
@@ -1990,7 +1990,7 @@ b = 2.1 % 0;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyUpdate07()
         {
             String code =
@@ -2000,7 +2000,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestLHSUpdate01()
         {
             String code =
@@ -2011,7 +2011,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestLHSUpdate02()
         {
             String code =
@@ -2021,7 +2021,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyModificationInMethodUpdate01()
         {
             String code =
@@ -2031,7 +2031,7 @@ b = 2.1 % 0;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropertyModificationInMethodUpdate02()
         {
             String code =
@@ -2124,7 +2124,7 @@ a = 10;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestGCRefCount()
         {
             String code =
@@ -2182,7 +2182,7 @@ a = 10;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestAttributeOnClass()
         {
             string src = @"class TestAttribute
@@ -2224,7 +2224,7 @@ class Point
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestAttributeOnGlobalFunction()
         {
             string src = @"class TestAttribute
@@ -2266,7 +2266,7 @@ class Point
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestAttributeOnLanguageBlock()
         {
             string src = @"class TestAttribute
@@ -2292,7 +2292,7 @@ class VisibilityAttribute
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestAttributeWithLanguageBlockAndArrayExpression()
         {
             string src = @"class TestAttribute
@@ -2358,7 +2358,7 @@ s9=s7+s8;";
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestStringOperations()
         {
             string src = @"
@@ -2427,7 +2427,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestTypeArrayAssign3()
         {
             String code =
@@ -2438,7 +2438,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestTypedAssignment01()
         {
             String code =
@@ -2472,7 +2472,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestTypedAssignment04()
         {
             string code =
@@ -2482,7 +2482,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestTypedAssignment05()
         {
             string code =
@@ -2502,7 +2502,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Escalate")]
         [Category("ToFixJun")]
         public void TestPropAssignWithReplication()
@@ -2516,7 +2516,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestPropAssignWithReplication02()
         {
             string code =
@@ -3044,7 +3044,7 @@ p = f();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestLocalFromMemberFunction01()
         {
             string code =
@@ -3068,7 +3068,7 @@ y = p.f();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestLocalFromMemberFunction02()
         {
             string code =

@@ -599,7 +599,7 @@ x = test();";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T22_Defect_1463683_2()
         {
@@ -653,7 +653,7 @@ y;y1;y2;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T22_Defect_1463683_3()
         {

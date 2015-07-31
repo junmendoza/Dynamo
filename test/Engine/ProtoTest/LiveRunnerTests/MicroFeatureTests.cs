@@ -3123,7 +3123,7 @@ r = Equals(x, {41, 42});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestExecution()
         {
             List<string> codes = new List<string>() 
@@ -4769,7 +4769,9 @@ r = func_1(x);
         public void TestNestedLanguageBlockReExecution05()
         {
             string code = @"
-def foo()
+
+
+def foo()
 {
     x2 = 5;
     v1 = [Associative]

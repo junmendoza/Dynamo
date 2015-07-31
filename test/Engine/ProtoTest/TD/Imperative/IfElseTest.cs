@@ -432,7 +432,7 @@ b;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T12_TestIfElseUsingClassProperty()
         {
@@ -1702,7 +1702,7 @@ c;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T56_Defect_1460162()
         {
@@ -1967,7 +1967,7 @@ test = foo();
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T60_Comparing_Class_Properties()
         {
@@ -2009,7 +2009,7 @@ x2 = [Imperative]
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T60_Comparing_Class_Properties_With_Null()
         {
@@ -2037,7 +2037,7 @@ x1 = a1.a == B.B(10).a ? true : false ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T61_Accessing_non_existent_properties_of_array_elements()
         {
             // Assert.Fail("");
@@ -2185,7 +2185,7 @@ r:bool = foo(null);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("TDDIfInline")]
         public void TDD_UserDefinedTypeConvertedToBool_NotNull_defect()
         {
@@ -2206,7 +2206,7 @@ d:bool=A.A(5);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("TDDIfInline")]
         //not null user defined var is not evaluated as true
         public void TDD_UserDefinedTypeConvertedToBool()
@@ -2287,7 +2287,7 @@ r = [Imperative]
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("TDDIfInline")]
         public void TDD_UserDefinedTypeConvertedToBool_Inline()
         {

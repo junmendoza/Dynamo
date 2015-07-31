@@ -250,7 +250,7 @@ r5 = __Apply(comp3, 9);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestApplyOnStaticFunction()
         {
             string code =
@@ -272,7 +272,7 @@ r = __Apply(fo, 3);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestApplyOnConstructor()
         {
             string code =
@@ -296,7 +296,7 @@ r = f.i;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestSortByKey()
         {
             // Tracked by: http://adsk-oss.myjetbrains.com/youtrack/issue/MAGN-4037
@@ -350,7 +350,7 @@ t4 = __Map(getPointKey, r6);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestGroupByKey()
         {
             string code =
@@ -456,7 +456,7 @@ v2 = __Reduce(acc2, 0, 1..10);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestGroupByKeyByString()
         {
             string code =

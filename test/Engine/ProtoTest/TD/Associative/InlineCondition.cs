@@ -33,7 +33,7 @@ namespace ProtoTest.TD.Associative
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T002_Inline_Using_Math_Lib_Functions()
         {
@@ -183,7 +183,7 @@ namespace ProtoTest.TD.Associative
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Replication")]
         public void T004_Inline_Inside_Class_Constructor_and_replication()
         {
@@ -376,7 +376,7 @@ a = c > 1 ? a : a + 1;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T012_Defect_1467288_2()
         {
             string code =
@@ -401,7 +401,7 @@ a1 = x.a;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T012_Defect_1467288_3()
         {
             string code =
@@ -432,7 +432,7 @@ test = a1.foo(5);
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T012_Defect_1467288_4()
         {
             string code =
@@ -458,7 +458,7 @@ a = x.a;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T012_Defect_1467288_5()
         {
             string code =
@@ -482,7 +482,7 @@ a = x.a;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T012_Defect_1467288_6()
         {
             string code =
@@ -631,7 +631,7 @@ test = foo();
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T014_InlineConditionContainUndefinedType_3()
         {
             string code = @"
@@ -925,7 +925,7 @@ d;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T019_conditionequalto_1467469()
         {
             // Tracked by http://adsk-oss.myjetbrains.com/youtrack/issue/MAGN-1692
@@ -1008,7 +1008,7 @@ test = foo();
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T021_1467442_4()
         {
             string code = @"
@@ -1087,7 +1087,7 @@ z = foo ( a > 0 ? 1.4 : false  );
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T021_1467442_8()
         {
             string code = @"

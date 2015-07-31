@@ -12,7 +12,7 @@ namespace ProtoTest.Associative
     class MethodsFocusTeam : ProtoTestBase
     {
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void SimpleCtorResolution01()
         {
             String code =
@@ -34,7 +34,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T001_DotOp_DefautConstructor_01()
         {
             String code =
@@ -45,7 +45,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T002_DotOp_DefautConstructor_02()
         {
             String code =
@@ -57,7 +57,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T003_DotOp_DefautConstructor_03()
         {
             String code =
@@ -68,7 +68,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T004_DotOp_DefautConstructor_04()
         {
             String code =
@@ -81,7 +81,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T005_DotOp_DefautConstructor_05()
         {
             String code =
@@ -94,7 +94,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T006_DotOp_SelfDefinedConstructor_01()
         {
             String code =
@@ -105,7 +105,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T007_DotOp_SelfDefinedConstructor_02()
         {
             String code =
@@ -134,7 +134,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467134_intToDouble_dotOp()
         {
             String code =
@@ -144,7 +144,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T008_DotOp_MultiConstructor_01()
         {
             String code =
@@ -157,7 +157,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T009_DotOp_FuncCall()
         {
             String code =
@@ -170,7 +170,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T010_DotOp_Property()
         {
             String code =
@@ -183,7 +183,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T011_DotOp_Property_2()
         {
             String code =
@@ -196,7 +196,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T012_DotOp_UserDefinedClass_01()
         {
             String code =
@@ -208,7 +208,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T013_DotOp_UserDefinedClass_02()
         {
             String code =
@@ -223,7 +223,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T014_DotOp_UserDefinedClass_03()
         {
             String code =
@@ -246,7 +246,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Failure")]
         public void TV1467135_DotOp_Replication_1()
         {
@@ -263,7 +263,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467135_DotOp_Replication_2()
         {
             String code =
@@ -278,7 +278,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Failure")]
         public void TV1467135_DotOp_Replication_3()
         {
@@ -296,7 +296,7 @@ namespace ProtoTest.Associative
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467135_CallingFuncInSameScope()
         {
             String code =
@@ -308,7 +308,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467135_CallingFuncInSameScope_this()
         {
             String code =
@@ -321,7 +321,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword()
         {
             String code =
@@ -332,7 +332,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword_InMemberFunction_Replication()
         {
             String code =
@@ -343,7 +343,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword_InMemberFunction_Replication_2()
         {
             String code =
@@ -354,7 +354,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword_InMemberFunction_Replication_3()
         {
             String code =
@@ -366,7 +366,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword_2()
         {
             String code =
@@ -376,7 +376,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword_2_Replication()
         {
             String code =
@@ -387,7 +387,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword_3()
         {
             String code =
@@ -400,7 +400,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467372_ThisKeyword_InMemberFunction_1()
         {
             String code =
@@ -410,7 +410,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467135_DotOp_Replication_4()
         {
             String code =
@@ -425,7 +425,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T015_DotOp_Collection_01()
         {
             String code =
@@ -435,7 +435,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T015_DotOp_Collection_01a()
         {
             String code =
@@ -445,7 +445,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T016_DotOp_Collection_02()
         {
             String code =
@@ -459,7 +459,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T017_DotOp_Collection_03()
         {
             String code =
@@ -470,7 +470,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T018_DotOp_Collection_04()
         {
             String code =
@@ -484,7 +484,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV018_DotOp_Collection_04_1()
         {
             String code =
@@ -506,7 +506,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV018_DotOp_Collection_04_3()
         {
             String code =
@@ -518,7 +518,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV018_DotOp_Collection_04_4()
         {
             String code =
@@ -541,7 +541,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T019_DotOp_Collection_05()
         {
             String code =
@@ -556,7 +556,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T021_DotOp_Nested_01()
         {
             String code =
@@ -568,7 +568,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T021_DotOp_Nested_02()
         {
             String code =
@@ -584,7 +584,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467137_DotOp_Indexing_1()
         {
             String code =
@@ -599,7 +599,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467137_1_DotOp_Update()
         {
             String code =
@@ -616,7 +616,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T021_DotOp_Nested_03()
         {
             String code =
@@ -632,7 +632,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467333()
         {
             String code =
@@ -647,7 +647,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T022_DotOp_CallFunc_01()
         {
             String code =
@@ -659,7 +659,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Failure")]
         public void T023_DotOp_FuncCall_02()
         {
@@ -672,7 +672,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T024_DotOp_FuncCall_03()
         {
             String code =
@@ -684,7 +684,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T025_DotOp_FuncCall_04()
         {
             String code =
@@ -696,7 +696,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV025_1467140_1()
         {
             String code =
@@ -709,7 +709,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV025_1467140_2()
         {
             String code =
@@ -722,7 +722,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T026_DotOp_FuncCall_05()
         {
             String code =
@@ -736,7 +736,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T027_DotOp_FuncCall_06()
         {
             String code =
@@ -751,7 +751,7 @@ namespace ProtoTest.Associative
         //////Inheritance
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T028_Inheritance_Property()
         {
             String code =
@@ -767,7 +767,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Class")]
         public void T029_Inheritance_Property_1()
         {
@@ -782,7 +782,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T030_Inheritance_Property_2()
         {
             String code =
@@ -793,7 +793,7 @@ namespace ProtoTest.Associative
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T031_Inheritance_Property_3()
         {
             String code =
@@ -808,7 +808,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T032_ReservationCheck_rangeExp()
         {
             String code =
@@ -819,7 +819,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T032_Defect_ReservationCheck_rangeExp()
         {
             String code =
@@ -840,7 +840,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T033_PushThroughCasting_UserDefinedType()
         {
             String code =
@@ -873,7 +873,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467147_PushThroughCastingWithReplication_2_constructor()
         {
             String code =
@@ -885,7 +885,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T034_PushThroughCastingWithReplication_UserDefinedType()
         {
             String code =
@@ -1105,7 +1105,7 @@ namespace ProtoTest.Associative
 [Test]        public void T039_Inheritance_()        {            String code =@"class A extends var{    fx = 0;    constructor A() : base var();    {        fx = 1;    }}a = A.A();b = a.fx;";            thisTest.RunScriptSource(code);            thisTest.Verify("fx", 1);        }*/
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T039_Inheritance_Method_1()
         {
             String code =
@@ -1117,7 +1117,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467161_Inheritance_Update_1()
         {
             String code =
@@ -1129,7 +1129,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467161_Inheritance_Update_2()
         {
             String code =
@@ -1142,7 +1142,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T040_Inheritance_Dynamic_Typing_1()
         {
             String code =
@@ -1154,7 +1154,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T041_Inheritance_Dynamic_Typing_2()
         {
             String code =
@@ -1168,7 +1168,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T042_Inheritance_Dynamic_Typing_3()
         {
             String code =
@@ -1182,7 +1182,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T044_Function_Overriding_NoArgs()
         {
             String code =
@@ -1194,7 +1194,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T043_Function_Overriding_1()
         {
             String code =
@@ -1208,7 +1208,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T043_Function_Overriding_2()
         {
             String code =
@@ -1222,7 +1222,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Failure")]
         public void TV1467063_Function_Overriding()
         {
@@ -1239,7 +1239,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T045_Inheritance_Method_02()
         {
             String code =
@@ -1250,7 +1250,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T046_Inheritance_Method_03()
         {
             String code =
@@ -1261,7 +1261,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T047_Inheritance_Method_04()
         {
             String code =
@@ -1282,7 +1282,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467175_2()
         {
             String code =
@@ -1292,7 +1292,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467175_3()
         {
             String code =
@@ -1303,7 +1303,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467175_4()
         {
             String code =
@@ -1314,7 +1314,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T049_Inheritance_Update_01()
         {
             String code =
@@ -1328,7 +1328,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T049_Inheritance_Update_02()
         {
             String code =
@@ -1343,7 +1343,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T049_Inheritance_Update_03()
         {
             String code =
@@ -1359,7 +1359,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV1467167()
         {
             String code =
@@ -1377,7 +1377,7 @@ namespace ProtoTest.Associative
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T050_Transitive_Inheritance_01()
         {
             String code =
@@ -1390,7 +1390,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T050_Transitive_Inheritance_02()
         {
             String code =
@@ -1404,7 +1404,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T050_Inheritance_Multi_Constructor_01()
         {
             String code =
@@ -1421,7 +1421,7 @@ namespace ProtoTest.Associative
         [Category("ToFixJun")]
         [Category("Failure")]
         [Category("Class")]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T051_TransitiveInheritance_Constructor()
         {
             String code =
@@ -1435,7 +1435,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T050_Inheritance_Multi_Constructor_02()
         {
             String code =
@@ -1450,7 +1450,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T052_Defect_ReplicationMethodOverloading()
         {
             String code =
@@ -1461,7 +1461,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Method Resolution")]
         [Category("Failure")]
         public void T052_Defect_ReplicationMethodOverloading_2()
@@ -1477,7 +1477,7 @@ namespace ProtoTest.Associative
         [Test]
         [Category("Method Resolution")]
         [Category("Failure")]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV052_Defect_ReplicationMethodOverloading_01()
         {
             String code =
@@ -1490,7 +1490,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Method Resolution")]
         public void TV052_Defect_ReplicationMethodOverloading_02()
         {
@@ -1503,7 +1503,7 @@ namespace ProtoTest.Associative
         [Test]
         [Category("Method Resolution")]
         [Category("Failure")]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV052_Defect_ReplicationMethodOverloading_03()
         {
             String code =
@@ -1518,7 +1518,7 @@ namespace ProtoTest.Associative
         [Test]
         [Category("Method Resolution")]
         [Category("Failure")]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TV052_Defect_ReplicationMethodOverloading_InUserDefinedClass()
         {
             String code =
@@ -1536,7 +1536,7 @@ namespace ProtoTest.Associative
 
         [Test]
         [Category("Failure")]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T053_ReplicationWithDiffTypesInArr()
         {
             String code =
@@ -1553,7 +1553,7 @@ namespace ProtoTest.Associative
 
         [Test]
         [Category("Failure")]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T054_ReplicationWithInvalidTypesInArr()
         {
             String code =
@@ -1570,7 +1570,7 @@ namespace ProtoTest.Associative
         }
         
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T055_ReplicationWithDiffTypesInArr_UserDefined_Simpler()
         {
             String code =
@@ -1591,7 +1591,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void Test()
         {
             String code =
@@ -1600,7 +1600,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T056_nonmatchingclass_1467162()
         {
             String code =
@@ -1611,7 +1611,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T057_nonmatchingclass_1467162_2()
         {
             String code =
@@ -1622,7 +1622,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T058_nonmatchingclass_1467162_3()
         {
             String code =
@@ -1633,7 +1633,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T059_Polymphism()
         {
             String code =
@@ -1643,7 +1643,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T059_Polymphism_2()
         {
             String code =
@@ -1654,7 +1654,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T059_Polymphism_3()
         {
             String code =
@@ -1664,7 +1664,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T059_Polymphism_4()
         {
             String code =
@@ -1674,7 +1674,7 @@ namespace ProtoTest.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T059_Polymphism_5()
         {
             String code =
@@ -1731,7 +1731,7 @@ namespace ProtoTest.Associative
         ///     
         /// </summary>
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestMethodResolutionForThisPtrs1()
         {
             string code = @"
@@ -1774,7 +1774,7 @@ r4 = a.foo(a,a,a);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestMethodResolutionForThisPtrs2()
         {
             string code = @"
@@ -1803,7 +1803,7 @@ r2 = a.foo(a, 1);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestMethodResolutionForThisPtrs3()
         {
             string code = @"

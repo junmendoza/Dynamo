@@ -7,7 +7,7 @@ namespace ProtoTest.TD.Associative
     class Class : ProtoTestBase
     {
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T001_Associative_Class_Property_Int()
         {
@@ -44,7 +44,7 @@ namespace ProtoTest.TD.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T002_Associative_Class_Property_Double()
         {
@@ -81,7 +81,7 @@ namespace ProtoTest.TD.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T003_Associative_Class_Property_Bool()
         {
@@ -108,7 +108,7 @@ namespace ProtoTest.TD.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T004_Associative_Class_Property_DefaultInitialization()
         {
@@ -140,7 +140,7 @@ namespace ProtoTest.TD.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T005_Associative_Class_Property_Get_InternalClassFunction()
         {
@@ -188,7 +188,7 @@ namespace ProtoTest.TD.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T006_Associative_Class_Property_UseInsideInternalClassFunction()
         {
@@ -220,7 +220,7 @@ namespace ProtoTest.TD.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T007_Associative_Class_Property_CallFromFunctionOutsideClass()
         {
@@ -267,7 +267,7 @@ namespace ProtoTest.TD.Associative
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T008_Associative_Class_Property_CallFromAnotherExternalClass()
         {
@@ -310,7 +310,7 @@ zPosition = myPoint.Z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T009_Associative_Class_Property_AssignInDifferentNamedConstructors()
         {
@@ -374,7 +374,7 @@ zPosition = myPoint.Z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T010_Associative_Class_Constructor_Overloads()
         {
@@ -416,7 +416,7 @@ zPosition = myPoint.Z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T011_Associative_Class_Property_ExtendedClass()
         {
@@ -464,7 +464,7 @@ zPt1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T012_Associative_Class_Property_Var()
         {
@@ -496,7 +496,7 @@ zPt1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T013_Associative_Class_Property_GetFromAnotherConstructorInSameClass()
         {
@@ -539,7 +539,7 @@ zPt1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T014_Associative_Class_Property_GetUsingMultipleReferencingWithSameName()
         {
@@ -586,7 +586,7 @@ zPt1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T015_Associative_Class_Property_SetInExternalFunction()
         {
@@ -627,7 +627,7 @@ zPt1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T016_Associative_Class_Property_SetInClassMethod()
         {
@@ -666,7 +666,7 @@ zPt1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T017_Associative_Class_Property_SetInExternalClassMethod()
         {
@@ -726,7 +726,7 @@ zPt1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T018_Associative_Class_Constructor_WithSameNameAndArgument_Negative()
         {
@@ -752,7 +752,7 @@ class TestClass
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T019_Associative_Class_Constructor_Overloads_WithSameNameAndDifferentArgumentNumber()
         {
@@ -789,7 +789,7 @@ class TestClass
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T020_Associative_Class_Constructor_Overloads_WithSameNameAndDifferentArgumenType()
         {
@@ -826,7 +826,7 @@ class TestClass
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T021_Associative_Class_Constructor_UsingUserDefinedClassAsArgument()
         {
@@ -865,7 +865,7 @@ class TestClass
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T022_Associative_Class_Constructor_AssignUserDefineProperties()
         {
@@ -908,7 +908,7 @@ class MyLine
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T023_Associative_Class_Constructor_CallingAFunction()
         {
@@ -939,7 +939,7 @@ class MyPoint
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T024_Associative_Class_Constructor_CallingAnImperativeFunction()
         {
@@ -982,7 +982,7 @@ p2Y = p2.Y;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T025_Associative_Class_Constructor_CallingAnotherConstructor()
         {
@@ -1025,7 +1025,7 @@ class MyLine
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T026_Associative_Class_Constructor_BaseConstructorAssignProperties()
         {
@@ -1070,7 +1070,7 @@ z = test.Z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T027_Associative_Class_Constructor_BaseConstructorWithSameName()
         {
@@ -1111,7 +1111,7 @@ z = test.Z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T028_Associative_Class_Property_DefaultAssignment()
         {
@@ -1145,7 +1145,7 @@ z = test.Z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T029_Associative_Class_Property_AccessModifier()
         {
@@ -1167,7 +1167,7 @@ t = a.x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T030_Associative_Class_Property_AccessModifier()
         {
@@ -1193,7 +1193,7 @@ class B extends A
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T031_Associative_Class_Property_AccessModifier()
         {
@@ -1224,7 +1224,7 @@ x = b.foo();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T051_Inherit_defaultconstructor()
         {
@@ -1252,7 +1252,7 @@ result3 = instance.val1;//2";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T052_Inherit_defaultproperty()
         {
@@ -1304,7 +1304,7 @@ x9 = a1.w4;//null
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T053_Inherit_changevalue()
         {
@@ -1370,7 +1370,7 @@ x9 = a1.w4;//{null,null}";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T056_Inherit_private()
         {
@@ -1426,7 +1426,7 @@ a5 = a.y;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Method Resolution")]
         public void T057_Inherit_private_modify()
         {
@@ -1492,7 +1492,7 @@ b6 = b.y;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Method Resolution")]
         public void T058_Inherit_private_notmodify()
         {
@@ -1553,7 +1553,7 @@ a6 = a.y;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Method Resolution")]
         public void T059_Inherit_access_privatemember()
         {
@@ -1620,7 +1620,7 @@ a6 = a.y;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T061_Inherit_Property()
         {
@@ -1677,7 +1677,7 @@ xPoint3 = derivedpoint.D;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T062_Inherit_classAsArgument()
         {
@@ -1749,7 +1749,7 @@ class derived extends TestPoint
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T063_Inherit_classAsArgument_callinfunction()
         {
@@ -1812,7 +1812,7 @@ def modify(oldPoint : TestPoint)
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T064_Inherit_classAsArgument_callinfunction()
         {
@@ -1879,7 +1879,7 @@ def modify(oldPoint : TestPoint)
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T065_Inherit_constructor_withoutbase()
         {
@@ -1931,7 +1931,7 @@ xPoint3 = derivedpoint.D;//7";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T066_Inherit_constructor_failing_witbase()
         {
@@ -1969,7 +1969,7 @@ b2 = b1.y;//10
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T067_Inherit_propertynotassignedinbase()
         {
@@ -2007,7 +2007,7 @@ b2 = b1.y;//10
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T068_Inherit_propertyassignedinherited()
         {
@@ -2045,7 +2045,7 @@ b3 = b1.x;//10
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T069_Inherit_constructor_failing_both()
         {
@@ -2082,7 +2082,7 @@ b2 = b1.y;//null
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T070_Inherit_constructor_failing_inherited()
         {
@@ -2121,7 +2121,7 @@ b3=b1.x;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T071_Inherit_constructor_failing_inherited_sameproperty()
         {
@@ -2159,7 +2159,7 @@ b3=b1.x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void T072_inherit_Class_Constructor_CallingAFunction()
         {
@@ -2202,7 +2202,7 @@ pY = p.Y;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T073inherit_Constructor_WithSameNameAndDifferentArgumenType()
         {
@@ -2252,7 +2252,7 @@ test2 = myClass.Create (true, false);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T074_Inherit_property_array()
         {
@@ -2285,7 +2285,7 @@ x1 = a1.y;//null
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T075_Inherit_property_array_modify()
         {
@@ -2317,7 +2317,7 @@ x1 = a1.y;//null
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T076_Inherit_property_array_modifyanitem()
         {
@@ -2350,7 +2350,7 @@ x1 = a1.y;//null
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T077_Inherit_property_thatdoesnotexist()
         {
@@ -2383,7 +2383,7 @@ x1 = a1.z;//null
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T078_Inherit_property_singletonconvertedtoarray()
         {
@@ -2414,7 +2414,7 @@ x1 = a1.y;//null
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z001_Associative_Class_Property_Regress001()
         {
@@ -2466,7 +2466,7 @@ sp_x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z002_Associative_Class_Property_Regress_1454056()
         {
@@ -2497,7 +2497,7 @@ val;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z003_Associative_Class_Property_Regress_1454164()
         {
@@ -2519,7 +2519,7 @@ class Sample
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z004_Associative_Class_Property_Regress_1454138()
         {
@@ -2574,7 +2574,7 @@ test4;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z005_Associative_Class_Property_Regress_1454178()
         {
@@ -2629,7 +2629,7 @@ sum;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z006_Associative_Class_Property_Regress_1453886()
         {
@@ -2673,7 +2673,7 @@ one;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z007_Associative_Class_Property_Regress_1454172()
         {
@@ -2716,7 +2716,7 @@ sum;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z008_Associative_Class_Property_Regress_1454161()
         {
@@ -2758,7 +2758,7 @@ h3;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z009_Associative_Class_Property_Regress_1453891()
         {
@@ -2822,7 +2822,7 @@ l_startPoint_X = l.get_StartPoint().get_X();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z010_Associative_Class_Property_Regress_1454658()
         {
@@ -2880,7 +2880,7 @@ class Transform
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z011_Associative_Class_Property_Regress_1454162()
         {
@@ -2936,7 +2936,7 @@ class Transform
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z012_Access_Class_Property_From_If_Block_In_Class_Method_Regress_1456397()
         {
@@ -2977,7 +2977,7 @@ b1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z013_Defect_1457038()
         {
@@ -3023,7 +3023,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z014_Defect_1457057()
         {
@@ -3103,7 +3103,7 @@ numpts = bcurve.numPts;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void Z015_Defect_1457029()
         {
             //Assert.Fail("1457029 - Sprint25: Rev 3369 : Passing a collection value using index as argument to a class method is failing");
@@ -3129,7 +3129,7 @@ x = c1.Pt;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void Z015_Defect_1457029_2()
         {
             //Assert.Fail("1457029 - Sprint25: Rev 3369 : Passing a collection value using index as argument to a class method is failing");
@@ -3158,7 +3158,7 @@ x = c.Pt;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z016_Defect_1456771()
         {
@@ -3205,7 +3205,7 @@ t2 = b1.foo1(1);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z017_Defect_1456898()
         {
@@ -3282,7 +3282,7 @@ b1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z018_Defect_1456798()
         {
@@ -3312,7 +3312,7 @@ b2 = a1.add();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z018_Defect_1456798_2()
         {
@@ -3350,7 +3350,7 @@ a2;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z018_Defect_1456798_3()
         {
@@ -3382,7 +3382,7 @@ a2;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z019_Defect_1457053()
         {
@@ -3432,7 +3432,7 @@ b6 = a3.add();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z020_Defect_1457290()
         {
@@ -3462,7 +3462,7 @@ a2 = a1.foo();";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z020_Defect_1457290_2()
         {
@@ -3495,7 +3495,7 @@ a2;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z021_Defect_1458785()
         {
@@ -3552,7 +3552,7 @@ z11 = 2;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z021_Defect_1458785_2()
         {
@@ -3590,7 +3590,14 @@ a6 = 3;
         [Category("SmokeTest")]
         public void Z021_Defect_1458785_3()
         {
-            string code = @"def foo ( i:int[]){return = i;}x =  1;a1 = foo(x);a2 = 3;";
+            string code = @"def foo ( i:int[])
+{
+return = i;
+}
+x =  1;
+a1 = foo(x);
+a2 = 3;
+";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
 
             thisTest.Verify("a1", new object[] { 1 });
@@ -3598,7 +3605,7 @@ a6 = 3;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z021_Defect_1458785_4()
         {
@@ -3643,7 +3650,7 @@ test5= test1.testmethod();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z021_Defect_1458785_5()
         {
@@ -3692,7 +3699,7 @@ a4 = a.y;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z021_Defect_1458785_6()
         {
@@ -3723,7 +3730,7 @@ a2 = a1.x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z022_Defect_1455292()
         {
@@ -3771,7 +3778,7 @@ dummy = intpt.x;    // i was expecting 100 here
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z022_Defect_1455292_2()
         {
@@ -3809,7 +3816,7 @@ yy = p.y;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z022_Defect_1455292_3()
         {
@@ -3869,7 +3876,7 @@ t = [Imperative]
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z023_Defect_1455131()
         {
@@ -3931,7 +3938,7 @@ class TestClass
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z023_Defect_1455131_2()
         {
@@ -4006,7 +4013,7 @@ t = [Imperative]
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z024_Defect_1461133()
         {
@@ -4033,7 +4040,7 @@ a = 2;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z024_Defect_1461133_2()
         {
@@ -4061,7 +4068,7 @@ test = a1.foo( a2 );
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z025_Defect_1459626()
         {
@@ -4120,7 +4127,7 @@ t2 = t.X;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z026_Defect_1458563()
         {
@@ -4145,7 +4152,7 @@ t1 = a.x1;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Update")]
         public void Z026_Defect_1458563_2()
         {
@@ -4216,7 +4223,7 @@ p7 = t7;//a.x7;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z027_Defect_1461365()
         {
@@ -4238,7 +4245,7 @@ b1 = B.B();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z028_Same_Name_Constructor_And_Method_Negative()
         {
@@ -4261,7 +4268,7 @@ b = a.A();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z029_Calling_Class_Constructor_From_Instance_Negative()
         {
@@ -4286,7 +4293,7 @@ c1 = b1.a;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z030_Class_Instance_Name_Same_As_Class_Negative()
         {
@@ -4308,7 +4315,7 @@ A = A.A();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void Z030_Class_Instance_Name_Same_As_Class_Negative_2()
         {
@@ -4331,22 +4338,44 @@ t = A.a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestDefaultArgInConstructor01()
         {
             string code = @"
-class Test{	x : int;	constructor Test(m:int = 1)	{		x = m;	}}p = Test.Test(2); i = p.x;
+class Test
+{
+	x : int;
+	constructor Test(m:int = 1)
+	{
+		x = m;
+	}
+}
+
+p = Test.Test(2); 
+i = p.x;
 ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("i", 2);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestDefaultArgInConstructor02()
         {
             string code = @"
-class Test{	x : int;	y : int;	constructor Test(m:int, n:int = 2)	{		x = m;		y = n;	}}p = Test.Test(1); i = p.y;
+class Test
+{
+	x : int;
+	y : int;
+	constructor Test(m:int, n:int = 2)
+	{
+		x = m;
+		y = n;
+	}
+}
+
+p = Test.Test(1); 
+i = p.y;
 ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("i", 2);

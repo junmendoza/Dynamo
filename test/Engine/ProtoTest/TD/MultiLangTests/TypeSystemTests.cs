@@ -38,7 +38,7 @@ namespace ProtoTest.TD.MultiLangTests
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS002_IntToUserDefinedTypeConversion()
         {
@@ -84,7 +84,7 @@ namespace ProtoTest.TD.MultiLangTests
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS005_RetTypeArray_return_Singleton_1467196()
         {
@@ -132,7 +132,7 @@ namespace ProtoTest.TD.MultiLangTests
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS005_RetTypeArray_return_Singleton_1467196_b()
         {
@@ -159,7 +159,7 @@ namespace ProtoTest.TD.MultiLangTests
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS006_RetTypeuserdefinedArray_return_double_1467196()
         {
@@ -187,7 +187,7 @@ namespace ProtoTest.TD.MultiLangTests
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS007_Return_double_To_int_1467196()
         {
@@ -372,7 +372,7 @@ namespace ProtoTest.TD.MultiLangTests
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS017_Return_BoolArray_ToInt_1467182()
         {
@@ -573,7 +573,7 @@ b;c;d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS020_conditional_cantevaluate_1465293_2()
         {
@@ -609,7 +609,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS020_conditional_cantevaluate_1465293_3()
         {
@@ -672,7 +672,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS021_OverallPrimitiveConversionTestInt()
         {
@@ -817,7 +817,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS023_Double_To_Int_1467084_3()
         {
@@ -936,7 +936,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS029_Double_ToVar_1467222()
         {
@@ -978,7 +978,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS030_eachtype_To_var()
         {
@@ -1009,7 +1009,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS030_eachtype_To_var_2()
         {
@@ -1041,7 +1041,7 @@ z;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS031_eachType_To_int()
         {
@@ -1092,7 +1092,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS031_eachtype_To_double()
         {
@@ -1161,7 +1161,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS032_eachType_To_bool()
         {
@@ -1189,7 +1189,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS033_eachType_To_string()
         {
@@ -1260,7 +1260,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS034_eachType_To_char()
         {
@@ -1329,7 +1329,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS37_userdefinedTobool_1467240()
         {
@@ -1350,7 +1350,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS37_userdefinedTo_null()
         {
@@ -1375,7 +1375,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS038_eachType_To_Userdefined()
         {
@@ -1412,7 +1412,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS038_Param_single_AlltypeTo_UserDefined()
         {
@@ -1449,7 +1449,7 @@ z;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS038_return_single_AlltypeTo_UserDefined()
         {
@@ -1485,7 +1485,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS039_userdefined_covariance()
         {
@@ -1526,7 +1526,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS039_userdefined_covariance_2()
         {
@@ -1624,7 +1624,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS44_any_toNull()
         {
@@ -1670,7 +1670,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_To_array_1467206()
         {
@@ -1703,7 +1703,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_To_array_1467294_2()
         {
@@ -1735,7 +1735,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS46_typedassignment_To_array_1467294_3()
@@ -1771,7 +1771,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS46_typedassignment_To_Vararray_1467294_4()
@@ -1805,7 +1805,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_To_Intarray()
         {
@@ -1837,7 +1837,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS46_typedassignment_singleton_To_Intarray()
@@ -1870,7 +1870,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_To_doublearray()
         {
@@ -1903,7 +1903,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS46_typedassignment_Singleton_To_doublearray()
@@ -1937,7 +1937,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_To_boolarray()
         {
@@ -1970,7 +1970,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_singleton_To_boolarray()
         {
@@ -2003,7 +2003,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_To_stringarray()
         {
@@ -2036,7 +2036,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS46_typedassignment_singleton_To_stringarray()
@@ -2070,7 +2070,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_To_chararray()
         {
@@ -2102,7 +2102,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS46_typedassignment_singleton_To_chararray()
         {
@@ -2174,7 +2174,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS048_Param_eachType_To_varArray()
         {
@@ -2223,7 +2223,7 @@ z;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS049_Return_eachType_To_varArray()
@@ -2259,7 +2259,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS050_Return_eachType_To_intArray()
         {
@@ -2295,7 +2295,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS051_Param_eachType_To_intArray()
         {
@@ -2331,7 +2331,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS052_Return_AllTypeTo_doubleArray()
         {
@@ -2368,7 +2368,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS053_Param_AlltypeTo_doubleArray()
         {
@@ -2405,7 +2405,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS055_Param_AlltypeTo_BoolArray()
@@ -2475,7 +2475,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS056_Return_AlltypeTo_BoolArray()
@@ -2512,7 +2512,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS056_Return_BoolArray_1467258()
@@ -2545,7 +2545,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS057_Return_Array_1467305()
@@ -2576,7 +2576,7 @@ z;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS058_setter_Typeconversion_1467262()
         {
@@ -2770,7 +2770,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS068_Param_singleton_AlltypeTo_BoolArray()
         {
@@ -2805,7 +2805,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS069_Return_singleton_AlltypeTo_BoolArray()
         {
@@ -2839,7 +2839,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS070_Param_singleton_AlltypeTo_StringArray()
         {
@@ -2872,7 +2872,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS071_return_singleton_AlltypeTo_StringArray()
         {
@@ -2906,7 +2906,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS072_Param_singleton_AlltypeTo_CharArray()
         {
@@ -2940,7 +2940,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS073_return_singleton_AlltypeTo_CharArray()
         {
@@ -2973,7 +2973,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS074_Param_singleton_AlltypeTo_UserDefinedArray()
         {
@@ -3010,7 +3010,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS075_return_singleton_AlltypeTo_UserDefinedArray()
         {
@@ -3045,7 +3045,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS076_UserDefinedCovariance_ArrayPromotion()
         {
@@ -3088,7 +3088,7 @@ a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS077_userdefinedTobool_1467240_Imperative()
         {
@@ -3112,7 +3112,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS078_userdefinedToUserdefinedArray()
         {
@@ -3134,7 +3134,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS079_typedassignment_nullTo_Anyarray_1467295()
         {
@@ -3158,7 +3158,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array()
         {
@@ -3178,7 +3178,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_2()
         {
@@ -3198,7 +3198,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_5()
         {
@@ -3218,7 +3218,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_3()
         {
@@ -3238,7 +3238,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_4()
@@ -3260,7 +3260,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_6()
         {
@@ -3299,7 +3299,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_7()
         {
@@ -3339,7 +3339,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_8()
         {
@@ -3379,7 +3379,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_9()
         {
@@ -3419,7 +3419,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_10()
         {
@@ -3442,7 +3442,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_11()
         {
@@ -3482,7 +3482,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_Defect_1467235_coercion_from_singleton_array_12()
         {
@@ -3522,7 +3522,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_1467320_single_To_Dynamicarray()
         {
@@ -3544,7 +3544,7 @@ d;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_1467320_single_To_Dynamicarray_2()
         {
@@ -3567,7 +3567,7 @@ d;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TZ01_1467320_single_To_Dynamicarray_3()
         {
@@ -3609,7 +3609,7 @@ d;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS081_Userdefined_To_single_1467308()
         {
@@ -3636,7 +3636,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS081_Userdefined_To_single_1467308_2()
         {
@@ -3663,7 +3663,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS081_Userdefined_To_single_1467308_3()
         {
@@ -3690,7 +3690,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS081_Userdefined_To_single_1467308_4()
         {
@@ -3717,7 +3717,7 @@ e;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS082_return_userdefined_To_BoolArray_1467310()
         {
@@ -3738,7 +3738,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS082_Param_userdefined_To_BoolArray_1467310()
         {
@@ -3759,7 +3759,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS082_assign_userdefined_To_BoolArray_1467310()
         {
@@ -3775,7 +3775,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS082_assign2_userdefined_To_BoolArray_1467310()
         {
@@ -3791,7 +3791,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS082_dispatch2_userdefined_To_BoolArray_1467310()
         {
@@ -3808,7 +3808,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS082_dispatch3_userdefined_To_BoolArray_1467310()
         {
@@ -3861,7 +3861,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS084_Param_UserDefine_To_UserDefinedArray_1467314()
         {
@@ -3883,7 +3883,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS085_return_UserDefine_To_UserDefinedArray_1467314()
         {
@@ -3924,7 +3924,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS087_arrayUpgrade_function_arguments_1457470()
         {
@@ -4031,7 +4031,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS093_Param_notypedefined_indexing_Userdefined()
         {
@@ -4058,7 +4058,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS094_Param_notypedefined_single_Userdefined()
         {
@@ -4085,7 +4085,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS094_Class_member_single_ToDynamicArray_Userdefined_1467320()
         {
@@ -4109,7 +4109,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0120_typedassignment_To_Jagged_Vararray()
@@ -4145,7 +4145,7 @@ e;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0121_typedassignment_To_Jagged_Intarray()
@@ -4179,7 +4179,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0122_typedassignment_To_Jagged_doublearray()
@@ -4215,7 +4215,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0123_typedassignment_To_Jagged_boolarray()
@@ -4250,7 +4250,7 @@ e;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0124_typedassignment_To_Jagged_stringarray()
@@ -4284,7 +4284,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0125_typedassignment_To_Jagged_chararray()
@@ -4355,7 +4355,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS126_Param_eachType_Array_To_VarArray()
         {
@@ -4391,7 +4391,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS126_Return_eachType_Array_To_VarArray()
         {
@@ -4427,7 +4427,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS127_Param_eachType_Array_To_IntArray()
         {
@@ -4463,7 +4463,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS128_Return_eachType_Array_To_IntArray()
@@ -4501,7 +4501,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS129_Param_eachType_Array_To_DoubleArray()
         {
@@ -4537,7 +4537,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS130_Return_eachType_Array_To_DoubleArray()
@@ -4575,7 +4575,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS131_Param_eachType_Array_To_BoolArray()
         {
@@ -4611,7 +4611,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS132_Return_eachType_Array_To_BoolArray()
         {
@@ -4647,7 +4647,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS133_Param_eachType_Array_To_StringArray()
         {
@@ -4683,7 +4683,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS134_Return_eachType_Array_To_StringArray()
@@ -4721,7 +4721,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS135_Param_eachType_Array_To_charArray()
         {
@@ -4757,7 +4757,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS136_Return_eachType_Array_To_CharArray()
@@ -4795,7 +4795,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0137_Param_eachType_Array_To_Jagged_VarArray()
@@ -4833,7 +4833,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0138_Return_eachType_Array_To_Jagged_VarArray()
@@ -4871,7 +4871,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS139_Param_eachType_Array_To_jagged_IntArray()
@@ -4909,7 +4909,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS140_Return_eachType_Array_To_Jagged_IntArray()
@@ -4947,7 +4947,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS141_Param_eachType_Array_To_jagged_DoubleArray()
         {
@@ -4984,7 +4984,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS142_Return_eachType_Array_To_Jagged_DoubleArray()
         {
@@ -5020,7 +5020,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS143_Param_eachType_Array_To_Jagged_BoolArray()
@@ -5058,7 +5058,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS144_Return_eachType_Array_To_Jagged_BoolArray()
@@ -5096,7 +5096,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS147_Param_eachType_Array_To_jagged_StringArray()
@@ -5134,7 +5134,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS148_Return_eachType_Array_To_jagged_StringArray()
@@ -5172,7 +5172,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS149_Param_eachType_Array_To_Jagged_charArray()
         {
@@ -5208,7 +5208,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS150_Return_eachType_Array_To_jagged_CharArray()
@@ -5246,7 +5246,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0151_Param_eachType_Heterogenous_Array_To_VarArray()
         {
@@ -5275,7 +5275,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0152_NullingOutTest()
         {
@@ -5297,7 +5297,7 @@ e = d.a;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0152_NullingOutTest_a()
         {
@@ -5323,7 +5323,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0152_NullingOutTest_b()
         {
@@ -5349,7 +5349,7 @@ e;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0152_NullingOutTest_c()
         {
@@ -5405,7 +5405,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0160_Param_eachType_Heterogenous_Array_To_VarArray()
         {
@@ -5434,7 +5434,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS161_Param_eachType_Heterogenous_Array_To_VarArray()
         {
@@ -5463,7 +5463,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0162_Param_ArrayReduction_varArray_Var()
         {
@@ -5492,7 +5492,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0163_Param_ArrayReduction_heterogenous_To_Int()
         {
@@ -5521,7 +5521,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0164_Param_ArrayReduction_heterogenous_To_double()
@@ -5554,7 +5554,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0165_Param_ArrayReduction_heterogenous_To_bool()
         {
@@ -5583,7 +5583,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0166_Param_ArrayReduction_heterogenous_To_UserDefined()
@@ -5673,7 +5673,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0171_typeconversion_replication_botharguments_3()
         {
@@ -5701,7 +5701,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0171_typeconversion_replication_botharguments_4()
         {
@@ -5797,7 +5797,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0176_typeconversion_replication_userdefined()
         {
@@ -5897,7 +5897,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0181_typeconversion_replication_class()
         {
@@ -5957,7 +5957,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0184_TypeConversion()
         {
@@ -5983,7 +5983,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0184_TypeConversion_1467352()
         {
@@ -6009,7 +6009,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0184_TypeConversion_1467352_2()
         {
@@ -6166,7 +6166,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS190_Param_eachType_Heterogenous_Array_To_VarArray()
         {
@@ -6195,7 +6195,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0191_Param_ArrayReduction_heterogenous_To_IntArray()
@@ -6226,7 +6226,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0192_Param_ArrayReduction_heterogenous_To_doubleArray()
@@ -6259,7 +6259,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0193_Param_ArrayReduction_heterogenous_To_boolArray()
@@ -6290,7 +6290,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0194_Param_ArrayReduction_heterogenous_To_UserDefinedArray()
@@ -6323,7 +6323,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0195_heterogenousarray_To_UserDefinedArray()
         {
@@ -6345,7 +6345,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0196_heterogenousarray_To_UserDefinedArray()
@@ -6368,7 +6368,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         [Category("Failure")]
         public void TS0197_getter_dotoperator_1467419()
@@ -6404,7 +6404,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0198_method_resolution_1467273()
         {
@@ -6445,7 +6445,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0198_method_resolution_1467273_2()
         {
@@ -6486,7 +6486,7 @@ e = foo({5});
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Type System")]
         public void TS0198_method_resolution_1467273_3()
         {
@@ -6603,7 +6603,7 @@ d = { 1.0+ { { c + 5 }, { c + 5.5 }, { c + 6 } } };// received {46.0,47.00,47.00
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Failure")]
         public void indexintoarray_left_1467462_6()
         {
@@ -6622,7 +6622,7 @@ d = { 1.0+ { { c + 5 }, { c + 5.5 }, { c + 6 } } };// received {46.0,47.00,47.00
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void indexintoarray_left_1467462_7()
         {
             string code =
@@ -6638,7 +6638,7 @@ d = { 1.0+ { { c + 5 }, { c + 5.5 }, { c + 6 } } };// received {46.0,47.00,47.00
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TS200_memberproperty_1467486_1()
         {
             string code =
@@ -6662,7 +6662,7 @@ d = { 1.0+ { { c + 5 }, { c + 5.5 }, { c + 6 } } };// received {46.0,47.00,47.00
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TS201_memberproperty_1467486_2()
         {
             string code =
@@ -6688,7 +6688,7 @@ d = { 1.0+ { { c + 5 }, { c + 5.5 }, { c + 6 } } };// received {46.0,47.00,47.00
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TS202_memberproperty_1467486_3()
         {
             string code =

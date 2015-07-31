@@ -587,7 +587,7 @@ x1; x2; x3; x4;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void NegativeIndexOnCollection003()
         {
             String code =
@@ -597,7 +597,7 @@ x1; x2; x3; x4;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void PopListWithDimension()
         {
             String code =
@@ -859,7 +859,7 @@ x1; x2; x3; x4;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestAttributeOnGlobalFunction()
         {
             string code = @"class TestAttribute
@@ -888,7 +888,7 @@ class VisibilityAttribute
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestAttributeOnLanguageBlock()
         {
             string code = @"class TestAttribute
@@ -916,7 +916,7 @@ class VisibilityAttribute
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void TestAttributeWithLanguageBlockAndArrayExpression()
         {
             string code = @"class TestAttribute

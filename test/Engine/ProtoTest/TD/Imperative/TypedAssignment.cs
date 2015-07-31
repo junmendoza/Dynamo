@@ -7,7 +7,7 @@ namespace ProtoTest.TD.Imperative
     class TypedAssignment : ProtoTestBase
     {
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T01_TestVariousTypes()
         {

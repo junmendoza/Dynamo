@@ -149,7 +149,7 @@ result = foo(b);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T005_SomeNulls_Class()
         {
@@ -555,7 +555,7 @@ result = foo(b);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T016_CountTrue_Class()
         {
@@ -885,7 +885,7 @@ result = foo(b);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T027_CountFalse_Class()
         {
@@ -1223,7 +1223,7 @@ result = {foo(AllFalse(a1)),foo(AllFalse(a2)),foo(AllFalse(a3))};//true,true,fal
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T038_AllFalse_Class()
         {
@@ -1559,7 +1559,7 @@ result = foo(c);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest"), Category("Failure")]
         public void T050_Sum_Class()
         {
@@ -1858,7 +1858,7 @@ result = {foo(a),foo(b)};";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("SmokeTest")]
         public void T062_Average_Class()
         {
@@ -1967,7 +1967,7 @@ r2 = Print(arr2);";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Built in Functions")]
         public void TV1467193_print()
         {
@@ -2037,7 +2037,7 @@ x6 = Average({null}) ;// returns 0.0
        }*/
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         //Test "IsRectangular"
         public void CountInClass_1467364()
         {
@@ -2514,7 +2514,7 @@ z = foo();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Built in Functions")]
         public void T077_Defect_1467425_negative_index_6()
         {
@@ -2622,7 +2622,7 @@ sort = Sort(sorterFunction, a);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Failure")]
         public void BIM32_Sort_class()
         {
@@ -2652,7 +2652,7 @@ y=z.create();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("Failure")]
         public void BIM33_Sort_class_2()
         {
@@ -3407,7 +3407,7 @@ import (""DSCoreNodes.dll"");
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Abs_2()
         {
             string code = @"
@@ -3486,7 +3486,7 @@ import (""DSCoreNodes.dll"");
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Cosh_2()
         {
             string code = @"
@@ -3561,7 +3561,7 @@ import (""DSCoreNodes.dll"");
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_DivRem_2()
         {
             string code = @"
@@ -3640,7 +3640,7 @@ a2 = Math.IEEERemainder( 3..4, 2..3 ) ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_IEEERemainder_2()
         {
             string code = @"
@@ -3728,7 +3728,7 @@ t4 = Math.Max( -2..2, -2.1..2.1 ) ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Max_2()
         {
             string code = @"
@@ -3816,7 +3816,7 @@ t4 = Math.Min( -2..2, -2.1..2.1 ) ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Min_2()
         {
             string code = @"
@@ -3904,7 +3904,7 @@ t4 = Math.Pow( -2..2, -2..2 ) ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Pow_2()
         {
             string code = @"
@@ -3994,7 +3994,7 @@ t5 = Math.Round( 2.456, -2 ) ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Round_2()
         {
             string code = @"
@@ -4095,7 +4095,7 @@ import (""DSCoreNodes.dll"");
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Sign_2()
         {
             string code = @"
@@ -4244,7 +4244,7 @@ t4 = Math.Factorial(-1.5);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T068_Factorial_2()
         {
             string code = @"
@@ -4307,7 +4307,7 @@ t8 = Math.Factorial(arr);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T069_Defect_1467556_Sort_Over_Derived_Classes()
         {
             String code =
@@ -4343,7 +4343,7 @@ b = Sort(sorter,a).X;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T069_Defect_1467556_Sort_Over_Derived_Classes_2()
         {
             String code =
@@ -4382,7 +4382,7 @@ b = Sort(sorter,a).X;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T069_Defect_1467556_Sort_Over_Derived_Classes_3()
         {
             String code =
@@ -4574,7 +4574,7 @@ b = ImportFromCSV(a);
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T074_Defect_1467750()
         {
             String code =
@@ -4603,7 +4603,7 @@ x8 = Flatten({null}) ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T074_Defect_1467750_2()
         {
             String code =
@@ -4631,7 +4631,7 @@ test =
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T074_Defect_1467750_3()
         {
             String code =
@@ -4662,7 +4662,7 @@ def foo ()
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T074_Defect_1467750_4()
         {
             String code =
@@ -4696,7 +4696,7 @@ class B
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T074_Defect_1467750_5()
         {
             String code =
@@ -4734,7 +4734,7 @@ class B
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         [Category("ModifierBlock")]
         public void T074_Defect_1467750_6()
         {
@@ -4780,7 +4780,7 @@ x6 = Average({null}) ;
 
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T075_Defect_1467323()
         {
             String code =
@@ -4810,7 +4810,7 @@ x8 = Count({null}) ;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T075_Defect_1467323_2()
         {
             String code =
@@ -4838,7 +4838,7 @@ test =
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T075_Defect_1467323_3()
         {
             String code =
@@ -4869,7 +4869,7 @@ def foo ()
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T075_Defect_1467323_4()
         {
             String code =
@@ -4903,7 +4903,7 @@ class B
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T075_Defect_1467323_5()
         {
             String code =
@@ -4941,7 +4941,7 @@ class B
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T075_Defect_1467323_6()
         {
             String code =

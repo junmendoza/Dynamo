@@ -921,7 +921,7 @@ p11;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void DisposeOnFFITest005()
         {
             string code = @"
@@ -1015,7 +1015,7 @@ p11;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void DisposeOnFFITest007()
         {
             string code = @"
@@ -1060,7 +1060,7 @@ p11;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void DisposeOnFFITest008()
         {
             string code = @"

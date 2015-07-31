@@ -9,7 +9,7 @@ namespace ProtoTest.MultiLangTests
         string testCasePath = "..\\..\\..\\test\\Engine\\ProtoTest\\ImportFiles\\";
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T01_TestGCArray()
         {
             string code = @"
@@ -44,7 +44,7 @@ v4 = DisposeVerify.x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T02_TestGCEndofIfBlk()
         {
             string code = @"
@@ -67,7 +67,7 @@ v = DisposeVerify.x; // 3";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T03_TestGCEndofLangBlk()
         {
             string code = @"
@@ -94,7 +94,7 @@ v2 = DisposeVerify.x; // 3";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T04_TestGCReturnFromLangBlk()
         {
             string code = @"
@@ -121,7 +121,7 @@ v2 = DisposeVerify.x; // 2";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T05_TestGCReturnFromFunction()
         {
             string code = @"
@@ -150,7 +150,7 @@ v3 = DisposeVerify.x;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T06_TestGCEndofWhileBlk()
         {
             string code = @"
@@ -188,7 +188,7 @@ v4 = DisposeVerify.x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T07_TestGCEndofForBlk()
         {
             string code = @"
@@ -225,7 +225,7 @@ v4 = DisposeVerify.x;
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T08_TestGCArray02()
         {
             string code = @"
@@ -271,7 +271,7 @@ v8 = DisposeVerify.x;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T09_TestGCPassingArguments()
         {
             string code = @"
@@ -321,7 +321,7 @@ v6 = DisposeVerify.x; // 9";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T10_TestGCReturnArguments()
         {
             string code = @"
@@ -348,7 +348,7 @@ v3 = DisposeVerify.x;";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T11_TestGCLangBlkInFunction()
         {
             string code = @"
@@ -373,7 +373,7 @@ v1 = DisposeVerify.x; // 2
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T12_TestGCIfElseInFunction()
         {
             string code = @"
@@ -410,7 +410,7 @@ v2 = DisposeVerify.x; // 4";
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T13_GCTestComplexCase()
         {
             string code = @"
@@ -442,7 +442,7 @@ v1 = DisposeVerify.x; // 1
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T14_TestGCPointer_AssociativeScope()
         {
             string code = @"
@@ -462,7 +462,7 @@ __GC();
         }
 
         [Test]
-        [Category("DSDefinedClass")]
+        [Category("DSDefinedClass"), Ignore]
         public void T15_TestGCArray_AssociativeScope()
         {
             string code = @"
