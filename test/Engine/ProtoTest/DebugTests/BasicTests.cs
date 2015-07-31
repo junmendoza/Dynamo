@@ -1640,6 +1640,7 @@ b = 33;
         }
 
         [Test]
+        [Category("DSDefinedClass")]
         [Category("ExpressionInterpreterRunner")]
         public void TestWatchExpressionInNestedBlock1()
         {

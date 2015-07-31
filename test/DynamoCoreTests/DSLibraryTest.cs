@@ -34,6 +34,7 @@ namespace Dynamo.Tests
         }
 
         [Test]
+        [Category("DSDefinedClass")]
         [Category("UnitTests")]
         public void TestLoadDSFile()
         {
@@ -52,6 +53,7 @@ namespace Dynamo.Tests
         }
 
         [Test]
+        [Category("DSDefinedClass")]
         [Category("UnitTests")]
         public void TestLibraryAcrossSessions()
         {
