@@ -149,6 +149,7 @@
     <Compile Include="ProtoAST\ProtoASTExecutionTests.cs" />
     <Compile Include="ProtoAST\RoundTripTests.cs" />
     <Compile Include="ProtoTestBase.cs" />
+    <Compile Include="SetValue\SetValueTests.cs" />
     <Compile Include="TD\Associative\ReplicationGuide.cs" />
     <Compile Include="TD\DocTests\UserManualTests.cs" />
     <Compile Include="TD\Imperative\Imperative.cs" />

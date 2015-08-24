@@ -601,28 +601,6 @@ testFoo2 = foo();";
             thisTest.Verify("testFoo2", testFoo2);
         }
 
-        [Test]
-        [Category("Update")]
-        public void TestDynamicSetValueAfterExecution()
-        {
-            //Assert.Fail("1466857 - Sprint 23 : rev 2486 : Dynamic variable update issue"); 
-            String code =
-                @"
-                a = 2;
-                b = a;
-                a = 5;
-                ";
-            ExecutionMirror mirror = thisTest.RunScriptSource(code);
-            Obj o = mirror.GetValue("a");
-            Obj o2 = mirror.GetValue("b");
-            thisTest.Verify("a", 5);
-            thisTest.Verify("b", 5);
-            mirror.SetValueAndExecute("a", 10);
-            o = mirror.GetValue("a");
-            o2 = mirror.GetValue("b");
-            thisTest.Verify("a", 10);
-            thisTest.Verify("b", 10);
-        }
 
         [Test]
         [Category("SmokeTest")]
