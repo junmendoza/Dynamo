@@ -28,7 +28,7 @@ namespace DSTestCaseUtils
         {
             get
             {
-                return @"C:\Users\qing\Documents\github\Dynamo\test\Engine\ProtoTest\ProtoTest.csproj";
+                return @"..\..\..\test\Engine\ProtoTest\ProtoTest.csproj";
             }
         }
 
@@ -37,7 +37,7 @@ namespace DSTestCaseUtils
             get
             {
                 // Roslyn not working with VS2013 solution 
-                return @"C:\Users\qing\Documents\github\Dynamo\src\Dynamo.All.2012.sln";
+                return @"..\..\..\src\Dynamo.All.2012.sln";
             }
         }
 
@@ -332,12 +332,13 @@ namespace DSTestCaseUtils
         {
             try
             {
+                IProject prj = null;
                 var w = Workspace.LoadSolution(SolutionPath, "Debug", "AnyCPU", true);
-                //var w = Workspace.LoadStandAloneProject(ProjPath);
-                return w.CurrentSolution.Projects.Where(proj => proj.Name == "ProtoTest").First();
+                prj = w.CurrentSolution.Projects.Where(proj => proj.Name == "ProtoTest").First();
 
                 //var solution = Solution.Load(SolutionPath);
-                //return solution.Projects.Where(proj => proj.Name == "ProtoTest").First();
+                //prj = solution.Projects.Where(proj => proj.Name == "ProtoTest").First(); 
+                return prj;
 
 
             }

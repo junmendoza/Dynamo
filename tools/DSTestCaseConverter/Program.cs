@@ -16,7 +16,7 @@ namespace DSTestCaseConverter
 
         private static void ReplaceBasic()
         {
-            Debug.Assert(false); 
+            //Debug.Assert(false); 
             TestCaseUtils.InitProcess();
             TestCaseUtils.ReplaceBasic();
         }
