@@ -18,7 +18,7 @@ namespace DSTestCaseUtils
         {
             get
             {
-                return @"C:\Users\qing\Documents\github\Dynamo\bin\AnyCPU\Debug\ProtoTest.dll";
+                return @"ProtoTest.dll";
             }
         }
 
