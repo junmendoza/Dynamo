@@ -244,6 +244,7 @@ c = 3.0..5.0;//3.0,4.0,5.0
 
 
         [Test]
+        [Category("DSDefinedClass_Ignored_DSDefinedClassSemantics")]
         public void TestCallingConstructor()
         {
             // Tracked by http://adsk-oss.myjetbrains.com/youtrack/issue/MAGN-4134

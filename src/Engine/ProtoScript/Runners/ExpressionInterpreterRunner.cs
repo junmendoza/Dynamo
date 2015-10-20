@@ -170,7 +170,7 @@ namespace ProtoScript.Runners
                     if (ProtoCore.DSASM.Constants.kInvalidIndex == node.classScope)
                         Core.DSExecutable.runtimeSymbols[node.runtimeTableIndex].Remove(node);
                     else
-                        Core.ClassTable.ClassNodes[node.classScope].symbols.Remove(node);
+                        Core.ClassTable.ClassNodes[node.classScope].Symbols.Remove(node);
                 }
             }
             else
@@ -188,7 +188,7 @@ namespace ProtoScript.Runners
                     if (ProtoCore.DSASM.Constants.kInvalidIndex == node.classScope)
                         Core.DSExecutable.runtimeSymbols[node.runtimeTableIndex].Remove(node);
                     else
-                        Core.ClassTable.ClassNodes[node.classScope].symbols.Remove(node);
+                        Core.ClassTable.ClassNodes[node.classScope].Symbols.Remove(node);
                 }
 
                 // TODO: investigate why additional elements are added to the stack.

@@ -11,8 +11,6 @@ namespace ProtoTest.Macroblocks
 {
     class MacroblockGeneratorTests : ProtoTestBase
     {
-        private Core core = null;
-        ProtoCore.DSASM.Executable dsExecutable = null;
         private List<MacroBlock> generatedMacroblocks = null;
         public override void Setup()
         {
@@ -152,16 +150,16 @@ a = 10;b = a;c = a;
 
         private void CompileAndGenerateMacroblocks(string code)
         {
-            // Compile DS code
-            ProtoScriptTestRunner runner = new ProtoScriptTestRunner();
-            bool compileSucceeded = runner.Compile(code, core, out dsExecutable);
+            // Compile
+            ProtoScriptRunner runner = new ProtoScriptRunner();
+            bool compileSucceeded = runner.CompileAndGenerateExe(code, core, new ProtoCore.CompileTime.Context());
+            Assert.IsTrue(compileSucceeded == true);
 
-            Assert.True(compileSucceeded);
-            Assert.NotNull(dsExecutable);
-            Assert.NotNull(dsExecutable.MacroBlockList);
+            Assert.NotNull(core.DSExecutable);
+            Assert.NotNull(core.DSExecutable.MacroBlockList);
 
             // Get the generated macroblocks
-            generatedMacroblocks = dsExecutable.MacroBlockList;
+            generatedMacroblocks = core.DSExecutable.MacroBlockList;
         }
 
         private void VerifyMacroblockCount(int generatedBlocks)

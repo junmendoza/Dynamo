@@ -50,7 +50,7 @@ namespace Dynamo.Tests
             // Create some test note data
             Guid id = Guid.NewGuid();
             CurrentDynamoModel.CurrentWorkspace.AddNote(false, 200, 200, "This is a test note", id);
-            Assert.AreEqual(CurrentDynamoModel.CurrentWorkspace.Notes.Count, 1);
+            Assert.AreEqual(CurrentDynamoModel.CurrentWorkspace.Notes.Count(), 1);
         }
 
 
@@ -153,7 +153,7 @@ namespace Dynamo.Tests
         public void ValidateConnectionsDoesNotClearError()
         {
             CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(
-                new CodeBlockNodeModel("30", 100.0, 100.0, CurrentDynamoModel.LibraryServices),
+                new CodeBlockNodeModel("30", 100.0, 100.0, CurrentDynamoModel.LibraryServices, CurrentDynamoModel.CurrentWorkspace.ElementResolver),
                 false);
 
             Assert.AreEqual(1, CurrentDynamoModel.CurrentWorkspace.Nodes.Count());
@@ -236,6 +236,67 @@ namespace Dynamo.Tests
 
             CurrentDynamoModel.Paste();
             Assert.AreEqual(numNodes * 2, CurrentDynamoModel.CurrentWorkspace.Nodes.Count());
+        }
+
+        [Test]
+        [Category("UnitTests")]
+        public void CanCopydAndPasteNodeWithRightOffset()
+        {
+            var addNode = new DSFunction(CurrentDynamoModel.LibraryServices.GetFunctionDescriptor("+"));
+            addNode.Height = 2;
+            addNode.Width = 2;
+            addNode.CenterX = 3;
+            addNode.CenterY = 2;
+
+            CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(addNode, false);
+            Assert.AreEqual(1, CurrentDynamoModel.CurrentWorkspace.Nodes.Count());
+
+            CurrentDynamoModel.AddToSelection(addNode);
+            Assert.AreEqual(1, DynamoSelection.Instance.Selection.Count);
+
+            CurrentDynamoModel.Copy();
+            Assert.AreEqual(1, CurrentDynamoModel.ClipBoard.Count);
+
+            CurrentDynamoModel.Paste();
+            Assert.AreEqual(2, CurrentDynamoModel.CurrentWorkspace.Nodes.Count());
+
+            Assert.AreEqual(14, CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(1).X);
+            Assert.AreEqual(11, CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(1).Y);
+        }
+
+        [Test]
+        [Category("UnitTests")]
+        public void CanCopydAndPaste2NodesWithRightOffset()
+        {
+            var addNode = new DSFunction(CurrentDynamoModel.LibraryServices.GetFunctionDescriptor("+"));
+            addNode.Height = 2;
+            addNode.Width = 2;
+            addNode.CenterX = 3;
+            addNode.CenterY = 2;
+
+            CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(addNode, false);
+            CurrentDynamoModel.AddToSelection(addNode);
+
+            addNode = new DSFunction(CurrentDynamoModel.LibraryServices.GetFunctionDescriptor("+"));
+            addNode.Height = 2;
+            addNode.Width = 2;
+            addNode.CenterX = 6;
+            addNode.CenterY = 8;
+
+            CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(addNode, false);
+            CurrentDynamoModel.AddToSelection(addNode);
+
+            CurrentDynamoModel.Copy();
+            Assert.AreEqual(2, CurrentDynamoModel.ClipBoard.Count);
+
+            CurrentDynamoModel.Paste();
+            Assert.AreEqual(4, CurrentDynamoModel.CurrentWorkspace.Nodes.Count());
+
+            Assert.AreEqual(17, CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(2).X);
+            Assert.AreEqual(17, CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(2).Y);
+
+            Assert.AreEqual(20, CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(3).X);
+            Assert.AreEqual(23, CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(3).Y);
         }
 
         [Test]
@@ -568,8 +629,8 @@ namespace Dynamo.Tests
         {
             var addNode = new DSFunction(CurrentDynamoModel.LibraryServices.GetFunctionDescriptor("+"));
             CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(addNode, false);
-            CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(new CodeBlockNodeModel("2", 100.0, 100.0, CurrentDynamoModel.LibraryServices), false);
-            CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(new CodeBlockNodeModel("2", 100.0, 100.0, CurrentDynamoModel.LibraryServices), false);
+            CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(new CodeBlockNodeModel("2", 100.0, 100.0, CurrentDynamoModel.LibraryServices, CurrentDynamoModel.CurrentWorkspace.ElementResolver), false);
+            CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(new CodeBlockNodeModel("2", 100.0, 100.0, CurrentDynamoModel.LibraryServices, CurrentDynamoModel.CurrentWorkspace.ElementResolver), false);
             CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(new Watch { X = 100, Y = 300 }, false);
 
             ConnectorModel.Make(CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(1), CurrentDynamoModel.CurrentWorkspace.Nodes.ElementAt(0), 0, 0);

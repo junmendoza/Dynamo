@@ -466,6 +466,26 @@ namespace Dynamo.Tests
 
         [Test]
         [Category("UnitTests")]
+        public void CanSaveAndReadWorkspaceDescription()
+        {
+            // get empty workspace
+            var dynamoModel = ViewModel.Model;
+            Assert.IsNotNull(dynamoModel.CurrentWorkspace);
+
+            // set description
+            dynamoModel.CurrentWorkspace.Description = "dummy description";
+
+            // save
+            var newPath = GetNewFileNameOnTempPath("dyn");
+            ViewModel.Model.CurrentWorkspace.SaveAs(newPath, ViewModel.Model.EngineController.LiveRunnerRuntimeCore);
+
+            // load
+            ViewModel.Model.OpenFileFromPath(newPath);
+            Assert.AreEqual("dummy description", ViewModel.Model.CurrentWorkspace.Description);
+        }
+
+        [Test]
+        [Category("UnitTests")]
         public void CustomNodeWorkspaceHasUnsavedChangesPropertyIsSetOnSaveAs()
         {
             // open file
@@ -680,10 +700,10 @@ namespace Dynamo.Tests
             ViewModel.SearchViewModel.SearchAndUpdateResults("Constant2");
             Assert.AreEqual(originalNumElements + 1, ViewModel.Model.SearchModel.NumElements);
 
-            Assert.AreEqual(2, ViewModel.SearchViewModel.SearchResults.Count);
+            Assert.AreEqual(2, ViewModel.SearchViewModel.FilteredResults.Count());
 
-            var res1 = ViewModel.SearchViewModel.SearchResults[0];
-            var res2 = ViewModel.SearchViewModel.SearchResults[1];
+            var res1 = ViewModel.SearchViewModel.FilteredResults.ElementAt(0);
+            var res2 = ViewModel.SearchViewModel.FilteredResults.ElementAt(1);
 
             Assert.IsAssignableFrom(typeof(CustomNodeSearchElementViewModel), res1);
             Assert.IsAssignableFrom(typeof(CustomNodeSearchElementViewModel), res2);
@@ -783,16 +803,16 @@ namespace Dynamo.Tests
             ViewModel.SearchViewModel.SearchAndUpdateResults("TheNoodle");
 
             // results are correct
-            Assert.AreEqual(1, ViewModel.SearchViewModel.SearchResults.Count);
-            var node3 = (CustomNodeSearchElement)ViewModel.SearchViewModel.SearchResults[0].Model;
+            Assert.AreEqual(1, ViewModel.SearchViewModel.FilteredResults.Count());
+            var node3 = (CustomNodeSearchElement)ViewModel.SearchViewModel.FilteredResults.ElementAt(0).Model;
             Assert.AreEqual(newId, node3.ID);
 
             // search for un-refactored node
             ViewModel.SearchViewModel.SearchAndUpdateResults("Constant2");
 
             // results are correct
-            Assert.AreEqual(1, ViewModel.SearchViewModel.SearchResults.Count);
-            var node4 = (CustomNodeSearchElement)ViewModel.SearchViewModel.SearchResults[0].Model;
+            Assert.AreEqual(1, ViewModel.SearchViewModel.FilteredResults.Count());
+            var node4 = (CustomNodeSearchElement)ViewModel.SearchViewModel.FilteredResults.ElementAt(0).Model;
             Assert.AreEqual(oldId, node4.ID);
 
         }
@@ -838,10 +858,10 @@ namespace Dynamo.Tests
             ViewModel.SearchViewModel.SearchAndUpdateResults("Constant2");
 
             // results are correct
-            Assert.AreEqual(2, ViewModel.SearchViewModel.SearchResults.Count);
+            Assert.AreEqual(2, ViewModel.SearchViewModel.FilteredResults.Count());
 
-            var res1 = ViewModel.SearchViewModel.SearchResults[0];
-            var res2 = ViewModel.SearchViewModel.SearchResults[1];
+            var res1 = ViewModel.SearchViewModel.FilteredResults.ElementAt(0);
+            var res2 = ViewModel.SearchViewModel.FilteredResults.ElementAt(1);
 
             Assert.IsAssignableFrom(typeof(CustomNodeSearchElementViewModel), res1);
             Assert.IsAssignableFrom(typeof(CustomNodeSearchElementViewModel), res2);
@@ -927,10 +947,10 @@ namespace Dynamo.Tests
 
                 // Verify new name is searchable
                 ViewModel.SearchViewModel.SearchAndUpdateResults(newName);
-                Assert.AreEqual(1, ViewModel.SearchViewModel.SearchResults.Count);
+                Assert.AreEqual(1, ViewModel.SearchViewModel.FilteredResults.Count());
 
                 // Verify search element's name is new name
-                var res = ViewModel.SearchViewModel.SearchResults.First();
+                var res = ViewModel.SearchViewModel.FilteredResults.First();
                 Assert.IsAssignableFrom(typeof(CustomNodeSearchElementViewModel), res);
                 Assert.AreEqual(res.Name, newName);
 

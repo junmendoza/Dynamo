@@ -9,9 +9,10 @@ using System.Xml;
 
 using Dynamo.Core;
 using Dynamo.Core.Threading;
-using Dynamo.DSEngine;
+using Dynamo.Engine;
 
 using ProtoCore;
+using ProtoCore.Namespace;
 
 namespace Dynamo.Models
 {
@@ -114,8 +115,8 @@ namespace Dynamo.Models
             if (handler != null) handler(this, e);
         }
 
-        public event EventHandler<DeltaComputeStateEventArgs> SetNodeDeltaState;
-        public virtual void OnSetNodeDeltaState(DeltaComputeStateEventArgs e)
+        internal event EventHandler<DeltaComputeStateEventArgs> SetNodeDeltaState;
+        internal virtual void OnSetNodeDeltaState(DeltaComputeStateEventArgs e)
         {
             var handler = SetNodeDeltaState;
             if (handler != null) handler(this, e);
@@ -136,6 +137,7 @@ namespace Dynamo.Models
                 Enumerable.Empty<NoteModel>(),
                 Enumerable.Empty<AnnotationModel>(),
                 Enumerable.Empty<PresetModel>(),
+                new ElementResolver(),
                 new WorkspaceInfo(){FileName = fileName, Name = "Home"},
                 verboseLogging, 
                 isTestMode) { }
@@ -145,14 +147,15 @@ namespace Dynamo.Models
             DynamoScheduler scheduler, 
             NodeFactory factory,
             IEnumerable<KeyValuePair<Guid, List<string>>> traceData, 
-            IEnumerable<NodeModel> e, 
-            IEnumerable<NoteModel> n, 
-            IEnumerable<AnnotationModel> a,
+            IEnumerable<NodeModel> nodes, 
+            IEnumerable<NoteModel> notes, 
+            IEnumerable<AnnotationModel> annotations,
             IEnumerable<PresetModel> presets,
+            ElementResolver resolver,
             WorkspaceInfo info, 
             bool verboseLogging,
             bool isTestMode)
-            : base(e, n,a, info, factory,presets)
+            : base(nodes, notes,annotations, info, factory,presets, resolver)
         {
             EvaluationCount = 0;
 
@@ -186,7 +189,6 @@ namespace Dynamo.Models
                 copiedData.Add(new KeyValuePair<Guid, List<string>>(kvp.Key, strings));
             }
             historicalTraceData = copiedData;
-
         }
 
         #endregion
@@ -194,6 +196,7 @@ namespace Dynamo.Models
         public override void Dispose()
         {
             base.Dispose();
+
             if (EngineController != null)
             {
                 EngineController.MessageLogged -= Log;
@@ -234,6 +237,10 @@ namespace Dynamo.Models
             }
         }
 
+        /// <summary>
+        /// Called when a Node is modified in the workspace
+        /// </summary>
+        /// <param name="node">The node itself</param>
         protected override void NodeModified(NodeModel node)
         {
             base.NodeModified(node);
@@ -242,6 +249,38 @@ namespace Dynamo.Models
             {
                 RequestRun();
             }
+        }
+
+        /// <summary>
+        /// Called when a node is added to the workspace and event handlers are to be added
+        /// </summary>
+        /// <param name="node">The node itself</param>
+        protected override void RegisterNode(NodeModel node)
+        {
+            base.RegisterNode(node);
+
+            node.RequestSilenceNodeModifiedEvents += NodeOnRequestSilenceNodeModifiedEvents;
+        }
+
+        /// <summary>
+        /// Called when a node is disposed and removed from the workspace
+        /// </summary>
+        /// <param name="node">The node itself</param>
+        protected override void DisposeNode(NodeModel node)
+        {
+            node.RequestSilenceNodeModifiedEvents -= NodeOnRequestSilenceNodeModifiedEvents;
+
+            base.DisposeNode(node);
+        }
+
+        /// <summary>
+        /// Called when the RequestSilenceNodeModifiedEvents event is emitted from a Node
+        /// </summary>
+        /// <param name="node">The node itself</param>
+        /// <param name="value">A boolean value indicating whether to silence or not</param>
+        private void NodeOnRequestSilenceNodeModifiedEvents(NodeModel _, bool value)
+        {
+            this.silenceNodeModifications = value;
         }
 
         #region Public Operational Methods
@@ -411,11 +450,6 @@ namespace Dynamo.Models
                 node.Warning(message.Value); // Update node warning message.
             }
 
-            foreach (var node in Nodes)
-            {
-                node.ClearDirtyFlag();
-            }
-
             // Notify listeners (optional) of completion.
             RunSettings.RunEnabled = true; // Re-enable 'Run' button.
 
@@ -489,6 +523,12 @@ namespace Dynamo.Models
             {
                 task.Completed += OnUpdateGraphCompleted;
                 RunSettings.RunEnabled = false; // Disable 'Run' button.
+
+                // Reset node states
+                foreach (var node in Nodes)
+                {
+                    node.WasInvolvedInExecution = false;
+                }
 
                 // The workspace has been built for the first time
                 silenceNodeModifications = false;

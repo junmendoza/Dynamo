@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Threading;
-using Dynamo.DSEngine;
+using Dynamo.Engine;
 
 namespace Dynamo.TestInfrastructure
 {
@@ -55,7 +55,7 @@ namespace Dynamo.TestInfrastructure
 
             int numberOfUndosNeeded = Mutate(node);
 
-            Thread.Sleep(100);
+            Thread.Sleep(0);
 
             IEnumerable<NodeModel> nodesAfterMutate = DynamoViewModel.Model.CurrentWorkspace.Nodes;
 
@@ -79,7 +79,7 @@ namespace Dynamo.TestInfrastructure
                     DynamoViewModel.ExecuteCommand(undoCommand);
                 }));
             }
-            Thread.Sleep(100);
+            Thread.Sleep(0);
 
             IEnumerable<NodeModel> nodesAfterUndo = DynamoViewModel.Model.CurrentWorkspace.Nodes;
 

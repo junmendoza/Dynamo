@@ -155,19 +155,16 @@ namespace Dynamo.Controls
                     ViewModel.SetLacingTypeCommand.RaiseCanExecuteChanged();
                     break;
 
-                case "IsUpdated":
-                    HandleCacheValueUpdated();
+                case "CachedValue":
+                    CachedValueChanged();
                     break;
             }
         }
 
         /// <summary>
-        /// Whenever property "NodeModel.IsUpdated" is set to true, this method 
-        /// is invoked. It will result in preview control updated, if the control 
-        /// is currently visible. Otherwise this call will be ignored.
+        /// Called when the NodeModel's CachedValue property is updated
         /// </summary>
-        /// 
-        private void HandleCacheValueUpdated()
+        private void CachedValueChanged()
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
@@ -208,8 +205,7 @@ namespace Dynamo.Controls
                     DynamoSelection.Instance.ClearSelection();
                 }
 
-                if (!DynamoSelection.Instance.Selection.Contains(ViewModel.NodeLogic))
-                    DynamoSelection.Instance.Selection.Add(ViewModel.NodeLogic);
+                DynamoSelection.Instance.Selection.AddUnique(ViewModel.NodeLogic);
             }
             else
             {
@@ -410,11 +406,18 @@ namespace Dynamo.Controls
         {
             RefreshPreviewIconDisplay();
 
+            var preview = sender as PreviewControl;
+            // If the preview is in a transition, return directly to avoid another
+            // transition
+            if (preview == null || preview.IsInTransition)
+            {
+                return;
+            }
+
             if (previewIcon.IsMouseOver)
             {
                 // The mouse is currently over the preview icon, so if the 
                 // preview control is hidden, bring it into condensed state.
-                var preview = sender as PreviewControl;
                 if (preview.IsHidden != false)
                     preview.TransitionToState(PreviewControl.State.Condensed);
             }
@@ -422,7 +425,6 @@ namespace Dynamo.Controls
             {
                 // The mouse is no longer over the preview icon, if the preview 
                 // control is currently in condensed state, hide it from view.
-                var preview = sender as PreviewControl;
                 if (preview.IsCondensed != false)
                     preview.TransitionToState(PreviewControl.State.Hidden);
             }

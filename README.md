@@ -11,9 +11,9 @@ Looking to learn or download Dynamo?  Check out [dynamobim.org](http://dynamobim
 
 ## Develop ###
 ### Create a Node Library for Dynamo ###
-#### COMING SOON - NUGET PACKAGES ARE BEING BUILT AGAINST DYNAMO 0.8.2 ####
 If you're interested in developing a Node library for Dynamo, the easiest place to start is by browsing the [DynamoSamples](https://github.com/DynamoDS/DynamoSamples).  
 These samples use the [Dynamo NuGet packages](https://www.nuget.org/packages?q=DynamoVisualProgramming) which can be installed using the NuGet package manager in Visual Studio.
+[![NuGet](https://img.shields.io/nuget/v/DynamoVisualProgramming.ZeroTouchLibrary.svg)]()
 
 You can learn more about developing libraries for Dynamo on the [Dynamo wiki](https://github.com/DynamoDS/Dynamo/wiki/Zero-Touch-Plugin-Development).
 
@@ -37,6 +37,67 @@ Dynamo is an open-source project and would be nothing without its community.  Yo
 
 
 ## Releases ##
+
+### 0.9.0 ###
+
+Create DirectShape Elements in Dynamo
+- You can now wrap meshes, solids, and surfaces in a DirectShape and place it into your Revit Model
+
+Library Enhancements
+- The library is now organized in a tree view to make it easier to find the nodes you want. Node types have also been color-coded to make it easier for you to locate create, action, and query nodes in the library
+
+Manage Custom Node and Package Paths  
+- Add paths to makes nodes and packages show up in the library
+
+Node Layout Cleanup Improvements
+- Clean up layouts considering groups as a whole or clean up layouts within groups
+
+Background Preview works on Remote Desktop and Parallels
+- For remote systems with GPUs and virtual machines with hardware-acceleration, background preview is now visible.
+
+Additional Updates and Improvements
+- New Chapters and expansion of the [Dynamo Primer](http://dynamobim.com/learn/)
+- Easier to read Search Results 
+- Node to Code Stabilization
+- Improved 'Canvas Snapshot' functionality
+- Move to .NET 4.5
+- Lots of bug fixes
+
+### 0.8.2 ###
+
+Local Network Package and Definition location 
+- use a common shared network folder within an office environment.
+
+Preset Graph States
+- Keep track of different states of your graph and develop design options with Presets, found in the Edit menu
+
+Color on surfaces
+-	Square arrays of color can now be applied to surfaces with the Display.BySurfaceColors node
+
+Node2Code
+-	Select groups of nodes and automatically create Code Block Nodes from the selection
+-	Known issues that we will continue to work on
+
+Search/Browse
+-	Tooltips and search algorithm improvements for in canvas search (via right click)
+
+Localization 
+- Now localized to 12 languages (Dynamo for Revit and Dynamo standalone)
+- Define the localization for Dynamo standalone [Instructions here](http://dynamobim.com/multilingual-dynamo/)
+
+Documentation
+- 4 New Chapters for the [Dynamo Primer](http://dynamobim.com/learn/)
+- New and updated [Nuget packages for developers](https://www.nuget.org/packages?q=DynamoVisualProgramming)
+
+Command Line Interface
+-	DynamoCLI now available for executing non-Revit Dynamo graphs
+
+Package Manager
+- Publish a package locally from Dynamo for Revit
+
+Known Issues
+- Current list of [known issues](https://github.com/DynamoDS/Dynamo/wiki/Known-Issues)
+
 
 ### 0.8.1 ###
 
@@ -243,30 +304,6 @@ Hardware Acceleration in Revit 2015
 ###Older Releases###
 [Archive of Release Fixes and Improvements](https://github.com/DynamoDS/Dynamo/wiki/Archive-of-Release-Fixes-and-Improvements)
 
-
-## Dynamo License ##
-
-Those portions created by Ian are provided with the following copyright:
-
-Copyright 2014 Ian Keough
-
-Those portions created by Autodesk employees are provided with the following copyright:
-
-Copyright 2014 Autodesk
-
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
 ## Instrumentation ##
 Dynamo contains an instrumentation system that anonymously reports usage data to the Dynamo team. This data will be used to enhance the usability of the product. Aggregated summaries of the data will be shared back with the Dynamo community.
 
@@ -278,86 +315,7 @@ The Data is Base64 encoded. For example, the data field above ('MTMxMjQxLjY3MzAy
 
 The UserID is randomly generated when the application is first run. The SessionID is randomly generated each time Dynamo is opened.
 
+## License ##
 
-## Third Party Licenses ##
-
-###Avalon Edit###
-http://www.codeproject.com/Articles/42490/Using-AvalonEdit-WPF-Text-Editor
-http://opensource.org/licenses/lgpl-3.0.html
-
-###CSharpAnalytics###
-https://github.com/AttackPattern/CSharpAnalytics
-http://www.apache.org/licenses/LICENSE-2.0
-
-###GNU gettext (libintl)###
-https://www.gnu.org/software/gettext/
-https://www.gnu.org/software/gettext/manual/html_node/GNU-LGPL.html#GNU-LGPL
-
-###Helix3D###
-https://helixtoolkit.codeplex.com/
-https://helixtoolkit.codeplex.com/license
-
-###Iron Python###
-http://ironpython.net/
-http://opensource.org/licenses/apache2.0.php
-
-###Kinect for Windows###
-http://www.microsoft.com/en-us/kinectforwindows/
-http://www.microsoft.com/en-us/kinectforwindows/develop/sdk-eula.aspx
-
-###libiconv###
-https://www.gnu.org/software/libiconv/
-https://www.gnu.org/software/gettext/manual/html_node/GNU-LGPL.html#GNU-LGPL
-
-###libgcc, libstdc++, libgomp###
-https://gcc.gnu.org/onlinedocs/libgomp/
-https://gcc.gnu.org/onlinedocs/gccint/Libgcc.html
-https://gcc.gnu.org/libstdc++/
-http://www.gnu.org/licenses/gcc-exception.html
-
-###Microsoft 2012 C Runtime DLLS, msvcp110.dll and msvcr110.dll###
-http://msdn.microsoft.com/en-us/vstudio/dn501987
-
-###Moq###
-http://www.nuget.org/packages/Moq/
-http://opensource.org/licenses/bsd-license.php
-
-###MiConvexHull###
-http://miconvexhull.codeplex.com/
-http://miconvexhull.codeplex.com/license
-
-###NCalc###
-http://ncalc.codeplex.com/
-http://ncalc.codeplex.com/license
-
-###NDesk Options###
-http://ndesk.org/Options#License
-
-###Newtonsoft JSON###
-https://github.com/JamesNK/Newtonsoft.Json
-https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md
-
-###NUnit####
-http://www.nunit.org/
-http://www.nunit.org/index.php?p=license&r=2.6.2
-
-###OpenSans font from Google###
-http://www.google.com/fonts/specimen/Open+Sans
-http://www.apache.org/licenses/LICENSE-2.0.html
-
-###Prism###
-http://msdn.microsoft.com/en-us/library/gg406140.aspx
-http://msdn.microsoft.com/en-us/library/gg405489(PandP.40).aspx
-
-###Revit Test Framework###
-https://github.com/DynamoDS/RevitTestFramework
-http://opensource.org/licenses/MIT
-
-###Lucene.Net###
-http://lucenenet.apache.org/
-http://www.apache.org/licenses/LICENSE-2.0
-
-###Winpthreads###
-http://mingw-w64.sourceforge.net/
-http://www.mingw.org/license
+Dynamo is licensed under the Apache License. Dynamo also uses a number of third party libraries, some with different licenses. You can find more information [here](LICENSE.txt).
 

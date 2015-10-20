@@ -6,6 +6,7 @@ using System.Text;
 using ProtoCore.Utils;
 using ProtoCore.DSASM;
 using ProtoCore.AST.AssociativeAST;
+using System.Globalization;
 
 namespace ProtoCore.AST.ImperativeAST
 {
@@ -230,7 +231,7 @@ namespace ProtoCore.AST.ImperativeAST
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString(CultureInfo.InvariantCulture);
         }
     }
 
@@ -259,7 +260,7 @@ namespace ProtoCore.AST.ImperativeAST
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString(CultureInfo.InvariantCulture);
         }
     }
 
@@ -1294,22 +1295,6 @@ namespace ProtoCore.AST.ImperativeAST
         public override string ToString()
         {
             return LeftNode.ToString() + "." + RightNode.ToString();
-        }
-    }
-
-    public class PostFixNode : ImperativeNode
-    {
-        public ImperativeNode Identifier { get; set; }
-        public ProtoCore.DSASM.UnaryOperator Operator { get; set; }
-
-        public override bool Equals(object other)
-        {
-            var otherNode = other as PostFixNode;
-            if (null == otherNode)
-                return false;
-
-            return Operator.Equals(otherNode.Operator) &&
-                   Identifier.Equals(otherNode.Identifier);
         }
     }
 

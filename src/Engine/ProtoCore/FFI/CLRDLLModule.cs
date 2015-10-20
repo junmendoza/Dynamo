@@ -983,16 +983,7 @@ namespace ProtoFFI
         {
             Type[] types = GetTypes(typeName);
             Type exttype = typeof(IExtensionApplication);
-#if PARALLEL
-            System.Threading.Tasks.Parallel.ForEach(types, type =>
-            {
-                //For now there is no support for generic type.
-                if (!type.IsGenericType && type.IsPublic && !exttype.IsAssignableFrom(type) && !CLRModuleType.SupressesImport(type))
-                {
-                    CLRModuleType importedType = CLRModuleType.GetInstance(type, this, alias);
-                }
-            });
-#else
+
             foreach (var type in types)
             {
                 //For now there is no support for generic type.
@@ -1010,7 +1001,6 @@ namespace ProtoFFI
                     }
                 }
             }
-#endif
 
             CodeBlockNode node = new CodeBlockNode();
             //Get all the types available on this module.
@@ -1243,6 +1233,10 @@ namespace ProtoFFI
                     if (string.IsNullOrEmpty(ObsoleteMessage))
                         ObsoleteMessage = "Obsolete";
                 }
+                else if (attr is PreferredShortNameAttribute)
+                {
+                    PreferredShortName = (attr as PreferredShortNameAttribute).PreferredShortName;
+                }
             }
         }
     }
@@ -1363,18 +1357,6 @@ namespace ProtoFFI
             }
         }
 
-        public string PreferredShortName
-        {
-            get
-            {
-                object shortName  = null;
-                if (TryGetAttribute("PreferredShortNameAttribute", out shortName))
-                    return shortName as string;
-                else
-                    return null;
-            }
-        }
-
         public FFIParamAttributes(ParameterInfo parameter)
         {
             var attributes = parameter.GetCustomAttributes(false);
@@ -1388,11 +1370,6 @@ namespace ProtoFFI
                 else if (attr is ArbitraryDimensionArrayImportAttribute)
                 {
                     AddAttribute("ArbitraryDimensionArrayImportAttribute", true);
-                }
-                else if (attr is PreferredShortNameAttribute)
-                {
-                    string shortName = (attr as PreferredShortNameAttribute).PreferredShortName;
-                    AddAttribute("PreferredShortNameAttribute", shortName);
                 }
             }
         }

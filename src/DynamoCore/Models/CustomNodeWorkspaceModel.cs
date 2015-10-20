@@ -41,28 +41,25 @@ namespace Dynamo.Models
                 Enumerable.Empty<NoteModel>(),
                 Enumerable.Empty<AnnotationModel>(),
                 Enumerable.Empty<PresetModel>(),
+                new ElementResolver(),
                 info) { }
 
         public CustomNodeWorkspaceModel( 
             NodeFactory factory,
-            IEnumerable<NodeModel> e, 
-            IEnumerable<NoteModel> n, 
-            IEnumerable<AnnotationModel> a,
+            IEnumerable<NodeModel> nodes, 
+            IEnumerable<NoteModel> notes, 
+            IEnumerable<AnnotationModel> annotations,
             IEnumerable<PresetModel> presets,
-            WorkspaceInfo info,
-            ElementResolver elementResolver = null) 
-            : base(e, n,a, info, factory,presets)
+            ElementResolver elementResolver, 
+            WorkspaceInfo info)
+            : base(nodes, notes,annotations, info, factory,presets, elementResolver)
         {
             HasUnsavedChanges = false;
 
             CustomNodeId = Guid.Parse(info.ID);
             Category = info.Category;
             Description = info.Description;
-
-            if (elementResolver != null)
-            {
-                ElementResolver.CopyResolutionMap(elementResolver);
-            }
+            IsVisibleInDynamoLibrary = info.IsVisibleInDynamoLibrary;
             PropertyChanged += OnPropertyChanged;
         }
 
@@ -114,7 +111,7 @@ namespace Dynamo.Models
         {
             get
             {
-                return new CustomNodeInfo(CustomNodeId, Name, Category, Description, FileName);
+                return new CustomNodeInfo(CustomNodeId, Name, Category, Description, FileName, IsVisibleInDynamoLibrary);
             }
         }
 
@@ -160,6 +157,19 @@ namespace Dynamo.Models
             }
         }
         private string description;
+
+        /// <summary>
+        ///     Custom node visibility in the Dynamo library
+        /// </summary>
+        public bool IsVisibleInDynamoLibrary
+        {
+            get { return isVisibleInDynamoLibrary; }
+            set
+            {
+                isVisibleInDynamoLibrary = value;
+            }
+        }
+        private bool isVisibleInDynamoLibrary;
 
         protected override void RequestRun()
         {

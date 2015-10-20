@@ -11,16 +11,19 @@ using System.Threading;
 using System.Xml;
 
 using Dynamo.Core;
-using Dynamo.DSEngine;
+using Dynamo.Engine;
 using Dynamo.Interfaces;
 using Dynamo.Nodes;
 using Dynamo.Properties;
 using Dynamo.Selection;
 using Dynamo.Utilities;
+using Dynamo.Logging;
+
 using ProtoCore.AST;
 using ProtoCore.Namespace;
 
 using Utils = Dynamo.Nodes.Utilities;
+using Dynamo.Engine.NodeToCode;
 
 namespace Dynamo.Models
 {
@@ -38,18 +41,21 @@ namespace Dynamo.Models
         private int currentPasteOffset = 0;
         internal int CurrentPasteOffset
         {
-            get { return currentPasteOffset; }
+            get
+            {
+                return currentPasteOffset == 0 ? PasteOffsetStep : currentPasteOffset;
+            }
         }
 
         /// <summary>
         ///     The step to offset elements between subsequent paste operations
         /// </summary>
-        internal static readonly int PASTE_OFFSET_STEP = 10;
+        internal static readonly int PasteOffsetStep = 10;
 
         /// <summary>
         ///     The maximum paste offset before reset
         /// </summary>
-        internal static readonly int PASTE_OFFSET_MAX = 60;
+        internal static readonly int PasteOffsetMax = 60;
 
         private string fileName;
         private string name;
@@ -60,12 +66,14 @@ namespace Dynamo.Models
         private double zoom = 1.0;
         private DateTime lastSaved;
         private string author = "None provided";
+        private string description;
         private bool hasUnsavedChanges;
-        private readonly ObservableCollection<NodeModel> nodes;
-        private readonly ObservableCollection<NoteModel> notes;
-        private readonly ObservableCollection<AnnotationModel> annotations;
+        private readonly List<NodeModel> nodes;
+        private readonly List<NoteModel> notes;
+        private readonly List<AnnotationModel> annotations;
         private readonly List<PresetModel> presets;
         private readonly UndoRedoRecorder undoRecorder;
+        private bool hasNodeInSyncWithDefinition;
         private Guid guid;
 
         #endregion
@@ -90,7 +98,7 @@ namespace Dynamo.Models
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public virtual void OnRequestNodeCentered(object sender, ModelEventArgs e)
+        internal virtual void OnRequestNodeCentered(object sender, ModelEventArgs e)
         {
             if (RequestNodeCentered != null)
                 RequestNodeCentered(this, e);
@@ -114,7 +122,7 @@ namespace Dynamo.Models
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public virtual void OnZoomChanged(object sender, ZoomEventArgs e)
+        internal virtual void OnZoomChanged(object sender, ZoomEventArgs e)
         {
             if (ZoomChanged != null)
             {
@@ -140,7 +148,7 @@ namespace Dynamo.Models
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public virtual void OnCurrentOffsetChanged(object sender, PointEventArgs e)
+        internal virtual void OnCurrentOffsetChanged(object sender, PointEventArgs e)
         {
             if (CurrentOffsetChanged != null)
             {
@@ -182,10 +190,73 @@ namespace Dynamo.Models
             if (handler != null) handler(node);
         }
 
+        /// <summary>
+        ///     Event that is fired when nodes are cleared from the workspace.
+        /// </summary>
         public event Action NodesCleared;
         protected virtual void OnNodesCleared()
         {
             var handler = NodesCleared;
+            if (handler != null) handler();
+        }
+
+        /// <summary>
+        ///     Event that is fired when a note is added to the workspace.
+        /// </summary>
+        public event Action<NoteModel> NoteAdded;
+        protected virtual void OnNoteAdded(NoteModel note)
+        {
+            var handler = NoteAdded;
+            if (handler != null) handler(note);
+        }
+
+        /// <summary>
+        ///     Event that is fired when a note is removed from the workspace.
+        /// </summary>
+        public event Action<NoteModel> NoteRemoved;
+        protected virtual void OnNoteRemoved(NoteModel note)
+        {
+            var handler = NoteRemoved;
+            if (handler != null) handler(note);
+        }
+
+        /// <summary>
+        ///     Event that is fired when notes are cleared from the workspace.
+        /// </summary>
+        public event Action NotesCleared;
+        protected virtual void OnNotesCleared()
+        {
+            var handler = NotesCleared;
+            if (handler != null) handler();
+        }
+
+        /// <summary>
+        ///     Event that is fired when an annotation is added to the workspace.
+        /// </summary>
+        public event Action<AnnotationModel> AnnotationAdded;
+        protected virtual void OnAnnotationAdded(AnnotationModel annotation)
+        {
+            var handler = AnnotationAdded;
+            if (handler != null) handler(annotation);
+        }
+
+        /// <summary>
+        ///     Event that is fired when an annotation is removed from the workspace.
+        /// </summary>
+        public event Action<AnnotationModel> AnnotationRemoved;
+        protected virtual void OnAnnotationRemoved(AnnotationModel annotation)
+        {
+            var handler = AnnotationRemoved;
+            if (handler != null) handler(annotation);
+        }
+
+        /// <summary>
+        ///     Event that is fired when annotations are cleared from the workspace.
+        /// </summary>
+        public event Action AnnotationsCleared;
+        protected virtual void OnAnnotationsCleared()
+        {
+            var handler = AnnotationsCleared;
             if (handler != null) handler();
         }
 
@@ -211,6 +282,11 @@ namespace Dynamo.Models
         public event Action<ConnectorModel> ConnectorDeleted;
         protected virtual void OnConnectorDeleted(ConnectorModel obj)
         {
+            if (hasNodeInSyncWithDefinition)
+            {
+                undoRecorder.RecordModelAsOffTrack(obj.GUID);
+            }
+
             var handler = ConnectorDeleted;
             if (handler != null) handler(obj);
         }
@@ -234,6 +310,15 @@ namespace Dynamo.Models
             if (handler != null) handler(obj);
         }
 
+        public void OnSyncWithDefintionStart(NodeModel nodeModel)
+        {
+            hasNodeInSyncWithDefinition = true;
+        }
+
+        public void OnSyncWithDefinitionEnd(NodeModel nodeModel)
+        {
+            hasNodeInSyncWithDefinition = false;
+        }
         #endregion
 
         #region public properties
@@ -263,7 +348,7 @@ namespace Dynamo.Models
         }
 
         /// <summary>
-        ///     A description of the workspace
+        ///     An author of the workspace
         /// </summary>
         public string Author
         {
@@ -272,6 +357,19 @@ namespace Dynamo.Models
             {
                 author = value;
                 RaisePropertyChanged("Author");
+            }
+        }
+
+        /// <summary>
+        ///     A description of the workspace
+        /// </summary>
+        public string Description
+        {
+            get { return description; }
+            set
+            {
+                description = value;
+                RaisePropertyChanged("Description");
             }
         }
 
@@ -304,6 +402,16 @@ namespace Dynamo.Models
             } 
         }
 
+        /// <summary>
+        /// List of subgraphs for graph layout algorithm.
+        /// </summary>
+        internal List<GraphLayout.Graph> LayoutSubgraphs;
+
+        /// <summary>
+        /// List of clusters (groups of nodes) which will be processed separately
+        /// in the subgraph creation of graph layout algorithm.
+        /// </summary>
+        private List<List<GraphLayout.Node>> SubgraphClusters;
 
         private void AddNode(NodeModel node)
         {
@@ -341,12 +449,34 @@ namespace Dynamo.Models
 
         /// <summary>
         ///     All of the notes currently in the workspace.
-        /// 
-        ///     TODO(Peter): This should be an IEnumerable of notes to prevent modification from the outside - MAGN-6580
         /// </summary>
-        public ObservableCollection<NoteModel> Notes { get { return notes; } }
+        public IEnumerable<NoteModel> Notes
+        {
+            get
+            {
+                IEnumerable<NoteModel> notesClone;
+                lock (notes)
+                {
+                    notesClone = notes.ToList();
+                }
 
-        public ObservableCollection<AnnotationModel> Annotations { get { return annotations; } }
+                return notesClone;
+            }
+        }
+
+        public IEnumerable<AnnotationModel> Annotations
+        {
+            get
+            {
+                IEnumerable<AnnotationModel> annotationsClone;
+                lock (annotations)
+                {
+                    annotationsClone = annotations.ToList();
+                }
+
+                return annotationsClone;
+            }
+        }
 
         /// <summary>
         ///     Path to the file this workspace is associated with. If null or empty, this workspace has never been saved.
@@ -483,7 +613,7 @@ namespace Dynamo.Models
         /// WorkspaceModel.RecordModelsForUndo method which allows for multiple 
         /// modifications in a single action group.
         /// </summary>
-        public UndoRedoRecorder UndoRecorder
+        internal UndoRedoRecorder UndoRecorder
         {
             get { return undoRecorder; }
         }
@@ -502,22 +632,24 @@ namespace Dynamo.Models
         #region constructors
 
         protected WorkspaceModel(
-            IEnumerable<NodeModel> e, 
-            IEnumerable<NoteModel> n,
-            IEnumerable<AnnotationModel> a,
+            IEnumerable<NodeModel> nodes, 
+            IEnumerable<NoteModel> notes,
+            IEnumerable<AnnotationModel> annotations,
             WorkspaceInfo info, 
             NodeFactory factory,
-            IEnumerable<PresetModel> presets)
+            IEnumerable<PresetModel> presets,
+            ElementResolver resolver)
         {
             guid = Guid.NewGuid();
 
-            nodes = new ObservableCollection<NodeModel>(e);
-            notes = new ObservableCollection<NoteModel>(n);
+            this.nodes = new List<NodeModel>(nodes);
+            this.notes = new List<NoteModel>(notes);
 
-            annotations = new ObservableCollection<AnnotationModel>(a);         
+            this.annotations = new List<AnnotationModel>(annotations);         
 
             // Set workspace info from WorkspaceInfo object
             Name = info.Name;
+            Description = info.Description;
             X = info.X;
             Y = info.Y;
             FileName = info.FileName;
@@ -532,18 +664,10 @@ namespace Dynamo.Models
             NodeFactory = factory;
 
             this.presets = new List<PresetModel>(presets);
-            // Update ElementResolver from nodeGraph.Nodes (where node is CBN)
-            ElementResolver = new ElementResolver();
-            foreach (var node in nodes)
-            {
-                RegisterNode(node);
+            ElementResolver = resolver;
 
-                var cbn = node as CodeBlockNodeModel;
-                if (cbn != null && cbn.ElementResolver != null)
-                {
-                    ElementResolver.CopyResolutionMap(cbn.ElementResolver);
-                }
-            }
+            foreach (var node in this.nodes)
+                RegisterNode(node);
 
             foreach (var connector in Connectors)
                 RegisterConnector(connector);
@@ -583,6 +707,13 @@ namespace Dynamo.Models
 
             DynamoSelection.Instance.ClearSelection();
 
+            // The deletion of connectors in the following step will trigger a
+            // lot of graph executions. As connectors are deleted, nodes will 
+            // have invalid inputs, so these executions are meaningless and may
+            // cause invalid GC. See comments in MAGN-7229.
+            foreach (NodeModel node in Nodes)
+                node.RaisesModificationEvents = false;
+
             foreach (NodeModel el in Nodes)
             {
                 el.Dispose();
@@ -600,8 +731,8 @@ namespace Dynamo.Models
             }
 
             ClearNodes();
-            Notes.Clear();
-            Annotations.Clear();
+            ClearNotes();
+            ClearAnnotations();
             presets.Clear();
 
             ClearUndoRecorder();
@@ -665,10 +796,17 @@ namespace Dynamo.Models
             RequestRun();
         }
 
-        private void RegisterNode(NodeModel node)
+        protected virtual void RegisterNode(NodeModel node)
         {
             node.Modified += NodeModified;
             node.ConnectorAdded += OnConnectorAdded;
+
+            var functionNode = node as Function;
+            if (functionNode != null)
+            {
+                functionNode.Controller.SyncWithDefinitionStart += OnSyncWithDefintionStart;
+                functionNode.Controller.SyncWithDefinitionEnd += OnSyncWithDefinitionEnd;
+            }
         }
 
         protected virtual void RequestRun()
@@ -700,11 +838,27 @@ namespace Dynamo.Models
             DisposeNode(model);
         }
 
-        protected void DisposeNode(NodeModel model)
+        protected virtual void DisposeNode(NodeModel model)
         {
+            var functionNode = model as Function;
+            if (functionNode != null)
+            {
+                functionNode.Controller.SyncWithDefinitionStart -= OnSyncWithDefintionStart;
+                functionNode.Controller.SyncWithDefinitionEnd -= OnSyncWithDefinitionEnd;
+            }
             model.ConnectorAdded -= OnConnectorAdded;
             model.Modified -= NodeModified;
             model.Dispose();
+        }
+
+        private void AddNote(NoteModel note)
+        {
+            lock (notes)
+            {
+                notes.Add(note);
+            }
+
+            OnNoteAdded(note);
         }
 
         public void AddNote(NoteModel note, bool centered)
@@ -714,7 +868,7 @@ namespace Dynamo.Models
                 var args = new ModelEventArgs(note, true);
                 OnRequestNodeCentered(this, args);
             }
-            Notes.Add(note);
+            AddNote(note);
         }
 
         public NoteModel AddNote(bool centerNote, double xPos, double yPos, string text, Guid id)
@@ -728,11 +882,59 @@ namespace Dynamo.Models
             return noteModel;
         }
 
+        public void ClearNotes()
+        {
+            lock (notes)
+            {
+                notes.Clear();
+            }
+
+            OnNotesCleared();
+        }
+
+        private void RemoveNote(NoteModel note)
+        {
+            lock (notes)
+            {
+                if (!notes.Remove(note)) return;
+            }
+            OnNoteRemoved(note);
+        }
+
+        private void AddNewAnnotation(AnnotationModel annotation)
+        {
+            lock (annotations)
+            {
+                annotations.Add(annotation);
+            }
+
+            OnAnnotationAdded(annotation);
+        }
+
+        public void ClearAnnotations()
+        {
+            lock (annotations)
+            {
+                annotations.Clear();
+            }
+
+            OnAnnotationsCleared();
+        }
+
+        private void RemoveAnnotation(AnnotationModel annotation)
+        {
+            lock (annotations)
+            {
+                if (!annotations.Remove(annotation)) return;
+            }
+            OnAnnotationRemoved(annotation);
+        }
+
         public void AddAnnotation(AnnotationModel annotationModel)
         {
             annotationModel.ModelBaseRequested += annotationModel_GetModelBase;
             annotationModel.Disposed += (_) => annotationModel.ModelBaseRequested -= annotationModel_GetModelBase;
-            Annotations.Add(annotationModel);
+            AddNewAnnotation(annotationModel);
         }
 
         public AnnotationModel AddAnnotation(string text, Guid id)
@@ -749,11 +951,388 @@ namespace Dynamo.Models
                 };
                 annotationModel.ModelBaseRequested += annotationModel_GetModelBase;
                 annotationModel.Disposed += (_) => annotationModel.ModelBaseRequested -= annotationModel_GetModelBase;
-                Annotations.Add(annotationModel);
+                AddNewAnnotation(annotationModel);
                 HasUnsavedChanges = true;
                 return annotationModel;
             }
             return null;
+        }
+
+        /// <summary>
+        /// This function wraps a few methods on the workspace model layer
+        /// to set up and run the graph layout algorithm.
+        /// </summary>
+        internal void DoGraphAutoLayout()
+        {
+            if (Nodes.Count() < 2) return;
+
+            var selection = DynamoSelection.Instance.Selection;
+
+            // Check if all the selected models are groups
+            bool isGroupLayout = selection.Count > 0 &&
+                selection.All(x => x is AnnotationModel ||
+                    selection.OfType<AnnotationModel>().Any(g => g.SelectedModels.Contains(x)));
+
+            GenerateCombinedGraph(isGroupLayout);
+            RecordUndoGraphLayout(isGroupLayout);
+
+            // Generate subgraphs separately for each cluster
+            SubgraphClusters.ForEach(
+                x => GenerateSeparateSubgraphs(new HashSet<GraphLayout.Node>(x)));
+
+            // Deselect all nodes
+            SubgraphClusters.ForEach(c => c.ForEach(x => x.IsSelected = false));
+
+            // Run layout algorithm for each subgraph
+            LayoutSubgraphs.Skip(1).ToList().ForEach(g => RunLayoutSubgraph(g, isGroupLayout));
+            AvoidSubgraphOverlap();
+            SaveLayoutGraph();
+
+            // Restore the workspace model selection information
+            selection.ToList().ForEach(x => x.Select());
+        }
+
+        /// <summary>
+        /// This method extracts all models from the workspace and puts them
+        /// into the combined graph object, LayoutSubgraphs.First()
+        /// <param name="isGroupLayout">True if all the selected models are groups.</param>
+        /// </summary>
+        private void GenerateCombinedGraph(bool isGroupLayout)
+        {
+            LayoutSubgraphs = new List<GraphLayout.Graph>();
+            LayoutSubgraphs.Add(new GraphLayout.Graph());
+
+            GraphLayout.Graph combinedGraph = LayoutSubgraphs.First();
+            SubgraphClusters = new List<List<GraphLayout.Node>>();
+
+            if (!isGroupLayout)
+            {
+                foreach (AnnotationModel group in Annotations)
+                {
+                    // Treat a group as a graph layout node/vertex
+                    combinedGraph.AddNode(group.GUID, group.Width, group.Height, group.X, group.Y,
+                        group.IsSelected || DynamoSelection.Instance.Selection.Count == 0);
+                }
+            }
+
+            foreach (NodeModel node in Nodes)
+            {
+                if (!isGroupLayout)
+                {
+                    AnnotationModel group = Annotations.Where(
+                        g => g.SelectedModels.Contains(node)).ToList().FirstOrDefault();
+
+                    // Do not process nodes within groups
+                    if (group == null)
+                    {
+                        combinedGraph.AddNode(node.GUID, node.Width, node.Height, node.X, node.Y,
+                            node.IsSelected || DynamoSelection.Instance.Selection.Count == 0);
+                    }
+                }
+                else
+                {
+                    // Process all nodes inside the selection
+                    combinedGraph.AddNode(node.GUID, node.Width, node.Height, node.X, node.Y,
+                        node.IsSelected || DynamoSelection.Instance.Selection.Count == 0);
+                }
+            }
+
+            foreach (ConnectorModel edge in Connectors)
+            {
+                if (!isGroupLayout)
+                {
+                    AnnotationModel startGroup = null, endGroup = null;
+                    startGroup = Annotations.Where(
+                        g => g.SelectedModels.Contains(edge.Start.Owner)).ToList().FirstOrDefault();
+                    endGroup = Annotations.Where(
+                        g => g.SelectedModels.Contains(edge.End.Owner)).ToList().FirstOrDefault();
+
+                    // Treat a group as a node, but do not process edges within a group
+                    if (startGroup == null || endGroup == null || startGroup != endGroup)
+                    {
+                        combinedGraph.AddEdge(
+                            startGroup == null ? edge.Start.Owner.GUID : startGroup.GUID,
+                            endGroup == null ? edge.End.Owner.GUID : endGroup.GUID,
+                            edge.Start.Center.X, edge.Start.Center.Y, edge.End.Center.X, edge.End.Center.Y);
+                    }
+                }
+                else
+                {
+                    // Edges within a group are also processed
+                    combinedGraph.AddEdge(edge.Start.Owner.GUID, edge.End.Owner.GUID,
+                        edge.Start.Center.X, edge.Start.Center.Y, edge.End.Center.X, edge.End.Center.Y);
+                }
+            }
+
+            foreach (NoteModel note in Notes)
+            {
+                // Link a note to the nearest node
+                GraphLayout.Node nd = combinedGraph.Nodes.OrderBy(node =>
+                    Math.Pow(node.X + node.Width / 2 - note.X - note.Width / 2, 2) +
+                    Math.Pow(node.Y + node.Height / 2 - note.Y - note.Height / 2, 2)).FirstOrDefault();
+
+                if (nd != null)
+                {
+                    nd.LinkNote(note, note.Width, note.Height);
+                }
+            }
+
+            if (!isGroupLayout)
+            {
+                // Add all nodes to one big cluster
+                List<GraphLayout.Node> bigcluster = new List<GraphLayout.Node>();
+                bigcluster.AddRange(combinedGraph.Nodes);
+                SubgraphClusters.Add(bigcluster);
+            }
+            else
+            {
+                // Each group becomes one cluster
+                foreach (AnnotationModel group in DynamoSelection.Instance.Selection.OfType<AnnotationModel>())
+                {
+                    List<GraphLayout.Node> cluster = new List<GraphLayout.Node>();
+                    cluster.AddRange(group.SelectedModels.Select(x => combinedGraph.FindNode(x.GUID)));
+                    SubgraphClusters.Add(cluster);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// This method adds relevant models to the undo recorder.
+        /// </summary>
+        /// <param name="isGroupLayout">True if all the selected models are groups.</param>
+        private void RecordUndoGraphLayout(bool isGroupLayout)
+        {
+            List<ModelBase> undoItems = new List<ModelBase>();
+
+            if (!isGroupLayout)
+            {
+                // Add all selected items to the undo recorder
+                undoItems.AddRange(Nodes);
+                undoItems.AddRange(Notes);
+                if (DynamoSelection.Instance.Selection.Count > 0)
+                {
+                    undoItems = undoItems.Where(x => x.IsSelected).ToList();
+                }
+            }
+            else
+            {
+                // Add all models inside selected groups
+                foreach (var group in Annotations)
+                {
+                    if (group.IsSelected)
+                    {
+                        group.Deselect();
+                        undoItems.AddRange(group.SelectedModels);
+                    }
+                }
+            }
+
+            WorkspaceModel.RecordModelsForModification(undoItems, UndoRecorder);
+        }
+        
+        /// <summary>
+        /// This method repeatedly takes a selected node in the combined graph and
+        /// uses breadth-first search to find all other nodes in the same subgraph
+        /// until all selected nodes have been processed.
+        /// </summary>
+        /// <param name="nodes">A cluster of nodes to be separated into subgraphs.</param>
+        private void GenerateSeparateSubgraphs(HashSet<GraphLayout.Node> nodes)
+        {
+            int processed = 0;
+            var combinedGraph = LayoutSubgraphs.First();
+            GraphLayout.Graph graph = new GraphLayout.Graph();
+            Queue<GraphLayout.Node> queue = new Queue<GraphLayout.Node>();
+
+            while (nodes.Count(n => n.IsSelected) > 0)
+            {
+                GraphLayout.Node currentNode;
+
+                if (queue.Count == 0)
+                {
+                    if (graph.Nodes.Count > 0)
+                    {
+                        // Save the subgraph and subtract these nodes from the combined graph
+
+                        LayoutSubgraphs.Add(graph);
+                        nodes.ExceptWith(graph.Nodes);
+                        combinedGraph.Nodes.ExceptWith(graph.Nodes);
+                        graph = new GraphLayout.Graph();
+                    }
+                    if (nodes.Count(n => n.IsSelected) == 0) break;
+
+                    currentNode = nodes.FirstOrDefault(n => n.IsSelected);
+                    graph.Nodes.Add(currentNode);
+                }
+                else
+                {
+                    currentNode = queue.Dequeue();
+                }
+
+                // Find all nodes in the selection which are connected directly
+                // to the left or to the right to the currentNode
+
+                var selectedNodes = currentNode.RightEdges.Select(e => e.EndNode)
+                    .Union(currentNode.LeftEdges.Select(e => e.StartNode))
+                    .Where(x => nodes.Contains(x) && x.IsSelected)
+                    .Except(graph.Nodes).ToList();
+                graph.Nodes.UnionWith(selectedNodes);
+                graph.Edges.UnionWith(currentNode.RightEdges);
+                graph.Edges.UnionWith(currentNode.LeftEdges);
+
+                // If any of the incident edges are connected to unselected (outside) nodes
+                // then mark these edges as anchors.
+
+                graph.AnchorRightEdges.UnionWith(currentNode.RightEdges.Where(e => !e.EndNode.IsSelected));
+                graph.AnchorLeftEdges.UnionWith(currentNode.LeftEdges.Where(e => !e.StartNode.IsSelected));
+
+                foreach (var node in selectedNodes)
+                {
+                    queue.Enqueue(node);
+                    processed++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// This function calls the graph layout algorithm methods.
+        /// </summary>
+        /// <param name="graph">The subgraph to be processed.</param>
+        /// <param name="isGroupLayout">True if all selected models are groups.</param>
+        private void RunLayoutSubgraph(GraphLayout.Graph graph, bool isGroupLayout)
+        {
+            // Select relevant nodes
+            graph.Nodes.ToList().ForEach(x => x.IsSelected = true);
+
+            // Save subgraph position before running the layout
+            graph.RecordInitialPosition();
+
+            // Sugiyama algorithm steps
+            graph.RemoveCycles();
+            graph.AssignLayers();
+            graph.OrderNodes();
+
+            // Node and graph positioning
+            graph.DistributeNodePosition();
+            graph.SetGraphPosition(isGroupLayout);
+
+            // Reset layer information and deselect nodes
+            graph.ResetLayers();
+            graph.Nodes.ToList().ForEach(x => x.IsSelected = false);
+        }
+
+        /// <summary>
+        /// This method repeatedly shifts subgraphs away vertically from each other
+        /// when there are any two nodes from different subgraphs overlapping.
+        /// </summary>
+        private void AvoidSubgraphOverlap()
+        {
+            bool done;
+
+            do
+            {
+                done = true;
+
+                foreach (var g1 in LayoutSubgraphs.Skip(1))
+                {
+                    foreach (var g2 in LayoutSubgraphs.Skip(1))
+                    {
+                        // The first subgraph's center point must be higher than the second subgraph
+                        if (!g1.Equals(g2) && (g1.GraphCenterY + g1.OffsetY <= g2.GraphCenterY + g2.OffsetY))
+                        {
+                            var g1nodes = g1.Nodes.OrderBy(n => n.Y + n.TotalHeight);
+                            var g2nodes = g2.Nodes.OrderBy(n => n.Y);
+
+                            foreach (var node1 in g1nodes)
+                            {
+                                foreach (var node2 in g2nodes)
+                                {
+                                    // If any two nodes from these two different subgraphs overlap
+                                    if ((node1.Y + node1.TotalHeight + GraphLayout.Graph.VerticalNodeDistance + g1.OffsetY > node2.Y + g2.OffsetY) &&
+                                        (((node1.X <= node2.X) && (node1.X + node1.Width + GraphLayout.Graph.HorizontalNodeDistance > node2.X)) ||
+                                        ((node2.X <= node1.X) && (node2.X + node2.Width + GraphLayout.Graph.HorizontalNodeDistance > node1.X))))
+                                    {
+                                        // Shift the first subgraph to the top and the second subgraph to the bottom
+                                        g1.OffsetY -= 5;
+                                        g2.OffsetY += 5;
+                                        done = false;
+                                    }
+                                    if (!done) break;
+                                }
+                                if (!done) break;
+                            }
+                        }
+                    }
+                }
+            } while (!done);
+        }
+
+        /// <summary>
+        /// This method pushes changes from the GraphLayout.Graph objects
+        /// back to the workspace models.
+        /// </summary>
+        private void SaveLayoutGraph()
+        {
+            // Assign coordinates to nodes inside groups
+            foreach (var group in Annotations)
+            {
+                GraphLayout.Graph graph = LayoutSubgraphs
+                    .FirstOrDefault(g => g.FindNode(group.GUID) != null);
+
+                if (graph != null)
+                {
+                    GraphLayout.Node n = graph.FindNode(group.GUID);
+
+                    double deltaX = n.X - group.X;
+                    double deltaY = n.Y - group.Y + graph.OffsetY;
+                    foreach (var node in group.SelectedModels.OfType<NodeModel>())
+                    {
+                        node.X += deltaX;
+                        node.Y += deltaY;
+                        node.ReportPosition();
+                    }
+
+                    foreach (NoteModel note in n.LinkedNotes)
+                    {
+                        if (note.IsSelected || DynamoSelection.Instance.Selection.Count == 0)
+                        {
+                            note.X += deltaX;
+                            note.Y += deltaY;
+                            note.ReportPosition();
+                        }
+                    }
+                }
+            }
+
+            // Assign coordinates to nodes outside groups
+            foreach (var node in Nodes)
+            {
+                GraphLayout.Graph graph = LayoutSubgraphs
+                    .FirstOrDefault(g => g.FindNode(node.GUID) != null);
+
+                if (graph != null)
+                {
+                    GraphLayout.Node n = graph.FindNode(node.GUID);
+                    double offsetY = graph.OffsetY;
+
+                    node.X = n.X;
+                    node.Y = n.Y + n.NotesHeight + offsetY;
+                    node.ReportPosition();
+                    HasUnsavedChanges = true;
+
+                    double noteOffset = -n.NotesHeight;
+                    foreach (NoteModel note in n.LinkedNotes)
+                    {
+                        if (note.IsSelected || DynamoSelection.Instance.Selection.Count == 0)
+                        {
+                            note.X = node.X;
+                            note.Y = node.Y + noteOffset;
+                            noteOffset += note.Height + GraphLayout.Graph.VerticalNoteDistance;
+                            note.ReportPosition();
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -852,7 +1431,7 @@ namespace Dynamo.Models
         /// </summary>
         internal void IncrementPasteOffset()
         {
-            this.currentPasteOffset = (this.currentPasteOffset + PASTE_OFFSET_STEP) % PASTE_OFFSET_MAX;
+            this.currentPasteOffset = (this.currentPasteOffset + PasteOffsetStep) % PasteOffsetMax;
         }
         
         #endregion
@@ -865,7 +1444,7 @@ namespace Dynamo.Models
         /// <param name="description">a description of what the state does</param>
         /// <param name="currentSelection">a set of NodeModels that are to be serialized in this state</param>
         /// <param name="id">a GUID id for the state, if not supplied, a new GUID will be generated, cannot be a duplicate</param>
-        private void AddPresetCore(string name, string description, IEnumerable<NodeModel> currentSelection, Guid id = new Guid())
+        private PresetModel AddPresetCore(string name, string description, IEnumerable<NodeModel> currentSelection)
         {
             if (currentSelection == null || currentSelection.Count() < 1)
             {
@@ -873,13 +1452,14 @@ namespace Dynamo.Models
             }
             var inputs = currentSelection;
 
-            if (Presets.Any(x => x.Guid == id))
+            var newstate = new PresetModel(name, description, inputs);
+            if (Presets.Any(x => x.GUID == newstate.GUID))
             {
                 throw new ArgumentException("duplicate id in collection");
             }
 
-            var newstate = new PresetModel(name, description, inputs, id);
             presets.Add(newstate);
+            return newstate;
         }
 
         public void RemovePreset(PresetModel state)
@@ -910,8 +1490,8 @@ namespace Dynamo.Models
                         var originalpos = node.Position;
                         var serializedNode = state.SerializedNodes.ToList().Find(x => Guid.Parse(x.GetAttribute("guid")) == node.GUID);
                         //overwrite the xy coords of the serialized node with the current position, so the node is not moved
-                        serializedNode.SetAttribute("x", originalpos.X.ToString());
-                        serializedNode.SetAttribute("y", originalpos.Y.ToString());
+                        serializedNode.SetAttribute("x", originalpos.X.ToString(CultureInfo.InvariantCulture));
+                        serializedNode.SetAttribute("y", originalpos.Y.ToString(CultureInfo.InvariantCulture));
 
                         this.undoRecorder.RecordModificationForUndo(node);
                         this.ReloadModel(serializedNode);
@@ -925,13 +1505,14 @@ namespace Dynamo.Models
                 }
             }
         }
-        internal void AddPreset(string name, string description, IEnumerable<Guid> IDSToSave)
+        internal PresetModel AddPreset(string name, string description, IEnumerable<Guid> IDSToSave)
         {
-            //lookup the nodes by their ID, can also check that we find all of them....
-            var nodesFromIDs = this.Nodes.Where(node => IDSToSave.Contains(node.GUID));
- 	        //access the presetsCollection and add a new state based on the current selection
-            this.AddPresetCore(name, description, nodesFromIDs);
-            HasUnsavedChanges = true;
+                //lookup the nodes by their ID, can also check that we find all of them....
+                var nodesFromIDs = this.Nodes.Where(node => IDSToSave.Contains(node.GUID));
+                //access the presetsCollection and add a new state based on the current selection
+                var newpreset = this.AddPresetCore(name, description, nodesFromIDs);
+                HasUnsavedChanges = true;
+                return newpreset;
         }
 
         public void ImportPresets(IEnumerable<PresetModel> presetCollection)
@@ -1002,6 +1583,7 @@ namespace Dynamo.Models
                 root.SetAttribute("Y", Y.ToString(CultureInfo.InvariantCulture));
                 root.SetAttribute("zoom", Zoom.ToString(CultureInfo.InvariantCulture));
                 root.SetAttribute("Name", Name);
+                root.SetAttribute("Description", Description);
 
                 SerializeElementResolver(xmlDoc);
 
@@ -1175,7 +1757,7 @@ namespace Dynamo.Models
             HasUnsavedChanges = true;
         }
 
-        internal void ConvertNodesToCodeInternal(EngineController engineController)
+        internal void ConvertNodesToCodeInternal(EngineController engineController, INamingProvider namingProvider)
         {
             var selectedNodes = DynamoSelection.Instance
                                                .Selection
@@ -1184,7 +1766,7 @@ namespace Dynamo.Models
             if (!selectedNodes.Any())
                 return;
 
-            var cliques = NodeToCodeUtils.GetCliques(selectedNodes).Where(c => !(c.Count == 1 && c.First() is CodeBlockNodeModel));
+            var cliques = NodeToCodeCompiler.GetCliques(selectedNodes).Where(c => !(c.Count == 1 && c.First() is CodeBlockNodeModel));
             var codeBlockNodes = new List<CodeBlockNodeModel>();
 
             //UndoRedo Action Group----------------------------------------------
@@ -1202,7 +1784,7 @@ namespace Dynamo.Models
                     //Also collect the average X and Y co-ordinates of the different nodes
                     int nodeCount = nodeList.Count;
 
-                    var nodeToCodeResult = engineController.ConvertNodesToCode(this.nodes, nodeList);
+                    var nodeToCodeResult = engineController.ConvertNodesToCode(this.nodes, nodeList, namingProvider);
 
                     #region Step I. Delete all nodes and their connections
 
@@ -1256,10 +1838,10 @@ namespace Dynamo.Models
 
                     #region Step II. Create the new code block node
                     var outputVariables = externalOutputConnections.Values;
-                    var newResult = NodeToCodeUtils.ConstantPropagationForTemp(nodeToCodeResult, outputVariables);
+                    var newResult = NodeToCodeCompiler.ConstantPropagationForTemp(nodeToCodeResult, outputVariables);
 
                     // Rewrite the AST using the shortest unique name in case of namespace conflicts
-                    NodeToCodeUtils.ReplaceWithShortestQualifiedName(
+                    NodeToCodeCompiler.ReplaceWithShortestQualifiedName(
                         engineController.LibraryServices.LibraryManagementCore.ClassTable, newResult.AstNodes, ElementResolver);
                     var codegen = new ProtoCore.CodeGenDS(newResult.AstNodes);
                     var code = codegen.GenerateCode();
@@ -1268,7 +1850,7 @@ namespace Dynamo.Models
                         code,
                         System.Guid.NewGuid(), 
                         totalX / nodeCount,
-                        totalY / nodeCount, engineController.LibraryServices);
+                        totalY / nodeCount, engineController.LibraryServices, ElementResolver);
                     undoHelper.RecordCreation(codeBlockNode);
                    
                     AddAndRegisterNode(codeBlockNode, false);
@@ -1334,7 +1916,7 @@ namespace Dynamo.Models
         }
 
         // See RecordModelsForModification below for more details.
-        public static void RecordModelForModification(ModelBase model, UndoRedoRecorder recorder)
+        internal static void RecordModelForModification(ModelBase model, UndoRedoRecorder recorder)
         {
             if (null != model)
             {
@@ -1368,7 +1950,7 @@ namespace Dynamo.Models
             }
         }
 
-        public static void RecordModelsForUndo(Dictionary<ModelBase, UndoRedoRecorder.UserAction> models, UndoRedoRecorder recorder)
+        internal static void RecordModelsForUndo(Dictionary<ModelBase, UndoRedoRecorder.UserAction> models, UndoRedoRecorder recorder)
         {
             if (null == recorder)
                 return;
@@ -1435,13 +2017,20 @@ namespace Dynamo.Models
                     {
                         // Take a snapshot of the note before it goes away.
                         undoRecorder.RecordDeletionForUndo(model);
-                        Notes.Remove(model as NoteModel);
+                        RemoveNote(model as NoteModel);
                     }
                     else if (model is AnnotationModel)
                     {
                         undoRecorder.RecordDeletionForUndo(model);
-                        Annotations.Remove(model as AnnotationModel);
+                        RemoveAnnotation(model as AnnotationModel);
                     }
+
+                    else if (model is PresetModel)
+                    {
+                        undoRecorder.RecordDeletionForUndo(model);
+                        RemovePreset(model as PresetModel);
+                    }
+
                     else if (model is NodeModel)
                     {
                         // Just to make sure we don't end up deleting nodes from 
@@ -1520,12 +2109,16 @@ namespace Dynamo.Models
             if (model is NoteModel)
             {
                 var note = model as NoteModel;
-                Notes.Remove(note);                
+                RemoveNote(note);
                 note.Dispose();
             }
             else if (model is AnnotationModel)
             {
                 RemoveGroup(model);
+            }
+            else if (model is PresetModel)
+            {
+                RemovePreset(model as PresetModel);
             }
             else if (model is ConnectorModel)
             {
@@ -1547,7 +2140,7 @@ namespace Dynamo.Models
         public void RemoveGroup(ModelBase model)
         {
             var annotation = model as AnnotationModel;
-            Annotations.Remove(annotation);
+            RemoveAnnotation(annotation);
             annotation.Dispose();
         }
 
@@ -1592,12 +2185,28 @@ namespace Dynamo.Models
                 var connector = NodeGraph.LoadConnectorFromXml(modelData,
                     Nodes.ToDictionary(node => node.GUID));
 
-                OnConnectorAdded(connector); // Update view-model and view.
+                // It is possible that in some cases connector can't be created,
+                // for example, connector connects to a custom node instance
+                // whose input ports have been changed, so connector can't find
+                // its end port owner.
+                if (connector == null)
+                {
+                    var guidAttribute = modelData.Attributes["guid"];
+                    if (guidAttribute == null)
+                    {
+                        throw new InvalidOperationException("'guid' field missing from recorded model");
+                    }
+                    undoRecorder.RecordModelAsOffTrack(Guid.Parse(guidAttribute.Value)); 
+                }
+                else 
+                {
+                    OnConnectorAdded(connector); // Update view-model and view.
+                }
             }
             else if (typeName.StartsWith("Dynamo.Models.NoteModel"))
             {
                 var noteModel = NodeGraph.LoadNoteFromXml(modelData);
-                Notes.Add(noteModel);
+                AddNote(noteModel);
 
                 //check whether this note belongs to a group
                 foreach (var annotation in Annotations)
@@ -1617,12 +2226,24 @@ namespace Dynamo.Models
                 var annotationModel = new AnnotationModel(selectedNodes, selectedNotes);
                 annotationModel.ModelBaseRequested += annotationModel_GetModelBase;
                 annotationModel.Disposed += (_) => annotationModel.ModelBaseRequested -= annotationModel_GetModelBase;
-                annotationModel.Deserialize(modelData, SaveContext.Undo);                
-                Annotations.Add(annotationModel);
+                annotationModel.Deserialize(modelData, SaveContext.Undo);
+                AddNewAnnotation(annotationModel);
+            }
+
+            else if (typeName.Contains("PresetModel"))
+            {
+                var preset = new PresetModel(this.Nodes);
+                preset.Deserialize(modelData, SaveContext.Undo);
+                presets.Add(preset);
+                //we raise this property change here so that this event bubbles up through
+                //the model and to the DynamoViewModel so that presets show in the UI menu if our undo/redo
+                //created the first preset
+                RaisePropertyChanged("EnablePresetOptions");
+               
             }
             else // Other node types.
             {
-                NodeModel nodeModel = NodeFactory.CreateNodeFromXml(modelData, SaveContext.Undo);
+                NodeModel nodeModel = NodeFactory.CreateNodeFromXml(modelData, SaveContext.Undo, ElementResolver);
                 
                 AddAndRegisterNode(nodeModel);
                 
@@ -1664,9 +2285,10 @@ namespace Dynamo.Models
         public ModelBase GetModelInternal(Guid modelGuid)
         {
             ModelBase foundModel = (Connectors.FirstOrDefault(c => c.GUID == modelGuid)
-                ??  Nodes.FirstOrDefault(node => node.GUID == modelGuid) as ModelBase)
-                ?? (Notes.FirstOrDefault(note => note.GUID == modelGuid) 
-                ??  Annotations.FirstOrDefault(annotation => annotation.GUID == modelGuid) as ModelBase) ;
+                ?? Nodes.FirstOrDefault(node => node.GUID == modelGuid) as ModelBase)
+                ?? (Notes.FirstOrDefault(note => note.GUID == modelGuid)
+                ?? Annotations.FirstOrDefault(annotation => annotation.GUID == modelGuid) as ModelBase
+                ?? Presets.FirstOrDefault(preset => preset.GUID == modelGuid) as ModelBase);
 
             return foundModel;
         }

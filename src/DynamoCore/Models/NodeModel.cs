@@ -9,24 +9,24 @@ using Autodesk.DesignScript.Interfaces;
 
 using Dynamo.Core;
 using Dynamo.Core.Threading;
+using Dynamo.Migration;
 using Dynamo.Nodes;
-using Dynamo.DSEngine;
+using Dynamo.Engine;
+using Dynamo.Engine.CodeGeneration;
 using Dynamo.Selection;
 using Dynamo.Utilities;
 using Dynamo.Interfaces;
 
 using ProtoCore.AST.AssociativeAST;
 using ProtoCore.Mirror;
-using ProtoCore.Namespace;
 using String = System.String;
 using StringNode = ProtoCore.AST.AssociativeAST.StringNode;
 using ProtoCore.DSASM;
 using System.Reflection;
-using Autodesk.DesignScript.Runtime;
 
 namespace Dynamo.Models
 {
-    public abstract class NodeModel : ModelBase, IDisposable
+    public abstract class NodeModel : ModelBase, IRenderPackageSource<NodeModel>, IDisposable
     {
         #region private members
 
@@ -41,23 +41,23 @@ namespace Dynamo.Models
         private string toolTipText = "";
         private string description;
         private string persistentWarning = "";
+        private bool areInputPortsRegistered;
+        private bool areOutputPortsRegistered;
 
-        // Data caching related class members. There are multiple parties at
-        // play when it comes to caching MirrorData for a NodeModel, this value
-        // is accessed from UI thread for display (e.g. preview bubble) and it's
-        // updated by QueryMirrorDataAsyncTask on ISchedulerThread's context. 
-        // Access to the cached data is guarded by cachedMirrorDataMutex object.
-        // 
-        private bool isUpdated;
-        private MirrorData cachedMirrorData;
-        private readonly object cachedMirrorDataMutex = new object();
+        /// <summary>
+        /// The cached value of this node. The cachedValue object is protected by the cachedValueMutex
+        /// as it may be accessed from multiple threads concurrently. 
+        /// 
+        /// However, generally access to the cachedValue property should be protected by usage
+        /// of the Scheduler. 
+        /// </summary>
+        private MirrorData cachedValue;
+        private readonly object cachedValueMutex = new object();
 
         // Input and output port related data members.
         private ObservableCollection<PortModel> inPorts = new ObservableCollection<PortModel>();
         private ObservableCollection<PortModel> outPorts = new ObservableCollection<PortModel>();
         private readonly Dictionary<PortModel, PortData> portDataDict = new Dictionary<PortModel, PortData>();
-
-        private List<IRenderPackage> renderPackages = new List<IRenderPackage>();
 
         #endregion
 
@@ -65,28 +65,6 @@ namespace Dynamo.Models
 
         private readonly Dictionary<int, Tuple<int, NodeModel>> inputNodes;
         private readonly Dictionary<int, HashSet<Tuple<int, NodeModel>>> outputNodes;
-
-        public Object RenderPackagesMutex = new object();
-        public List<IRenderPackage> RenderPackages
-        {
-            get
-            {
-                lock (RenderPackagesMutex)
-                {
-                    return renderPackages; 
-                }
-            }
-            set
-            {
-                lock (RenderPackagesMutex)
-                {
-                    renderPackages = value;
-                }
-                RaisePropertyChanged("RenderPackages");
-            }
-        }
-
-        public bool HasRenderPackages { get; set; }
 
         /// <summary>
         /// The unique name that was created the node by
@@ -115,7 +93,7 @@ namespace Dynamo.Models
                 DispatchedToUI(sender, e);
         }
 
-        public event DispatchedToUIThreadHandler DispatchedToUI;
+        internal event DispatchedToUIThreadHandler DispatchedToUI;
 
         #endregion
 
@@ -124,11 +102,13 @@ namespace Dynamo.Models
         /// <summary>
         ///     Definitions for the Input Ports of this NodeModel.
         /// </summary>
+        [Obsolete("InPortData is deprecated, please use the InPortNamesAttribute, InPortDescriptionsAttribute, and InPortTypesAttribute instead.")]
         public ObservableCollection<PortData> InPortData { get; private set; }
         
         /// <summary>
         ///     Definitions for the Output Ports of this NodeModel.
         /// </summary>
+        [Obsolete("OutPortData is deprecated, please use the OutPortNamesAttribute, OutPortDescriptionsAttribute, and OutPortTypesAttribute instead.")]
         public ObservableCollection<PortData> OutPortData { get; private set; }
 
         /// <summary>
@@ -425,14 +405,30 @@ namespace Dynamo.Models
             return elCatAttrib.ElementCategory;
         }
 
+        /// <summary>
+        /// The value of this node after the most recent computation
+        /// 
+        /// As this property could be modified by the virtual machine, it's dangerous 
+        /// to access this value without using the active Scheduler. Use the Scheduler to 
+        /// remove the possibility of race conditions.
+        /// </summary>
         public MirrorData CachedValue
         {
             get
             {
-                lock (cachedMirrorDataMutex)
+                lock (cachedValueMutex)
                 {
-                    return cachedMirrorData;
+                    return cachedValue;
                 }
+            }
+            private set
+            {
+                lock (cachedValueMutex)
+                {
+                    cachedValue = value;
+                }
+
+                RaisePropertyChanged("CachedValue");
             }
         }
 
@@ -451,44 +447,28 @@ namespace Dynamo.Models
         /// 
         internal MirrorData GetCachedValueFromEngine(EngineController engine)
         {
-            if (cachedMirrorData != null)
-                return cachedMirrorData;
+            if (cachedValue != null)
+                return cachedValue;
 
             // Do not have an identifier for preview right now. For an example,
             // this can be happening at the beginning of a code block node creation.
             if (AstIdentifierForPreview.Value == null)
                 return null;
 
-            cachedMirrorData = null;
+            cachedValue = null;
 
             var runtimeMirror = engine.GetMirror(AstIdentifierForPreview.Value);
 
             if (runtimeMirror != null)
-                cachedMirrorData = runtimeMirror.GetData();
+                cachedValue = runtimeMirror.GetData();
 
-            return cachedMirrorData;
+            return cachedValue;
         }
 
         /// <summary>
-        ///     If the node is updated in LiveRunner's execution
+        /// Use to indicated if a node was involved in the most recent graph evaluation.
         /// </summary>
-        public bool IsUpdated
-        {
-            get { return isUpdated; }
-            set
-            {
-                isUpdated = value;
-                if (isUpdated)
-                {
-                    // When a NodeModel is updated, its
-                    // cached data should be invalidated.
-                    lock (cachedMirrorDataMutex)
-                    {
-                        cachedMirrorData = null;
-                    }
-                }
-            }
-        }
+        internal bool WasInvolvedInExecution { get; set; }
 
         /// <summary>
         ///     Search tags for this Node.
@@ -589,7 +569,7 @@ namespace Dynamo.Models
         /// </summary>
         public bool IsPartiallyApplied //TODO(Steve): Move to Graph level -- MAGN-5710
         {
-            get { return !Enumerable.Range(0, InPortData.Count).All(HasInput); }
+            get { return !Enumerable.Range(0, InPorts.Count).All(HasInput); }
         }
 
         /// <summary>
@@ -612,10 +592,10 @@ namespace Dynamo.Models
         /// <returns>Identifier corresponding to the given output port.</returns>
         public virtual IdentifierNode GetAstIdentifierForOutputIndex(int outputIndex)
         {
-            if (outputIndex < 0 || outputIndex > OutPortData.Count)
+            if (outputIndex < 0 || outputIndex > OutPorts.Count)
                 throw new ArgumentOutOfRangeException("outputIndex", @"Index must correspond to an OutPortData index.");
 
-            if (OutPortData.Count <= 1)
+            if (OutPorts.Count <= 1)
                 return AstIdentifierForPreview;
             else
             {
@@ -624,6 +604,15 @@ namespace Dynamo.Models
             }
         }
 
+        /// <summary>
+        ///      The possible type of output at specified port. This 
+        ///      type information is not necessary to be accurate.
+        /// </summary>
+        /// <returns></returns>
+        public virtual ProtoCore.Type GetTypeHintForOutput(int index)
+        {
+             return ProtoCore.TypeSystem.BuildPrimitiveTypeObject(ProtoCore.PrimitiveType.kTypeVar);
+        }
         #endregion
 
         protected NodeModel()
@@ -645,17 +634,6 @@ namespace Dynamo.Models
                 {
                     case ("OverrideName"):
                         RaisePropertyChanged("NickName");
-                        break;
-                    case ("IsSelected"):
-                        // Synchronize the selected state of any render packages for this node
-                        // with the selection state of the node.
-                        if (HasRenderPackages)
-                        {
-                            lock (RenderPackagesMutex)
-                            {
-                                RenderPackages.ForEach(rp => rp.IsSelected = IsSelected);
-                            }
-                        }
                         break;
                 }
             };
@@ -715,6 +693,23 @@ namespace Dynamo.Models
             if (handler != null) handler(this);
         }
 
+        /// <summary>
+        /// Called when a node is requesting that the workspace's node modified events be
+        /// silenced. This is particularly critical for code block nodes, whose modification can 
+        /// mutate the workspace.
+        /// 
+        /// As opposed to RaisesModificationEvents, this modifies the entire parent workspace
+        /// </summary>
+        internal event Action<NodeModel, bool> RequestSilenceNodeModifiedEvents;
+
+        internal void OnRequestSilenceModifiedEvents(bool silence)
+        {
+            if (RequestSilenceNodeModifiedEvents != null)
+            {
+                RequestSilenceNodeModifiedEvents(this, silence);
+            }
+        }
+
         #endregion
 
         #region ProtoAST Compilation
@@ -739,7 +734,7 @@ namespace Dynamo.Models
         /// </summary>
         /// <param name="inputAstNodes"></param>
         /// <param name="context">Compilation context</param>
-        internal virtual IEnumerable<AssociativeNode> BuildAst(List<AssociativeNode> inputAstNodes, AstBuilder.CompilationContext context)
+        internal virtual IEnumerable<AssociativeNode> BuildAst(List<AssociativeNode> inputAstNodes, CompilationContext context)
         {
             OnBuilt();
 
@@ -773,7 +768,7 @@ namespace Dynamo.Models
                 };
             }
 
-            if (OutPortData.Count == 1)
+            if (OutPorts.Count == 1)
             {
                 var firstOuputIdent = GetAstIdentifierForOutputIndex(0);
                 if (!AstIdentifierForPreview.Equals(firstOuputIdent))
@@ -1084,50 +1079,58 @@ namespace Dynamo.Models
         }
 
         /// <summary>
-        ///     Since the ports can have a margin (offset) so that they can moved vertically from its
-        ///     initial position, the center of the port needs to be calculted differently and not only
-        ///     based on the index. The function adds the height of other nodes as well as their margins
+        /// If a "PortModel.LineIndex" property isn't "-1", then it is a PortModel
+        /// meant to match up with a line in code block node. A code block node may 
+        /// contain empty lines in it, resulting in one PortModel being spaced out 
+        /// from another one. In such cases, the vertical position of PortModel is 
+        /// dependent of its "LineIndex".
+        /// 
+        /// If a "PortModel.LineIndex" property is "-1", then it is a regular 
+        /// PortModel. Regular PortModel stacks up on one another with equal spacing,
+        /// so their positions are based solely on "PortModel.Index".
         /// </summary>
-        /// <param name="portModel"> The portModel whose height is to be found</param>
-        /// <returns> Returns the offset of the given port from the top of the ports </returns>
+        /// <param name="portModel">The portModel whose vertical offset is to be computed.</param>
+        /// <returns>Returns the offset of the given port from the top of the ports</returns>
         //TODO(Steve): This kind of UI calculation should probably live on the VM. -- MAGN-5711
         internal double GetPortVerticalOffset(PortModel portModel)
         {
             double verticalOffset = 2.9;
-            int index = portModel.Index;
+            int index = portModel.LineIndex == -1 ? portModel.Index : portModel.LineIndex;
 
             //If the port was not found, then it should have just been deleted. Return from function
             if (index == -1)
                 return verticalOffset;
 
             double portHeight = portModel.Height;
-
-            switch (portModel.PortType)
-            {
-                case PortType.Input:
-                    for (int i = 0; i < index; i++)
-                        verticalOffset += inPorts[i].MarginThickness.Top + portHeight;
-                    verticalOffset += inPorts[index].MarginThickness.Top;
-                    break;
-                case PortType.Output:
-                    for (int i = 0; i < index; i++)
-                        verticalOffset += outPorts[i].MarginThickness.Top + portHeight;
-                    verticalOffset += outPorts[index].MarginThickness.Top;
-                    break;
-            }
-
-            return verticalOffset;
+            return verticalOffset + index * portModel.Height;
         }
 
         /// <summary>
         ///     Reads inputs list and adds ports for each input.
         /// </summary>
+        [Obsolete("RegisterInputPorts is deprecated, please use the InPortNamesAttribute, InPortDescriptionsAttribute, and InPortTypesAttribute instead.")]
         public void RegisterInputPorts()
         {
+            var inputs = new List<PortData>();
+
+            // Old version of input ports registration.
+            // Used InPortData.
+            if (InPortData.Count > 0)
+            {
+                inputs.AddRange(InPortData);
+            }
+
+            // New version of input ports registration.
+            // Used port Attributes.
+            if (!areInputPortsRegistered)
+            {
+                inputs.AddRange(GetPortDataFromAttributes(PortType.Input));
+            }
+
             //read the inputs list and create a number of
             //input ports
             int count = 0;
-            foreach (PortData pd in InPortData)
+            foreach (PortData pd in inputs)
             {
                 //add a port for each input
                 //distribute the ports along the 
@@ -1137,7 +1140,7 @@ namespace Dynamo.Models
                 //port.DataContext = this;
 
                 portDataDict[port] = pd;
-                count++;            
+                count++;
             }
 
             if (inPorts.Count > count)
@@ -1154,17 +1157,35 @@ namespace Dynamo.Models
 
             //Configure Snap Edges
             ConfigureSnapEdges(inPorts);
+            areInputPortsRegistered = true;
         }
 
         /// <summary>
         ///     Reads outputs list and adds ports for each output
         /// </summary>
+        [Obsolete("RegisterOutputPorts is deprecated, please use the OutPortNamesAttribute, OutPortDescriptionsAttribute, and OutPortTypesAttribute instead.")]
         public void RegisterOutputPorts()
         {
+            var outputs = new List<PortData>();
+
+            // Old version of output ports registration.
+            // Used OutPortData.
+            if (OutPortData.Count > 0)
+            {
+                outputs.AddRange(OutPortData);
+            }
+
+            // New version of output ports registration.
+            // Used port Attributes.
+            if (!areOutputPortsRegistered)
+            {
+                outputs.AddRange(GetPortDataFromAttributes(PortType.Output));
+            }
+
             //read the inputs list and create a number of
             //input ports
             int count = 0;
-            foreach (PortData pd in OutPortData)
+            foreach (PortData pd in outputs)
             {
                 //add a port for each input
                 //distribute the ports along the 
@@ -1175,7 +1196,7 @@ namespace Dynamo.Models
                 //port.DataContext = this;
 
                 portDataDict[port] = pd;
-                count++;              
+                count++;
             }
 
             if (outPorts.Count > count)
@@ -1191,6 +1212,68 @@ namespace Dynamo.Models
 
             //configure snap edges
             ConfigureSnapEdges(outPorts);
+            areOutputPortsRegistered = true;
+        }
+
+        /// <summary>
+        /// Tries to load ports names and descriptions from attributes.
+        /// </summary>
+        /// <param name="portType">Input or Output port type</param>
+        private IEnumerable<PortData> GetPortDataFromAttributes(PortType portType)
+        {
+            var type = GetType();
+            List<string> names = null;
+            List<string> descriptions = null;
+
+            switch (portType)
+            {
+                case PortType.Input:
+                    {
+                        names = type.GetCustomAttributes<InPortNamesAttribute>(false)
+                                .SelectMany(x => x.PortNames)
+                                .ToList();
+                        descriptions = type.GetCustomAttributes<InPortDescriptionsAttribute>(false)
+                            .SelectMany(x => x.PortDescriptions)
+                            .ToList();
+                        break;
+                    }
+                case PortType.Output:
+                    {
+                        names = type.GetCustomAttributes<OutPortNamesAttribute>(false)
+                                .SelectMany(x => x.PortNames)
+                                .ToList();
+                        descriptions = type.GetCustomAttributes<OutPortDescriptionsAttribute>(false)
+                            .SelectMany(x => x.PortDescriptions)
+                            .ToList();
+                        break;
+                    }
+            }
+
+            if (names == null)
+            {
+                return new List<PortData>();
+            }
+
+            if (names.Count != descriptions.Count)
+            {
+                Log(String.Concat(
+                        Name,
+                        ": ",
+                        Properties.Resources.PortsNameDescriptionDoNotEqualWarningMessage));
+
+                // Take the same number of descriptions as number of names.
+                descriptions = new List<string>(descriptions.Take(names.Count));
+            }
+
+            var ports = new List<PortData>();
+            for (int i = 0; i < names.Count; i++)
+            {
+                string descr = i < descriptions.Count ? descriptions[i] : String.Empty;
+                var pd = new PortData(names[i], descr);
+                ports.Add(pd);
+            }
+
+            return ports;
         }
 
         /// <summary>
@@ -1225,7 +1308,7 @@ namespace Dynamo.Models
         }
 
         /// <summary>
-        ///     Updates UI so that all ports reflect current state of InPortData and OutPortData.
+        ///     Updates UI so that all ports reflect current state of node ports.
         /// </summary>
         public void RegisterAllPorts()
         {
@@ -1339,16 +1422,15 @@ namespace Dynamo.Models
         {
             string nick = NickName.Replace(' ', '_');
 
-            if (!Enumerable.Range(0, InPortData.Count).Any(HasInput))
+            if (!Enumerable.Range(0, InPorts.Count).Any(HasInput))
                 return nick;
 
             string s = "";
 
-            if (Enumerable.Range(0, InPortData.Count).All(HasInput))
+            if (Enumerable.Range(0, InPorts.Count).All(HasInput))
             {
-                s += "(" + nick;
-                //for (int i = 0; i < InPortData.Count; i++)
-                foreach (int data in Enumerable.Range(0, InPortData.Count))
+                s += "(" + nick;                
+                foreach (int data in Enumerable.Range(0, InPorts.Count))
                 {
                     Tuple<int, NodeModel> input;
                     TryGetInput(data, out input);
@@ -1358,17 +1440,16 @@ namespace Dynamo.Models
             }
             else
             {
-                s += "(lambda (" + string.Join(" ", InPortData.Where((_, i) => !HasInput(i)).Select(x => x.NickName))
-                     + ") (" + nick;
-                //for (int i = 0; i < InPortData.Count; i++)
-                foreach (int data in Enumerable.Range(0, InPortData.Count))
+                s += "(lambda (" + string.Join(" ", InPorts.Where((_, i) => !HasInput(i)).Select(x => x.PortName))
+                     + ") (" + nick;                
+                foreach (int data in Enumerable.Range(0, InPorts.Count))
                 {
                     s += " ";
                     Tuple<int, NodeModel> input;
                     if (TryGetInput(data, out input))
                         s += input.Item2.PrintExpression();
                     else
-                        s += InPortData[data].NickName;
+                        s += InPorts[data].PortName;
                 }
                 s += "))";
             }
@@ -1627,9 +1708,9 @@ namespace Dynamo.Models
             // requested to update its value. When the QueryMirrorDataAsyncTask 
             // returns, it will update cachedMirrorData with the latest value.
             // 
-            lock (cachedMirrorDataMutex)
+            lock (cachedValueMutex)
             {
-                cachedMirrorData = null;
+                cachedValue = null;
             }
 
             // Do not have an identifier for preview right now. For an example,
@@ -1645,19 +1726,22 @@ namespace Dynamo.Models
                 VariableName = variableName
             });
 
-            task.Completed += OnNodeValueQueried;
+            task.Completed += QueryMirrorDataAsyncTaskCompleted;
             scheduler.ScheduleForExecution(task);
         }
 
-        private void OnNodeValueQueried(AsyncTask asyncTask)
+        private void QueryMirrorDataAsyncTaskCompleted(AsyncTask asyncTask)
         {
-            lock (cachedMirrorDataMutex)
+            asyncTask.Completed -= QueryMirrorDataAsyncTaskCompleted;
+
+            var task = asyncTask as QueryMirrorDataAsyncTask;
+            if (task == null)
             {
-                var task = asyncTask as QueryMirrorDataAsyncTask;
-                cachedMirrorData = task.MirrorData;
+                throw new InvalidOperationException("Expected a " + typeof(QueryMirrorDataAsyncTask).Name 
+                    + ", but got a " + asyncTask.GetType().Name );
             }
 
-            RaisePropertyChanged("IsUpdated");
+            this.CachedValue = task.MirrorData;
         }
 
         /// <summary>
@@ -1665,43 +1749,13 @@ namespace Dynamo.Models
         /// this node. This method accesses core properties of a NodeModel and 
         /// therefore is typically called on the main/UI thread.
         /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="scheduler"></param>
-        /// <param name="maxTessellationDivisions">The maximum number of 
-        /// tessellation divisions to use for regenerating render packages.</param>
-        public void RequestVisualUpdateAsync(IScheduler scheduler, EngineController engine, IRenderPackageFactory factory)
-        {
-            //if (Workspace.DynamoModel == null)
-            //    return;
-
-            // Imagine a scenario where "NodeModel.RequestVisualUpdateAsync" is being 
-            // called in quick succession from the UI thread -- the first task may 
-            // be updating '_renderPackages' when the second call gets here. In 
-            // this case '_renderPackages' should be protected against concurrent 
-            // accesses.
-            // 
-            lock (RenderPackagesMutex)
-            {
-                renderPackages.Clear();
-                HasRenderPackages = false;
-            }
-
-            RequestVisualUpdateAsyncCore(scheduler, engine, factory);
-        }
-
-        /// <summary>
-        /// When called, the base implementation of this method schedules an 
-        /// UpdateRenderPackageAsyncTask to regenerate its render packages 
-        /// asynchronously. Derived classes can optionally override this method 
-        /// to prevent render packages to be generated if they do not require 
-        /// geometric preview.
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="scheduler"></param>
-        /// <param name="maxTesselationDivisions">The maximum number of 
-        /// tessellation divisions to use for regenerating render packages.</param>
-        protected virtual void 
-            RequestVisualUpdateAsyncCore(IScheduler scheduler, EngineController engine, IRenderPackageFactory factory)
+        /// <param name="scheduler">An IScheduler on which the task will be scheduled.</param>
+        /// <param name="engine">The EngineController which will be used to get MirrorData for the node.</param>
+        /// <param name="factory">An IRenderPackageFactory which will be used to generate IRenderPackage objects.</param>
+        /// <param name="forceUpdate">Normally, render packages are only generated when the node's IsUpdated parameter is true.
+        /// By setting forceUpdate to true, the render packages will be updated.</param>
+        public virtual void
+            RequestVisualUpdateAsync(IScheduler scheduler, EngineController engine, IRenderPackageFactory factory, bool forceUpdate = false)
         {
             var initParams = new UpdateRenderPackageParams()
             {
@@ -1709,35 +1763,56 @@ namespace Dynamo.Models
                 RenderPackageFactory = factory,
                 EngineController = engine,
                 DrawableIds = GetDrawableIds(),
-                PreviewIdentifierName = AstIdentifierForPreview.Name
+                PreviewIdentifierName = AstIdentifierForPreview.Name,
+                ForceUpdate = forceUpdate
             };
 
             var task = new UpdateRenderPackageAsyncTask(scheduler);
-            if (task.Initialize(initParams))
-            {
-                task.Completed += OnRenderPackageUpdateCompleted;
-                scheduler.ScheduleForExecution(task);
-            }
+            if (!task.Initialize(initParams)) return;
+
+            task.Completed += OnRenderPackageUpdateCompleted;
+            scheduler.ScheduleForExecution(task);
         }
 
         /// <summary>
         /// This event handler is invoked when UpdateRenderPackageAsyncTask is 
         /// completed, at which point the render packages (specific to this node) 
-        /// become available. Since this handler is called off the UI thread, the 
-        /// '_renderPackages' must be guarded against concurrent access.
+        /// become available. 
         /// </summary>
         /// <param name="asyncTask">The instance of UpdateRenderPackageAsyncTask
         /// that was responsible of generating the render packages.</param>
         /// 
         private void OnRenderPackageUpdateCompleted(AsyncTask asyncTask)
         {
-            lock (RenderPackagesMutex)
+            var task = asyncTask as UpdateRenderPackageAsyncTask;
+            if (task.RenderPackages.Any())
             {
-                var task = asyncTask as UpdateRenderPackageAsyncTask;
-                renderPackages.Clear();
-                renderPackages.AddRange(task.RenderPackages);
-                HasRenderPackages = renderPackages.Any();
+                var packages = new List<IRenderPackage>();
+                
+                packages.AddRange(task.RenderPackages);
+                packages.AddRange(OnRequestRenderPackages());
+
+                OnRenderPackagesUpdated(packages);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event Func<IEnumerable<IRenderPackage>> RequestRenderPackages;
+
+        /// <summary>
+        /// This event handler is invoked when the render packages (specific to this node)  
+        /// become available and in addition the node requests for associated render packages 
+        /// if any for example, packages used for associated node manipulators
+        /// </summary>
+        private IEnumerable<IRenderPackage> OnRequestRenderPackages()
+        {
+            if (RequestRenderPackages != null)
+            {
+                return RequestRenderPackages();
+            }
+            return new List<IRenderPackage>();
         }
 
         /// <summary>
@@ -1767,7 +1842,7 @@ namespace Dynamo.Models
         private string GetDrawableId(int outPortIndex)
         {
             var output = GetAstIdentifierForOutputIndex(outPortIndex);
-            return output == null ? null : output.ToString();
+            return output == null ? null : output.Value;
         }
 
         #endregion
@@ -1819,6 +1894,16 @@ namespace Dynamo.Models
         }
 
         protected bool ShouldDisplayPreviewCore { get; set; }
+        
+        public event Action<NodeModel, IEnumerable<IRenderPackage>> RenderPackagesUpdated;
+
+        private void OnRenderPackagesUpdated(IEnumerable<IRenderPackage> packages)
+        {
+            if(RenderPackagesUpdated != null)
+            {
+                RenderPackagesUpdated(this, packages);
+            }
+        }
     }
 
     public enum ElementState
@@ -1830,7 +1915,6 @@ namespace Dynamo.Models
         Error,
         AstBuildBroken
     };
-
 
     public enum LacingStrategy
     {
@@ -1855,6 +1939,7 @@ namespace Dynamo.Models
         Middle,
         Last
     }
+    
     [Flags]
     public enum SnapExtensionEdges
     {
@@ -1863,222 +1948,9 @@ namespace Dynamo.Models
         Bottom = 0x2
     }
 
-
     public delegate void PortsChangedHandler(object sender, EventArgs e);
 
-    public delegate void DispatchedToUIThreadHandler(object sender, UIDispatcherEventArgs e);
-
-    #region class attributes
-
-    [AttributeUsage(AttributeTargets.All)]
-    public class NodeNameAttribute : Attribute
-    {
-        public NodeNameAttribute(string elementName)
-        {
-            Name = elementName;
-        }
-
-        public string Name { get; set; }
-    }
-
-
-    [AttributeUsage(AttributeTargets.All)]
-    public class NodeCategoryAttribute : Attribute
-    {
-        public NodeCategoryAttribute(string category)
-        {
-            ElementCategory = category;
-        }
-
-        public string ElementCategory { get; set; }
-    }
-
-
-    [AttributeUsage(AttributeTargets.All)]
-    public class NodeSearchTagsAttribute : Attribute
-    {
-        public NodeSearchTagsAttribute(string tagsID, Type resourceType)
-        {
-            if (resourceType == null)
-                throw new ArgumentNullException("resourceType");
-
-            //Sometimes resources are made internal so that they don't appear in 
-            //node library, hence we also need to query non public properties.
-            var prop = resourceType.GetProperty(tagsID, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-            if (prop != null && prop.PropertyType == typeof(String))
-            {
-                var tagString = (string)prop.GetValue(null, null);
-                Tags = tagString.Split(';').ToList();
-            }
-            else
-            {
-                Tags = new List<String> { tagsID };
-            }
-        }
-        public NodeSearchTagsAttribute(params string[] tags)
-        {
-            Tags = tags.ToList();
-        }
-
-        public List<string> Tags { get; set; }
-    }
-
-    [AttributeUsage(AttributeTargets.Class)]
-    public class NotSearchableInHomeWorkspace : Attribute
-    { }
-
-    [AttributeUsage(AttributeTargets.Class)]
-    public class NotSearchableInCustomNodeWorkspace : Attribute
-    { }
-
-    [AttributeUsage(AttributeTargets.All)]
-    public class IsInteractiveAttribute : Attribute
-    {
-        public IsInteractiveAttribute(bool isInteractive)
-        {
-            IsInteractive = isInteractive;
-        }
-
-        public bool IsInteractive { get; set; }
-    }
-
-
-    [AttributeUsage(AttributeTargets.All)]
-    public class NodeDescriptionAttribute : Attribute
-    {
-        public NodeDescriptionAttribute(string description)
-        {
-            ElementDescription = description;
-        }
-
-        public NodeDescriptionAttribute(string descriptionResourceID, Type resourceType)
-        {
-            if (resourceType == null)
-                throw new ArgumentNullException("resourceType");
-
-            //Sometimes resources are made internal so that they don't appear in 
-            //node library, hence we also need to query non public properties.
-            var prop = resourceType.GetProperty(descriptionResourceID, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-            if (prop != null && prop.PropertyType == typeof(String))
-            {
-                ElementDescription = (string)prop.GetValue(null, null);
-            }
-            else
-            {
-                ElementDescription = descriptionResourceID;
-            }
-        }
-
-        public string ElementDescription { get; set; }
-    }
-
-
-    [AttributeUsage(AttributeTargets.All)]
-    public class NodeSearchableAttribute : Attribute
-    {
-        public NodeSearchableAttribute(bool isSearchable)
-        {
-            IsSearchable = isSearchable;
-        }
-
-        public bool IsSearchable { get; set; }
-    }
-
-
-    [AttributeUsage(AttributeTargets.All)]
-    public class NodeTypeIdAttribute : Attribute
-    {
-        public NodeTypeIdAttribute(string description)
-        {
-            Id = description;
-        }
-
-        public string Id { get; set; }
-    }
-
-
-    /// <summary>
-    ///     The DoNotLoadOnPlatforms attribute allows the node implementor
-    ///     to define an array of contexts in which the node will not
-    ///     be loaded.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.All)]
-    public class DoNotLoadOnPlatformsAttribute : Attribute
-    {
-        public DoNotLoadOnPlatformsAttribute(params string[] values)
-        {
-            Values = values;
-        }
-
-        public string[] Values { get; set; }
-    }
-
-
-    /// <summary>
-    ///     Flag to hide deprecated nodes in search, but allow in workflows
-    /// </summary>
-    [AttributeUsage(AttributeTargets.All)]
-    public class NodeDeprecatedAttribute : Attribute { }
-
-    /// <summary>
-    ///     The AlsoKnownAs attribute allows the node implementor to
-    ///     define an array of names that this node might have had
-    ///     in the past.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.All)]
-    public class AlsoKnownAsAttribute : Attribute
-    {
-        public AlsoKnownAsAttribute(params string[] values)
-        {
-            Values = values;
-        }
-
-        public string[] Values { get; set; }
-    }
-
-
-    /// <summary>
-    ///     The MetaNode attribute means this node shouldn't be added to the category,
-    ///     only its instances are allowed
-    /// </summary>
-    [AttributeUsage(AttributeTargets.All, Inherited = false)]
-    public class IsMetaNodeAttribute : Attribute { }
-
-
-    /// <summary>
-    ///     The IsDesignScriptCompatibleAttribute indicates if the node is able
-    ///     to work with DesignScript evaluation engine.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.All, Inherited = false)]
-    public class IsDesignScriptCompatibleAttribute : Attribute { }
-
-    /// <summary>
-    ///    The NodeDescriptionAttribute indicates this node is obsolete
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method |AttributeTargets.Property)]
-    public sealed class NodeObsoleteAttribute : IsObsoleteAttribute 
-    {
-        public NodeObsoleteAttribute(string message) : base(message)
-        {
-        }
-
-        public NodeObsoleteAttribute(string descriptionResourceID, Type resourceType)
-        {
-            if (resourceType == null)
-                throw new ArgumentNullException("resourceType");
-
-            var prop = resourceType.GetProperty(descriptionResourceID, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-            if (prop != null && prop.PropertyType == typeof(String))
-            {
-                Message = (string)prop.GetValue(null, null);
-            }
-            else
-            {
-                Message = descriptionResourceID;
-            }
-        }
-    }
-    #endregion
+    internal delegate void DispatchedToUIThreadHandler(object sender, UIDispatcherEventArgs e);
     
     public class UIDispatcherEventArgs : EventArgs
     {

@@ -13,11 +13,6 @@ namespace ProtoCore
             get; private set; 
         }
 
-        public BuildHaltException()
-        {
-            ErrorMessage = "Stopping Build\n";
-        }
-
         public BuildHaltException(string message)
         {
             ErrorMessage = message + '\n';
@@ -26,6 +21,12 @@ namespace ProtoCore
 
     namespace BuildData
     {
+        public enum ErrorType
+        {
+            SyntaxError,
+            MaxErrorID
+        }
+
         public enum WarningID
         {
             kDefault,
@@ -55,6 +56,7 @@ namespace ProtoCore
 
         public struct ErrorEntry
         {
+            public ErrorType ID;
             public string FileName;
             public string Message;
             public int Line;
@@ -81,15 +83,6 @@ namespace ProtoCore
         public OutputMessage(string message)
         {
             Type = MessageType.Info;
-            Message = message;
-            FilePath = string.Empty;
-            Line = -1;
-            Column = -1;
-        }
-        // A constructor for generic message.
-        public OutputMessage(MessageType type, string message)
-        {
-            Type = type;
             Message = message;
             FilePath = string.Empty;
             Line = -1;
@@ -250,15 +243,6 @@ namespace ProtoCore
     {
         public Core core;
         public string filename;
-        public WebOutputStream(Core core)
-        {
-            this.core = core;
-            this.filename = core.CurrentDSFileName;
-        }
-        public string GetCurrentFileName()
-        {
-            return this.filename;
-        }
 
         public void Write(ProtoCore.OutputMessage message)
         {
@@ -291,12 +275,6 @@ namespace ProtoCore
 
             if (message.Type == ProtoCore.OutputMessage.MessageType.Warning)
                 message.Continue = true;
-        }
-
-        public void Close()
-        {
-            if (null != core.ExecutionLog)
-                core.ExecutionLog.Close();
         }
 
         public List<ProtoCore.OutputMessage> GetMessages()
@@ -460,6 +438,7 @@ namespace ProtoCore
 
             var errorEntry = new BuildData.ErrorEntry
             {
+                ID = BuildData.ErrorType.SyntaxError,
                 FileName = fileName,
                 Message = localizedMessage,
                 Line = line,

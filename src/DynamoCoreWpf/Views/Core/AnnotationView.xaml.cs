@@ -109,7 +109,7 @@ namespace Dynamo.Nodes
                 //Set the panning mode to false if a group is in editing mode.
                 if (ViewModel.WorkspaceViewModel.IsPanning)
                 {
-                    ViewModel.WorkspaceViewModel.DynamoViewModel.TogglePan(null);
+                    ViewModel.WorkspaceViewModel.DynamoViewModel.BackgroundPreviewViewModel.TogglePan(null);
                 }
                 e.Handled = true;
             }
@@ -183,23 +183,20 @@ namespace Dynamo.Nodes
         private void GroupTextBox_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var textbox = sender as TextBox;
-            if (textbox != null && textbox.Visibility == Visibility.Visible)
+            if (textbox == null || textbox.Visibility != Visibility.Visible) return;
+
+            //Record the value here, this is useful when title is popped from stack during undo
+            ViewModel.WorkspaceViewModel.DynamoViewModel.ExecuteCommand(
+                new DynCmd.UpdateModelValueCommand(
+                    Guid.Empty, ViewModel.AnnotationModel.GUID, "TextBlockText",
+                    GroupTextBox.Text));
+
+            ViewModel.WorkspaceViewModel.DynamoViewModel.RaiseCanExecuteUndoRedo();
+
+            textbox.Focus();
+            if (textbox.Text.Equals(Properties.Resources.GroupDefaultText))
             {
-                //Record the value here, this is useful when title is poped from stack during undo
-                ViewModel.WorkspaceViewModel.DynamoViewModel.ExecuteCommand(
-                   new DynCmd.UpdateModelValueCommand(
-                       System.Guid.Empty, this.ViewModel.AnnotationModel.GUID, "TextBlockText",
-                       GroupTextBox.Text));
-
-                ViewModel.WorkspaceViewModel.DynamoViewModel.UndoCommand.RaiseCanExecuteChanged();
-                ViewModel.WorkspaceViewModel.DynamoViewModel.RedoCommand.RaiseCanExecuteChanged();
-
-                textbox.Focus();
-                if (textbox.Text.Equals(Dynamo.Properties.Resources.GroupDefaultText))
-                {
-                    textbox.SelectAll();  
-                }
-                             
+                textbox.SelectAll();  
             }
         }
 
@@ -227,5 +224,20 @@ namespace Dynamo.Nodes
                 ViewModel.WorkspaceViewModel.DynamoViewModel.DeleteCommand.Execute(null);
             }
         }
+
+        /// <summary>
+        /// This function will run graph layout algorithm to the nodes inside the selected group.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void OnGraphLayoutAnnotation(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.Select();
+                ViewModel.WorkspaceViewModel.DynamoViewModel.GraphAutoLayoutCommand.Execute(null);
+            }
+        }
+
     }
 }

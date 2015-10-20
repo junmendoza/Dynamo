@@ -117,10 +117,26 @@ temp = test(1, 2);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestFunctionsOverload03()
         {
             String code =
-            @"class A            {	            b : int;	            	            def foo(a : int)	            {		            b = 1;		            return = a;	            }	            def foo(a : int[])	            {                    b = 2;		            return = a;	            }            }            x = A.A();            c = {1,2,3,4};            d = x.foo(c);            y = x.b;            e = x.foo({5,6,7,8});            z = x.b;                        ";
+            @"b : int;
+            def foo(a : int)
+            {
+	            b = 1;
+	            return = a;
+            }
+            def foo(a : int[])
+            {
+	            b = 2;
+	            return = a;
+            }
+            c = {1,2,3,4};
+            d = foo(c);
+            y = b;
+            e = foo({5,6,7,8});
+            z = b;                 ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Obj o = mirror.GetValue("d");
             List<Obj> os = mirror.GetArrayElements(o);
@@ -141,10 +157,11 @@ temp = test(1, 2);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestDynamicDispatch01()
         {
             String code =
-@"    class A    {        x:int;        constructor A(i)        {            x = i;        }    }        def foo(a:A)    {        return = a.x;    }    def foo(x:int)    {        return = x;    }    def ding(x:int)    {        return = (x < 0) ? 2 * x : A.A(x);    }    t1 = foo(ding(-1));    t2 = foo(ding(2));    arr = {1, 2};    arr[1] = A.A(100);    t3 = foo(arr[1]);    ";
+@"    def foo(x:int)    {        return = x;    }    def ding(x:int)    {        return = (x < 0) ? 2 * x : x;    }    t1 = foo(ding(-1));    t2 = foo(ding(2));    arr = {1, 2};    arr[1] = 100;    t3 = foo(arr[1]);    ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("t1").Payload == -2);
             Assert.IsTrue((Int64)mirror.GetValue("t2").Payload == 2);
@@ -152,27 +169,30 @@ temp = test(1, 2);
         }
 
         [Test]
-        [Category("Class")]
+        [Category("DSDefinedClass_Ported")]
         public void TestClasses01()
         {
             String code =
-@"	class f	{		fx : var;		fy : var;		constructor f()		{			fx = 123;			fy = 345;		}	}		class g	{		gx : var;		gy : var;		constructor g()		{			// Construct a class within a class			gx = f.f();			gy = 678;		}	}	p = f.f();    a = p.fx;    b = p.fy;";
+@"import(""FFITarget.dll"");p = DummyPoint.ByCoordinates(123.0, 345.0, 567.0);a = p.X;b = p.Y;c = p.Z;";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
-            Assert.IsTrue((Int64)mirror.GetValue("a").Payload == 123);
-            Assert.IsTrue((Int64)mirror.GetValue("b").Payload == 345);
+            Assert.IsTrue((double)mirror.GetValue("a").Payload == 123.0);
+            Assert.IsTrue((double)mirror.GetValue("b").Payload == 345.0);
+            Assert.IsTrue((double)mirror.GetValue("c").Payload == 567.0);
         }
 
         [Test]
-        public void TestClasses02()
+        [Category("DSDefinedClass_Ported")]
+        public void TestFunction01()
         {
             String code =
-@"	class vector2D	{		mx : var;		my : var;				constructor vector2D(px : int, py : int)		{			mx = px; 			// Copy mx to my with px's value			my = mx; 		}	}	v1 = vector2D.vector2D(100,20);	x = v1.mx;	y = v1.my;";
+@"	mx : var;	my : var;	def vector2D(px : int, py : int)	{		mx = px; 		// Copy mx to my with px's value		my = mx; 	}	vector2D(100,20);	x = mx;	y = my;";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("x").Payload == 100);
             Assert.IsTrue((Int64)mirror.GetValue("y").Payload == 100);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored_DSClassInheritance")]
         public void TestClasses03()
         {
             String code =
@@ -182,6 +202,7 @@ temp = test(1, 2);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored_DSClassInheritance")]
         public void TestClasses04()
         {
             String code =
@@ -192,37 +213,52 @@ temp = test(1, 2);
         }
 
         [Test]
-        public void TestClasses05()
+        [Category("DSDefinedClass_Ported")]
+        public void TestFunction02()
         {
             String code =
-@"      def sum : double (p : double)    {           return = p + 10.0;    }    class Obj    {        val : var;		mx : var;		my : var;		mz : var;        constructor Obj(xx : double, yy : double, zz : double)        {            mx = xx;            my = yy;            mz = zz;            val = sum(zz);        }    }    p = Obj.Obj(0.0, 1.0, 2.0);    x = p.val;";
+@"      def sum : double (p : double)    {        return = p + 10.0;    }    val : var;	mx : var;	my : var;	mz : var;    def Obj(xx : double, yy : double, zz : double)    {        mx = xx;        my = yy;        mz = zz;        val = sum(zz);    }    p = Obj(0.0, 1.0, 2.0);    x = val;";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((double)mirror.GetValue("x").Payload == 12);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestClasses06()
         {
             String code =
-@"  class Point{    mx : var;    my : var;    mz : var;    constructor ByCoordinates(x : int, y : int, z : int)    {        mx = x;        my = y;        mz = z;    }}class BSplineCurve{    mpts : var[];    constructor ByPoints(ptsOnCurve : Point[])    {        mpts = ptsOnCurve;    }}pt1 = Point.ByCoordinates(1,2,3);pt2 = Point.ByCoordinates(4,5,6);pt3 = Point.ByCoordinates(7,8,9);pt4 = Point.ByCoordinates(10,11,12);pt5 = Point.ByCoordinates(15,16,17);pts = {pt1, pt2, pt3, pt4, pt5};p = BSplineCurve.ByPoints(pts);a1 = p.mpts[0].mx;a2 = p.mpts[1].my;a3 = p.mpts[2].mz;a4 = p.mpts[3].mx;a5 = p.mpts[4].my;";
+@"  import(""FFITarget.dll"");
+p1 = DummyPoint.ByCoordinates(1,1,1);
+p2 = DummyPoint.ByCoordinates(10,10,10);
+line = DummyLine.ByStartPointEndPoint(p1, p2);
+a = line.Start.X;
+b = line.Start.Y;
+c = line.Start.Z;
+x = line.End.X;
+y = line.End.Y;
+z = line.End.Z;
+";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
-            Assert.IsTrue((Int64)mirror.GetValue("a1").Payload == 1);
-            Assert.IsTrue((Int64)mirror.GetValue("a2").Payload == 5);
-            Assert.IsTrue((Int64)mirror.GetValue("a3").Payload == 9);
-            Assert.IsTrue((Int64)mirror.GetValue("a4").Payload == 10);
-            Assert.IsTrue((Int64)mirror.GetValue("a5").Payload == 16);
+            Assert.IsTrue((double)mirror.GetValue("a").Payload == 1.0);
+            Assert.IsTrue((double)mirror.GetValue("b").Payload == 1.0);
+            Assert.IsTrue((double)mirror.GetValue("c").Payload == 1.0);
+            Assert.IsTrue((double)mirror.GetValue("x").Payload == 10.0);
+            Assert.IsTrue((double)mirror.GetValue("y").Payload == 10.0);
+            Assert.IsTrue((double)mirror.GetValue("z").Payload == 10.0);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestClasses07()
         {
             String code =
-@"  class vector2D{	mx : var[];	constructor vector2D()	{		mx = {10,20}; 	}    def ModifyMe : int()    {        mx[1] = 64;        return = mx[1];    }}p = vector2D.vector2D();x = p.ModifyMe();";
+@"  mx : var[];def vector2D(){	mx = {10,20}; }def ModifyMe : int(){    mx[1] = 64;    return = mx[1];}vector2D();x = ModifyMe();";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("x").Payload == 64);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClasses08()
         {
             String code =
@@ -234,16 +270,18 @@ temp = test(1, 2);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestClassFunction01()
         {
             String code =
-@"	class complex	{		mx : var;		my : var;		constructor complex(px : int, py : int)		{			mx = px; 			my = py; 		}		def scale : int(s : int)		{			mx = mx * s; 			my = my * s; 			return = 0;		}	}	p = complex.complex(8,16);	i = p.mx;	j = p.my;	// Calling a member function of class complex that mutates its properties 	k1 = p.scale(2); 	// Scale 'p' further	k2 = p.scale(10); ";
+@"	mx : var;	my : var;	def complex(px : int, py : int)	{		mx = px; 		my = py; 	}	def scale : int(s : int)	{		mx = mx * s; 		my = my * s; 		return = 0;	}	complex(8,16);	i = mx;	j = my;	// Calling a member function of class complex that mutates its properties 	k1 = scale(2); 	// Scale 'p' further	k2 = scale(10); ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("i", 160);
             thisTest.Verify("j", 320);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassHeirarchy01()
         {
             String code =
@@ -291,6 +329,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassHeirarchy02()
         {
             String code =
@@ -339,25 +378,28 @@ x = d.foo(c);
 
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestClassFunction02()
         {
             String code =
-@"    class Obj    {        val : var;	    def sum : int (p : int)        {            return = p + 10;        }        constructor Obj()        {            val = sum(2);        }    }    p = Obj.Obj();    x = p.val;";
+@"    val : var;	def sum : int (p : int)    {        return = p + 10;    }    val = sum(2);    x = val;";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("x").Payload == 12);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestClassFunction03()
         {
             String code =
-@"	class Vector	{		mx : var;		my : var;				def init : int ()		{            my = 522;              return = 22;		}				constructor Vector(x : int)		{			mx = x;            aa = init(); // A local function called within the constructor		}	}	a = Vector.Vector(1);	b = a.mx;    c = a.my;    d = a.init();";
+@"	mx : var;	my : var;	def init : int ()	{        my = 522;          return = 22;	}	def Vector(x : int)	{		mx = x;        aa = init();	}	Vector(1);	b = mx;    c = my;    d = init();";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("b").Payload == 1);
             Assert.IsTrue((Int64)mirror.GetValue("c").Payload == 522);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction04()
         {
             String code =
@@ -368,6 +410,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored_Redundant")]
         public void TestClassFunction05()
         {
             String code =
@@ -384,17 +427,36 @@ x = d.foo(c);
         }
 
         [Test]
-        public void TestClassFunction06()
+        [Category("DSDefinedClass_Ported")]
+        public void TestClassProperty()
         {
             String code =
-@"class Point {    mx : var;    my : var;    mz : var;    constructor ByCoordinates(xx : double, yy : double, zz : double)    {    mx = xx;    my = yy;    mz = zz;    }}    class Circle{    _cp : var;        constructor ByCenterPointRadius(centerPt : Point, rad : double)    {        _cp = centerPt;    }        def get_CenterPoint : Point ()    {                return = _cp;    }        }e;f;g;[Associative]{    pt = Point.ByCoordinates(10.0,20.0,30.0);    rad = 25.0;        c = Circle.ByCenterPointRadius(pt, rad);        d = c.get_CenterPoint();    e = d.mx;    f = d.my;    g = d.mz;}";
+@"  import(""FFITarget.dll"");
+p1 = DummyPoint.ByCoordinates(1.0,1.0,1.0);
+p2 = DummyPoint.ByCoordinates(10.0,10.0,10.0);
+line = DummyLine.ByStartPointEndPoint(p1, p2);
+a;b;c;x;y;z;
+[Associative]
+{
+    a = line.Start.X;
+    b = line.Start.Y;
+    c = line.Start.Z;
+    x = line.End.X;
+    y = line.End.Y;
+    z = line.End.Z;
+}
+";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
-            Assert.IsTrue((double)mirror.GetValue("e", 0).Payload == 10);
-            Assert.IsTrue((double)mirror.GetValue("f", 0).Payload == 20);
-            Assert.IsTrue((double)mirror.GetValue("g", 0).Payload == 30);
+            Assert.IsTrue((double)mirror.GetValue("a").Payload == 1.0);
+            Assert.IsTrue((double)mirror.GetValue("b").Payload == 1.0);
+            Assert.IsTrue((double)mirror.GetValue("c").Payload == 1.0);
+            Assert.IsTrue((double)mirror.GetValue("x").Payload == 10.0);
+            Assert.IsTrue((double)mirror.GetValue("y").Payload == 10.0);
+            Assert.IsTrue((double)mirror.GetValue("z").Payload == 10.0);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction07()
         {
             String code =
@@ -404,6 +466,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction08()
         {
             String code =
@@ -418,10 +481,11 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestClassFunction09()
         {
             String code =
-@"class MyPoint{	mX : double;	mY : double;	mZ : double;                                constructor ByXY (x : double, y : double)    {		mX = x;		mY = y;		mZ = 0.0;    }			constructor ByYZ (y : double, z : double)    {		mX = 0.0;		mY = y;		mZ = z;    }}    p = MyPoint.ByYZ (100.0,200.0);	x = p.mX;	y = p.mY;	z = p.mZ;";
+@"mX : double;mY : double;mZ : double;                            def ByXY (x : double, y : double){	mX = x;	mY = y;	mZ = 0.0;}		def ByYZ (y : double, z : double){	mX = 0.0;	mY = y;	mZ = z;}    ByYZ (100.0,200.0);	x = mX;	y = mY;	z = mZ;";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((double)mirror.GetValue("x").Payload == 0);
             Assert.IsTrue((double)mirror.GetValue("y").Payload == 100);
@@ -429,6 +493,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction10()
         {
             String code =
@@ -437,6 +502,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction11()
         {
             String code =
@@ -446,6 +512,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction12()
         {
             String code =
@@ -454,6 +521,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction13()
         {
             String code =
@@ -466,6 +534,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         [Category("JunToFix")]
         public void TestClassFunction14()
         {
@@ -477,10 +546,11 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestClassFunction15()
         {
             String code =
-@"class Point{    x : var;    y : var;    z : var;        constructor Create(xx : double, yy : double, zz : double)    {        x = xx;        y = yy;        z = zz;    }        def Offset : Point (delx : double, dely : double, delz : double)    {        return = Point.Create(x + delx, y + dely, z + delz);    }        def OffsetByArray : Point( deltas : double[] )    {        return = Offset(deltas[0], deltas[1], deltas[2]);    }}x;y;z;[Associative]{    pt = Point.Create(10,10,10);    a = {10.0,20.0,30.0};    pt2 = pt.OffsetByArray(a);    x = pt2.x;    y = pt2.y;    z = pt2.z;}";
+@"x : var;y : var;z : var;def Create(xx : double, yy : double, zz : double){    x = xx;    y = yy;    z = zz;}def Offset (delx : double, dely : double, delz : double){    Create(x + delx, y + dely, z + delz);}def OffsetByArray ( deltas : double[] ){    Offset(deltas[0], deltas[1], deltas[2]);}[Associative]{    Create(10,10,10);    a = {10.0,20.0,30.0};    OffsetByArray(a);}";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((double)mirror.GetValue("x", 0).Payload == 20);
             Assert.IsTrue((double)mirror.GetValue("y", 0).Payload == 30);
@@ -488,6 +558,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction16()
         {
             String code =
@@ -496,6 +567,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassFunction17()
         {
             String code =
@@ -506,6 +578,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestStaticUpdate01()
         {
             string code = @"class Base{    static x : int = 1;}t = Base.x;Base.x = 10;                 ";
@@ -514,6 +587,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestStaticUpdate02()
         {
             string code = @"class Base{    static x : int[];}t = Base.x;Base.x = { 1, 2 };                   ";
@@ -522,6 +596,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestStaticProperty01()
         {
             string code = @"class A{    static x:int;    static def foo(i)    {        return = 2 * i;    }}a = A.A();a.x = 3;t1 = a.x;b = A.A();t2 = b.x;                ";
@@ -531,6 +606,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestStaticProperty02()
         {
             string code = @"class S{	public static a : int;}class C{    public x : int;    constructor C()    {        S.a = 2;    }}p = C.C();b = S.a;";
@@ -540,9 +616,10 @@ x = d.foo(c);
 
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestStaticMethodResolution()
         {
-            string code = @"            class A            {	            b : int;	            static z : int;	            def foo(a : int)	            {		            b = 1;		            return = a;	            }	            static def foo(a : int[])	            {		            z = 2;		            return = 9;	            }            }            x = A.A();            c = {1,2,3,4};            d = A.foo(c);            y = x.b;            v = x.z;            w = A.z;";
+            string code = @"	        b : int;	        z : int;	        def foo(a : int)	        {		        b = 1;		        return = a;	        }	        def foo(a : int[])	        {		        z = 2;		        return = 9;            }            c = {1,2,3,4};            d = foo(c);            v = z;";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Obj o = mirror.GetValue("c");
             List<Obj> os = mirror.GetArrayElements(o);
@@ -552,12 +629,11 @@ x = d.foo(c);
             Assert.IsTrue((Int64)os[2].Payload == 3);
             Assert.IsTrue((Int64)os[3].Payload == 4);
             Assert.IsTrue((Int64)mirror.GetValue("d").Payload == 9);
-            Assert.IsTrue((Int64)mirror.GetValue("y").Payload == 0);
             Assert.IsTrue((Int64)mirror.GetValue("v").Payload == 2);
-            Assert.IsTrue((Int64)mirror.GetValue("w").Payload == 2);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestClassNegative01()
         {
             Assert.Throws(typeof(ProtoCore.Exceptions.CompileErrorsOccured), () =>
@@ -661,6 +737,7 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestIndexingIntoArray01()
         {
             String code =
@@ -671,10 +748,11 @@ x = d.foo(c);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestIndexingIntoArray02()
         {
             String code =
-@"x=[Imperative]{    def ding()    {        return = {{1,2,3}, {4,5,6}};    }    return = ding()[1][1];}class A{    a:int;    constructor A(i:int)    {        a = i;    }}def foo(){    return = {A.A(1), A.A(2), A.A(3)};}y = foo()[1].a;";
+@"x=[Imperative]{    def ding()    {        return = {{1,2,3}, {4,5,6}};    }    return = ding()[1][1];}def foo(){    return = {1, 2, 3};}y = foo()[1];";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("x", 5);
             thisTest.Verify("y", 2);
@@ -885,6 +963,7 @@ r2 = a[""x""];
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestDictionary05()
         {
             // Using class instance as a key 
@@ -1390,31 +1469,55 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestReplicationGuidesOnDotOps01()
         {
-            string code = @"class A{    x : var[];    constructor A()    {        x = {1,2};    }}a = A.A();b = A.A();c = a.x<1> + b.x<2>;x = c[0];y = c[1];";
+            string code = @"v : var[];
+def A()
+{
+    v = {1,2};
+}
+A();
+c = v<1> + v<2>;
+x = c[0];
+y = c[1];";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("x", new object[] { 2, 3 });
             thisTest.Verify("y", new object[] { 3, 4 });
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestReplicationGuidesOnDotOps02()
         {
-            string code = @"class C{    def f(a:int,b:int)    {        return = 1;    }}p = C.C();x = {1,2};y = {3,4};a = p.f(x<1>, y<2>);b = a[0];";
+            string code = @"def f(a:int,b:int)
+{
+    return = 1;
+}
+x = {1,2};
+y = {3,4};
+a = f(x<1>, y<2>);
+b = a[0];";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("b", new object[] { 1, 1 });
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestReplicationGuidesOnDotOps03()
         {
-            string code = @"class C{    def f(a:int,b:int)    {        return = 1;    }}p = C.C();a = p.f({1,2}<1>, {3,4}<2>);b = a[0];";
+            string code = @"def f(a:int,b:int)
+{
+    return = 1;
+}
+a = f({1,2}<1>, {3,4}<2>);
+b = a[0];";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("b", new object[] { 1, 1 });
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestReplicationGuidesOnDotOps04()
         {
             string code = @"class C{    def f(a : int)    {        return = 10;    }}p = {C.C(), C.C()};x = p<1>.f({1,2}<2>);y = x[0];z = x[1];";
@@ -1424,6 +1527,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestReplicationGuidesOnDotOps05()
         {
             string code = @"class A{        x;        constructor A ( x1 )        {            x = x1;        }        def foo ( y )        {            return = x + y;        }}a = A.A (0..1);b = 2..3;x = a<1>.foo(b<2>);y = x[0];z = x[1];";
@@ -1543,6 +1647,7 @@ c = f(a<1L>,b<2>);";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestEq()
         {
             string code= @"
@@ -1636,6 +1741,7 @@ x4 = 0..#5..10;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void FunctionWithinConstr001()
         {
             String code =
@@ -1774,6 +1880,7 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void NegativeIndexOnCollection003()
         {
             String code =
@@ -1783,10 +1890,23 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void PopListWithDimension()
         {
             String code =
-                @"class A{	y : var;	z : var[];		constructor A()	{		y = 10;		z = { B.B(40, 50), B.B(60, 70) };	}}class B{	m : var;	n : var;	constructor B(i : int, j : int)	{		m = i;		n = j;	}}a = A.A();b = B.B(1, 2);a.z[1] = b;watch1 = a.z[1].m; watch2 = a.z[1].n; a.z[1].m = 10;                ";
+                @"y : var;
+z : var[]..[];
+
+def A()
+{
+	y = 10;
+    z = { { 40, 50 }, { 60, 70 } };
+}
+
+z[1] = { 1, 2 };
+watch1 = z[1][0];
+watch2 = z[1][1];
+z[1][0] = 10;                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("watch1", 10);
             thisTest.Verify("watch2", 2);
@@ -1849,6 +1969,7 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestFunctionUpdate01()
         {
             String code =
@@ -1858,45 +1979,65 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         [Category("JunToFix")]
         public void TestFunctionUpdate02()
         {
             String code =
-                @"class A {    a : int;    constructor A ()    {        b = 1;        a = b;        b = 10;    }}x = A.A();y = x.a;                ";
+                @"a : int;
+def A()
+{
+    b = 1;
+    a = b;
+    b = 10;
+}
+A();
+y = a;                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("y").Payload == 10);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestNoUpdate01()
         {
             String code =
-                @"class Line{    x : int;    constructor Line(i : int)    {        x = i;    }    def Trim()    {        return = Line.Line(x - 1);           }}myline = Line.Line(10);myline = myline.Trim();myline = myline.Trim();length = myline.x;                ";
+                @"def Trim(x)
+{
+    return = x - 1;
+}
+myline = 10;
+myline = Trim(myline);
+myline = Trim(myline);
+length = myline;                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("length").Payload == 8);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestPropertyUpdate01()
         {
             String code =
-                @"class A{    x : int;	    constructor A()    {        x = 0;    }}p = A.A();a = p.x;p.x = 2;                 ";
+                @"p = 0;a = p;p = 2;                 ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetValue("a").Payload == 2);
         }
         // Comment Jun: Investigate how replicating setters have affected this update
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestPropertyUpdate02()
         {
             String code =
-                @"class A{    x : int;	    constructor A()    {        x = 0;    }}p = A.A();b = 2;p.x = b;b = 10;t = p.x;                ";
+                @"p = 0;b = 2;p = b;b = 10;t = p;                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             //Assert.Fail("1467249 - Sprint25: rev 3468 : REGRESSION: class property update is not propagating");
             Assert.IsTrue((Int64)mirror.GetValue("t").Payload == 10);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestPropertyUpdate03()
         {
             String code =
@@ -1906,6 +2047,7 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestPropertyUpdate04()
         {
             String code =
@@ -1915,25 +2057,28 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestPropertyUpdate05()
         {
             String code =
-                @"class f{	x : var;	y : var;	constructor f()	{		x = 1;			y = 2;		}}p = f.f();i = p.x;p.y = 1000;                ";
+                @"x : var;y : var;def f(){	x = 1;		y = 2;	}f();i = x;y = 1000;                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetFirstValue("i").Payload == 1);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestPropertyUpdate06()
         {
             String code =
-                @"class C{    x :var;    constructor C()    {        x = 10;    }}p = C.C();p.x = p.x + 1;p.x = p.x + 1;t = p.x;                ";
+                @"x : var;def C(){    x = 10;}C();x = x + 1;x = x + 1;t = x;                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetFirstValue("t").Payload == 12);
         }
 
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestPropertyUpdate07()
         {
             String code =
@@ -1943,6 +2088,7 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestLHSUpdate01()
         {
             String code =
@@ -1953,28 +2099,59 @@ b = 2.1 % 0;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestLHSUpdate02()
         {
             String code =
-                @"class A{    a : int;    }a1 = A.A();a1.a = 1;b = a1.a; // Should only update oncea1.a = 10;                ";
+                @"a = 1;b = a; // Should only update oncea = 10;                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetFirstValue("b").Payload == 10);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestPropertyModificationInMethodUpdate01()
         {
             String code =
-                @"class C{    mx : var;    constructor C ()	{	    mx = 1; 	}	def f()	{		mx = 10;		return = 0; 	}}p = C.C();x = p.mx; a = p.f();                ";
+                @"mx : var;
+def C ()
+{
+    mx = 1; 
+}
+def f()
+{
+	mx = 10;
+	return = 0; 
+}
+C();
+x = mx; 
+a = f();                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetFirstValue("x").Payload == 10);
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestPropertyModificationInMethodUpdate02()
         {
             String code =
-                @"class C{    mx : var;	my : var;     constructor C ()	{	    mx = 1; 	    my = 2; 	}	def f()	{		mx = 10;		my = 20;		return = 0; 	}}p = C.C();x = p.mx; y = p.my; a = p.f();                ";
+                @"mx : var;
+my : var; 
+def C ()
+{
+    mx = 1; 
+    my = 2; 
+}
+def f()
+{
+	mx = 10;
+	my = 20;
+	return = 0; 
+}
+C();
+x = mx; 
+y = my; 
+a = f();                ";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             Assert.IsTrue((Int64)mirror.GetFirstValue("x").Payload == 10);
             Assert.IsTrue((Int64)mirror.GetFirstValue("y").Payload == 20);
@@ -2063,6 +2240,7 @@ a = 10;
 
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestGCRefCount()
         {
             String code =
@@ -2107,6 +2285,7 @@ a = 10;
 
         [Test]
         [Ignore]
+        [Category("DSDefinedClass_Ignored")]
         [Category("ProtoGeometry")]
         [Category("PortToCodeBlocks")]
         public void TestNullFFI()
@@ -2119,6 +2298,7 @@ a = 10;
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestAttributeOnClass()
         {
             string src = @"class TestAttribute
@@ -2160,6 +2340,7 @@ class Point
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestAttributeOnGlobalFunction()
         {
             string src = @"class TestAttribute
@@ -2201,6 +2382,7 @@ class Point
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored_DSClassAttribute")]
         public void TestAttributeOnLanguageBlock()
         {
             string src = @"class TestAttribute
@@ -2226,6 +2408,7 @@ class VisibilityAttribute
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored_DSClassAttribute")]
         public void TestAttributeWithLanguageBlockAndArrayExpression()
         {
             string src = @"class TestAttribute
@@ -2291,15 +2474,14 @@ s9=s7+s8;";
 
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestStringOperations()
         {
             string src = @"
-class A{}
 s = ""ab"";
 r1 = s + 3;
 r2 = s + false;
 r4 = !s;
-r44 = !A.A();
 r444 = !1;
 r5 = s == ""ab"";
 r6 = s == s;
@@ -2314,7 +2496,6 @@ m = ss;
             thisTest.Verify("r1", "ab3");
             thisTest.Verify("r2", "abfalse");
             thisTest.Verify("r4", false);
-            thisTest.Verify("r44", false);
             thisTest.Verify("r444", false);
             thisTest.Verify("r5", true);
             thisTest.Verify("r6", true);
@@ -2359,16 +2540,24 @@ r3 = 'h' + 1;";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestTypeArrayAssign3()
         {
             String code =
-@"class A {    t:int[];    def foo() {        t = {1,2,3};        return = t;    }}a = A.A();b = a.foo();ret = a.t;";
+@"t:int[];
+def foo() {
+    t = {1,2,3};
+    return = t;
+}
+b = foo();
+ret = t;";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("b", new Object[] { 1, 2, 3 });
             thisTest.Verify("ret", new Object[] { 1, 2, 3 });
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestTypedAssignment01()
         {
             String code =
@@ -2402,6 +2591,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestTypedAssignment04()
         {
             string code =
@@ -2411,10 +2601,18 @@ r3 = 'h' + 1;";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ported")]
         public void TestTypedAssignment05()
         {
             string code =
-@"class A{    x:int = 1;    def foo()    {        p:int = 3;        p = false;        return = p;    }}a = A.A();r = a.foo();";
+@"x:int = 1;
+def foo()
+{
+    p:int = 3;
+    p = false;
+    return = p;
+}
+r = foo();";
             ExecutionMirror mirror = thisTest.RunScriptSource(code);
             thisTest.Verify("r", null);
         }
@@ -2430,6 +2628,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         [Category("Escalate")]
         [Category("ToFixJun")]
         public void TestPropAssignWithReplication()
@@ -2443,6 +2642,7 @@ r3 = 'h' + 1;";
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestPropAssignWithReplication02()
         {
             string code =
@@ -2970,6 +3170,7 @@ p = f();
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestLocalFromMemberFunction01()
         {
             string code =
@@ -2993,6 +3194,7 @@ y = p.f();
         }
 
         [Test]
+        [Category("DSDefinedClass_Ignored")]
         public void TestLocalFromMemberFunction02()
         {
             string code =

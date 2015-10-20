@@ -86,11 +86,6 @@ namespace ProtoCore
             }
         }
 
-        public void ClearWarnings()
-        {
-            warnings.Clear();
-        }
-
         public void ClearWarningForExpression(int expressionID)
         {
             warnings.RemoveAll(w => w.ExpressionID == expressionID);
@@ -327,7 +322,7 @@ namespace ProtoCore
             int classScope,
             List<StackValue> arguments)
         {
-            string className = runtimeCore.DSExecutable.classTable.ClassNodes[classScope].name;
+            string className = runtimeCore.DSExecutable.classTable.ClassNodes[classScope].Name;
 
             List<string> argumentTypes = new List<string>();
             if (arguments == null || arguments.Count == 0)
@@ -369,7 +364,7 @@ namespace ProtoCore
             {
                 if (classScope != Constants.kGlobalScope)
                 {
-                    string classname = runtimeCore.DSExecutable.classTable.ClassNodes[classScope].name;
+                    string classname = runtimeCore.DSExecutable.classTable.ClassNodes[classScope].Name;
                     message = string.Format(Resources.kPropertyOfClassNotFound, propertyName, classname);
                 }
                 else

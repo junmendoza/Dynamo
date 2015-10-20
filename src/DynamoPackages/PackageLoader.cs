@@ -7,9 +7,10 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using Dynamo.Core;
-using Dynamo.DSEngine;
+using Dynamo.Engine;
 using Dynamo.Interfaces;
 using Dynamo.Utilities;
+using Dynamo.Logging;
 using DynamoUtilities;
 using DynamoPackages.Properties;
 
@@ -44,7 +45,7 @@ namespace Dynamo.PackageManager
 
         public PackageLoader(IEnumerable<string> packagesDirectories)
         {
-            if (packagesDirectories == null || (!packagesDirectories.Any()))
+            if (packagesDirectories == null)
                 throw new ArgumentNullException("packagesDirectories");
 
             this.packagesDirectories.AddRange(packagesDirectories);

@@ -64,13 +64,15 @@ namespace ProtoCore
     /// </summary>
     public class RuntimeCore
     {
-        public RuntimeCore(Heap heap)
+        public RuntimeCore(Heap heap, Options options = null, Executable executable = null)
         {
             // The heap is initialized by the core and is used to allocate strings
             // Use the that heap for runtime
             Validity.Assert(heap != null);
             this.Heap = heap;
             RuntimeMemory = new RuntimeMemory(Heap);
+
+            this.Options = options;
 
             InterpreterProps = new Stack<InterpreterProperties>();
             ReplicationGuides = new List<List<ReplicationGuide>>();
@@ -97,6 +99,8 @@ namespace ProtoCore
             RuntimeStatus = new ProtoCore.RuntimeStatus(this);
             StartPC = Constants.kInvalidPC;
             RuntimeData = new ProtoCore.RuntimeData();
+            DSExecutable = executable;
+            Mirror = null;
         }
 
         /// <summary>
@@ -186,6 +190,8 @@ namespace ProtoCore
         // Cached replication guides for the current call. 
         // TODO Jun: Store this in the dynamic table node
         public List<List<ReplicationGuide>> ReplicationGuides;
+        
+        public ProtoCore.DSASM.Mirror.ExecutionMirror Mirror { get; set; }
 
         private bool cancellationPending = false;
         public bool CancellationPending

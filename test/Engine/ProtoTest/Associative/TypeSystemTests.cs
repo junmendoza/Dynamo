@@ -29,6 +29,7 @@ namespace ProtoTest.Associative
 
 
         [Test]
+        [Category("DSDefinedClass_Ignored_DSClassSemantics")]
         public void RedefConvTest()
         {
             String code =

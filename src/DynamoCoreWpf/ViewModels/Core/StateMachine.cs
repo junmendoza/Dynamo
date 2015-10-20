@@ -245,8 +245,7 @@ namespace Dynamo.ViewModels
 
             WorkspaceModel.RecordModelsForModification(models, Model.UndoRecorder);
 
-            DynamoViewModel.UndoCommand.RaiseCanExecuteChanged();
-            DynamoViewModel.RedoCommand.RaiseCanExecuteChanged();
+            DynamoViewModel.RaiseCanExecuteUndoRedo();
         }
 
         private void OnDragSelectionStarted(object sender, EventArgs e)
@@ -316,47 +315,6 @@ namespace Dynamo.ViewModels
         /// </summary>
         internal class StateMachine
         {
-            #region Private Nested Class MouseClickHistory
-
-            class MouseClickHistory
-            {
-                internal int Timestamp { get; set; }
-                internal object Source { get; set; }
-                internal Point Position { get; set; }
-
-                internal MouseClickHistory(object sender, MouseButtonEventArgs e)
-                {
-                    this.Timestamp = e.Timestamp;
-                    this.Source = e.Source;
-
-                    IInputElement element = sender as IInputElement;
-                    this.Position = e.GetPosition(element);
-                }
-
-                internal static bool CheckIsDoubleClick(
-                    MouseClickHistory prevClick, MouseClickHistory curClick)
-                {
-                    if (prevClick == null || (curClick.Source != prevClick.Source))
-                        return false; // Click events did not come from same source
-
-                    int clickInterval = curClick.Timestamp - prevClick.Timestamp;
-                    if (clickInterval > System.Windows.Forms.SystemInformation.DoubleClickTime)
-                        return false; // Time difference is more than system DoubleClickTime
-
-                    double diff = Math.Abs(prevClick.Position.X - curClick.Position.X);
-                    if (diff > Configurations.DoubleClickAcceptableDistance)
-                        return false; // Click is beyond acceptable threshold.
-
-                    diff = Math.Abs(prevClick.Position.Y - curClick.Position.Y);
-                    if (diff > Configurations.DoubleClickAcceptableDistance)
-                        return false; // Click is beyond acceptable threshold.
-
-                    return true;
-                }
-            }
-
-            #endregion
-
             #region Private Class Data Members
 
             private enum State
@@ -523,9 +481,6 @@ namespace Dynamo.ViewModels
 
             #region User Input Event Handlers
 
-            private MouseClickHistory prevClick;
-          
-
             internal bool HandleLeftButtonDown(object sender, MouseButtonEventArgs e)
             {
                 if (false != ignoreMouseClick)
@@ -533,8 +488,6 @@ namespace Dynamo.ViewModels
                     ignoreMouseClick = false;
                     return false;
                 }
-
-                MouseClickHistory curClick = new MouseClickHistory(sender, e);
 
                 bool eventHandled = false;
                 bool returnFocusToSearch = true;
@@ -561,25 +514,26 @@ namespace Dynamo.ViewModels
                     }
                     else
                     {
-                        if ((e.Source is Dynamo.Controls.EndlessGrid) == false)
+                        if (e.ClickCount < 2) 
+                        {
                             InitiateWindowSelectionSequence();
-                        else if (!MouseClickHistory.CheckIsDoubleClick(prevClick, curClick))
-                            InitiateWindowSelectionSequence();
-                        else
+                        }
+                        else // Double-clicking on canvas.
                         {
                             // Double-clicking on the background grid results in 
                             // a code block node being created, in which case we
                             // should keep the input focus on the code block to 
                             // avoid it being dismissed (with empty content).
-                            // 
-                            CreateCodeBlockNode(mouseDownPos);
+                            //
+                            // If Shift is pressed, CBN shouldn't be created.
+                            // Shift Modifier indicates, that user tries to call InCanvasSearch
+                            // by using Shift + DoubleClick.
+                            if (Keyboard.Modifiers != ModifierKeys.Shift)
+                                CreateCodeBlockNode(mouseDownPos);
 
                             returnFocusToSearch = false;
-                            curClick = null;
                         }
                     }
-
-                    prevClick = curClick;
 
                     eventHandled = true; // Mouse event handled.
                 }
